@@ -7,7 +7,7 @@ app = Flask(__name__)
 api_key = "fxr_live_0e9f7bba09e36d62b800cfea2147bdd6efaf"
 
 @app.route('/main', methods=['GET', 'POST'])
-def rate():
+def rate(): #rate
     main = []
     if request.method == 'POST':
         user_base = request.form.get('base', '').strip()
@@ -45,4 +45,5 @@ def rate():
 
 if __name__ == '__main__':
     app.run(port=8000, host='0.0.0.0', debug=True)
+
     
