@@ -1,21 +1,26 @@
-import requests
-from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-# 웹 페이지 요청
-url = "https://www.iban.kr/currency-codes"
-response = requests.get(url)
+driver = webdriver.Chrome()
+driver.get("https://data.kma.go.kr/tmeta/stn/selectStnList.do")
 
-if response.status_code == 200:
-    soup = BeautifulSoup(response.text, 'html.parser')
+# 모든 div#sidetree 가져오기
+sidetree_divs = driver.find_elements(By.ID, "sidetree")
 
-    # 모든 <tr> 찾기
-    rows = soup.find_all('tr')
+# 두 번째 요소 선택
+sidetree_div = sidetree_divs[0]
 
-    for row in rows:
-        cols = row.find_all('td')
-        if len(cols) >= 3:  # 최소 3개의 <td> 존재
-            country = cols[0].text.strip()
-            code = cols[2].text.strip()
-            print(f"'{country}': '{code}'")
-else:
-    print(f"Error: {response.status_code}")
+# 첫 번째 ul 가져오기
+first_ul = sidetree_div.find_element(By.TAG_NAME, "ul")
+
+# 첫 번째 li 가져오기
+first_li = first_ul.find_element(By.TAG_NAME, "li")
+
+first_ul_1 = first_li.find_element(By.TAG_NAME, "ui")
+
+
+print(first_ul_1.get_attribute("outerHTML"))
+
+driver.quit()

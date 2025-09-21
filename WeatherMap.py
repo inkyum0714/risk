@@ -1,7 +1,6 @@
 import requests
 from flask import Flask, request, render_template
-from Symbol import symbol_data, country_code_data_two
-
+from Symbol import country_code_data_five_number
 app = Flask(__name__)
 
 api_key = "lfwWiH5cTMe8Foh-XJzH6g"
@@ -13,7 +12,7 @@ def weather():
     if request.method == 'POST':
         user_input_day = request.form.get('day', '').strip()
         user_STN = request.form.get('stn', '').strip()
-        STN  = 
+        STN = [k for k, v in country_code_data_five_number.items() if v == user_STN]
         url = f"https://apihub.kma.go.kr/api/typ01/url/gts_syn1.php?tm={user_input_day}&dtm=3&stn=47&help=0&authKey={api_key}&stn={STN}"
         response = requests.get(url)
         text = response.text
