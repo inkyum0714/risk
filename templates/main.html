@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>날씨 검색</title>
+</head>
+<body>
+    <h1>날씨 검색</h1>
+
+    <form action="/Weather" method="post">
+        <label>날짜 (YYMMDDHH):</label>
+        <input type="text" name="day" placeholder="예: 202211301200" required>
+        <br><br>
+        <label>지점 코드:</label>
+        <input type="text" name="stn" placeholder="예: 47411" required>
+        <br><br>
+        <input type="submit" value="검색">
+    </form>
+
+    {% if values %}
+        <h2>검색 결과:</h2>
+        <ul>
+        {% for row in values %}
+            <li>{{ row }}</li>
+        {% endfor %}
+        </ul>
+    {% elif values is not none %}
+        <p>정보를 찾을 수 없습니다.</p>
+    {% endif %}
+        <h1>환율 검색</h1>
+
+    <form action="/rate" method="post">
+        <label>기준이 되는 나라 통화 선택: </label>
+        <input type="text" name="base" placeholder="예: 대한민국" required>
+        <br><br>
+        <label>환율을 알고 싶은 통화 선택(쉼표로 구분): </label>
+        <input type="text" name="stn" placeholder="예: 일본" required>
+        <br><br>
+        <label>반환할 양 입력: </label>
+        <input type="text" name="stn" placeholder="예: 1000" required>
+        <br><br>
+        <input type="submit" value="검색">
+    </form>
+
+    {% if values %}
+        <h2>검색 결과:</h2>
+        <ul>
+        {% for row in values %}
+            <li>{{ row }}</li>
+        {% endfor %}
+        </ul>
+    {% elif values is not none %}
+        <p>정보를 찾을 수 없습니다.</p>
+    {% endif %}
+</body>
+</html>
