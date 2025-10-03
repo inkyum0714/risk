@@ -7,12 +7,13 @@ app = Flask(__name__)
 api_key = "jiDRCL1%2FKFqcHeMt6Q8%2FwIFNhQoj79XSfFhNpfZCeNWBmGu8oDp%2B7P0gPHWcCr96h1YrqMtF2QGeyMItKFO%2FTA%3D%3D"
 
 @app.route('/main', methods=['GET', 'POST'])
-def rate():
+def risk():
     risk_data = None
     if request.method == 'POST':
         country_risk = request.form.get('riskmap', '').strip()
         country = country_code_data_two[country_risk]
-        url = f"http://apis.data.go.kr/1262000/TravelAlarmService2/getTravelAlarmList2?serviceKey={api_key}&returnType=JSON&numOfRows=1&cond[country_iso_alp2::EQ]={country}"
+        url = f"https://apis.data.go.kr/1262000/TravelAlarmService2/getTravelAlarmList2?serviceKey={api_key}&returnType=JSON&numOfRows=1&cond[country_iso_alp2::EQ]={country}"
+        
         response = requests.get(url)
         if response.status_code == 200:
             try:

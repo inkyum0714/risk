@@ -9,9 +9,12 @@ driver.get("https://data.kma.go.kr/tmeta/stn/selectStnList.do")
 
 # 1. 지정한 XPath 클릭
 first_link = WebDriverWait(driver, 120).until(
-    EC.element_to_be_clickable((By.XPATH, "/html/body/div[2]/div[1]/div/div[2]/div[3]/div[3]/div[2]/form/div[2]/div[1]/div/div/div/div/ul/li/ul/li[6]/a[1]"))
+    EC.presence_of_element_located((By.XPATH, "/html/body/div[2]/div[1]/div/div[2]/div[3]/div[3]/div[2]/form/div[2]/div[1]/div/div/div/div/ul/li/ul/li[6]/a[1]"))
 )
-first_link.click()
+
+# 스크롤 후 자바스크립트 클릭
+driver.execute_script("arguments[0].scrollIntoView(true);", first_link)
+driver.execute_script("arguments[0].click();", first_link)
 
 # 2. 내부 자식 label 중 "GTS기상" 포함된 label 클릭
 # first_link의 부모에서 상대 XPath로 찾음

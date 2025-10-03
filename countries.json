@@ -1,0 +1,437 @@
+[
+    {
+        "name": {
+            "common": "South Korea",
+            "official": "Republic of Korea",
+            "nativeName": {
+                "kor": {
+                    "official": "대한민국",
+                    "common": "한국"
+                }
+            }
+        },
+        "tld": [
+            ".kr",
+            ".한국"
+        ],
+        "cca2": "KR",
+        "ccn3": "410",
+        "cioc": "KOR",
+        "independent": true,
+        "status": "officially-assigned",
+        "unMember": true,
+        "currencies": {
+            "KRW": {
+                "symbol": "₩",
+                "name": "South Korean won"
+            }
+        },
+        "idd": {
+            "root": "+8",
+            "suffixes": [
+                "2"
+            ]
+        },
+        "capital": [
+            "Seoul"
+        ],
+        "altSpellings": [
+            "KR",
+            "Korea, Republic of",
+            "Republic of Korea",
+            "남한",
+            "남조선"
+        ],
+        "region": "Asia",
+        "subregion": "Eastern Asia",
+        "languages": {
+            "kor": "Korean"
+        },
+        "latlng": [
+            37.0,
+            127.5
+        ],
+        "landlocked": false,
+        "borders": [
+            "PRK"
+        ],
+        "area": 100210.0,
+        "demonyms": {
+            "eng": {
+                "f": "South Korean",
+                "m": "South Korean"
+            },
+            "fra": {
+                "f": "Sud-coréenne",
+                "m": "Sud-coréen"
+            }
+        },
+        "cca3": "KOR",
+        "translations": {
+            "ara": {
+                "official": "جمهورية كوريا",
+                "common": "كوريا الجنوبية"
+            },
+            "bre": {
+                "official": "Republik Korea",
+                "common": "Korea ar Su"
+            },
+            "ces": {
+                "official": "Korejská republika",
+                "common": "Jižní Korea"
+            },
+            "cym": {
+                "official": "Republic of Korea",
+                "common": "South Korea"
+            },
+            "deu": {
+                "official": "Republik Korea",
+                "common": "Südkorea"
+            },
+            "est": {
+                "official": "Korea Vabariik",
+                "common": "Lõuna-Korea"
+            },
+            "fin": {
+                "official": "Korean tasavalta",
+                "common": "Etelä-Korea"
+            },
+            "fra": {
+                "official": "République de Corée",
+                "common": "Corée du Sud"
+            },
+            "hrv": {
+                "official": "Republika Koreja",
+                "common": "Južna Koreja"
+            },
+            "hun": {
+                "official": "Koreai Köztársaság",
+                "common": "Dél-Korea"
+            },
+            "ind": {
+                "official": "Republik Korea",
+                "common": "Korea Selatan"
+            },
+            "ita": {
+                "official": "Repubblica di Corea",
+                "common": "Corea del Sud"
+            },
+            "jpn": {
+                "official": "大韓民国",
+                "common": "韓国"
+            },
+            "kor": {
+                "official": "대한민국",
+                "common": "한국"
+            },
+            "nld": {
+                "official": "Republiek Korea",
+                "common": "Zuid-Korea"
+            },
+            "per": {
+                "official": "جمهوری کره",
+                "common": "کرهٔ جنوبی"
+            },
+            "pol": {
+                "official": "Republika Korei",
+                "common": "Korea Południowa"
+            },
+            "por": {
+                "official": "República da Coreia",
+                "common": "Coreia do Sul"
+            },
+            "rus": {
+                "official": "Республика Корея",
+                "common": "Южная Корея"
+            },
+            "slk": {
+                "official": "Kórejská republika",
+                "common": "Južná Kórea"
+            },
+            "spa": {
+                "official": "República de Corea",
+                "common": "Corea del Sur"
+            },
+            "srp": {
+                "official": "Република Кореја",
+                "common": "Јужна Кореја"
+            },
+            "swe": {
+                "official": "Republiken Korea",
+                "common": "Sydkorea"
+            },
+            "tur": {
+                "official": "Kore Cumhuriyeti",
+                "common": "Güney Kore"
+            },
+            "urd": {
+                "official": "جمہوریہ کوریا ",
+                "common": "جنوبی کوریا"
+            },
+            "zho": {
+                "official": "大韩民国",
+                "common": "韩国"
+            }
+        },
+        "flag": "🇰🇷",
+        "maps": {
+            "googleMaps": "https://goo.gl/maps/7ecjaJXefjAQhxjGA",
+            "openStreetMaps": "https://www.openstreetmap.org/relation/307756"
+        },
+        "population": 51780579,
+        "gini": {
+            "2016": 31.4
+        },
+        "fifa": "KOR",
+        "car": {
+            "signs": [
+                "ROK"
+            ],
+            "side": "right"
+        },
+        "timezones": [
+            "UTC+09:00"
+        ],
+        "continents": [
+            "Asia"
+        ],
+        "flags": {
+            "png": "https://flagcdn.com/w320/kr.png",
+            "svg": "https://flagcdn.com/kr.svg",
+            "alt": "The flag of South Korea has a white field, at the center of which is a red and blue Taegeuk circle surrounded by four black trigrams, one in each corner."
+        },
+        "coatOfArms": {
+            "png": "https://mainfacts.com/media/images/coats_of_arms/kr.png",
+            "svg": "https://mainfacts.com/media/images/coats_of_arms/kr.svg"
+        },
+        "startOfWeek": "monday",
+        "capitalInfo": {
+            "latlng": [
+                37.55,
+                126.98
+            ]
+        },
+        "postalCode": {
+            "format": "SEOUL ###-###",
+            "regex": "^(?:SEOUL)*(\\d{6})$"
+        }
+    },
+    {
+        "name": {
+            "common": "North Korea",
+            "official": "Democratic People's Republic of Korea",
+            "nativeName": {
+                "kor": {
+                    "official": "조선민주주의인민공화국",
+                    "common": "조선"
+                }
+            }
+        },
+        "tld": [
+            ".kp"
+        ],
+        "cca2": "KP",
+        "ccn3": "408",
+        "cioc": "PRK",
+        "independent": true,
+        "status": "officially-assigned",
+        "unMember": true,
+        "currencies": {
+            "KPW": {
+                "symbol": "₩",
+                "name": "North Korean won"
+            }
+        },
+        "idd": {
+            "root": "+8",
+            "suffixes": [
+                "50"
+            ]
+        },
+        "capital": [
+            "Pyongyang"
+        ],
+        "altSpellings": [
+            "KP",
+            "Democratic People's Republic of Korea",
+            "DPRK",
+            "조선민주주의인민공화국",
+            "Chosŏn Minjujuŭi Inmin Konghwaguk",
+            "Korea, Democratic People's Republic of",
+            "북한",
+            "북조선"
+        ],
+        "region": "Asia",
+        "subregion": "Eastern Asia",
+        "languages": {
+            "kor": "Korean"
+        },
+        "latlng": [
+            40.0,
+            127.0
+        ],
+        "landlocked": false,
+        "borders": [
+            "CHN",
+            "KOR",
+            "RUS"
+        ],
+        "area": 120538.0,
+        "demonyms": {
+            "eng": {
+                "f": "North Korean",
+                "m": "North Korean"
+            },
+            "fra": {
+                "f": "Nord-coréenne",
+                "m": "Nord-coréen"
+            }
+        },
+        "cca3": "PRK",
+        "translations": {
+            "ara": {
+                "official": "جمهورية كوريا الديمقراطية الشعبية",
+                "common": "كوريا الشمالية"
+            },
+            "bre": {
+                "official": "Republik Poblel ha Demokratel Korea",
+                "common": "Korea an Norzh"
+            },
+            "ces": {
+                "official": "Korejská lidově demokratická republika",
+                "common": "Severní Korea"
+            },
+            "cym": {
+                "official": "Democratic People's Republic of Korea",
+                "common": "North Korea"
+            },
+            "deu": {
+                "official": "Demokratische Volksrepublik Korea",
+                "common": "Nordkorea"
+            },
+            "est": {
+                "official": "Korea Rahvademokraatlik Vabariik",
+                "common": "Põhja-Korea"
+            },
+            "fin": {
+                "official": "Korean demokraattinen kansantasavalta",
+                "common": "Pohjois-Korea"
+            },
+            "fra": {
+                "official": "République populaire démocratique de Corée",
+                "common": "Corée du Nord"
+            },
+            "hrv": {
+                "official": "Demokratska Narodna Republika Koreja",
+                "common": "Sjeverna Koreja"
+            },
+            "hun": {
+                "official": "Koreai Népi Demokratikus Köztársaság",
+                "common": "Észak-Korea"
+            },
+            "ind": {
+                "official": "Republik Rakyat Demokratik Korea",
+                "common": "Korea Utara"
+            },
+            "ita": {
+                "official": "Repubblica democratica popolare di Corea",
+                "common": "Corea del Nord"
+            },
+            "jpn": {
+                "official": "朝鮮民主主義人民共和国",
+                "common": "朝鮮民主主義人民共和国"
+            },
+            "kor": {
+                "official": "조선민주주의인민공화국",
+                "common": "조선"
+            },
+            "nld": {
+                "official": "Democratische Volksrepubliek Korea",
+                "common": "Noord-Korea"
+            },
+            "per": {
+                "official": "جمهوری دموکراتیک خلق کره",
+                "common": "کُره شمالی"
+            },
+            "pol": {
+                "official": "Koreańska Republika Ludowo-Demokratyczna",
+                "common": "Korea Północna"
+            },
+            "por": {
+                "official": "República Popular Democrática da Coreia",
+                "common": "Coreia do Norte"
+            },
+            "rus": {
+                "official": "Корейская Народно-Демократическая Республика Корея",
+                "common": "Северная Корея"
+            },
+            "slk": {
+                "official": "Kórejská ľudovodemokratická republika",
+                "common": "Severná Kórea"
+            },
+            "spa": {
+                "official": "República Popular Democrática de Corea",
+                "common": "Corea del Norte"
+            },
+            "srp": {
+                "official": "Демократска Народна Република Кореја",
+                "common": "Северна Кореја"
+            },
+            "swe": {
+                "official": "Demokratiska Folkrepubliken Korea",
+                "common": "Nordkorea"
+            },
+            "tur": {
+                "official": "Kore Demokratik Halk Cumhuriyeti",
+                "common": "Kuzey Kore"
+            },
+            "urd": {
+                "official": "جمہوری عوامی جمہوریہ کوریا",
+                "common": "شمالی کوریا"
+            },
+            "zho": {
+                "official": "朝鲜人民民主共和国",
+                "common": "朝鲜"
+            }
+        },
+        "flag": "🇰🇵",
+        "maps": {
+            "googleMaps": "https://goo.gl/maps/9q5T2DMeH5JL7Tky6",
+            "openStreetMaps": "https://www.openstreetmap.org/relation/192734"
+        },
+        "population": 25778815,
+        "fifa": "PRK",
+        "car": {
+            "signs": [
+                ""
+            ],
+            "side": "right"
+        },
+        "timezones": [
+            "UTC+09:00"
+        ],
+        "continents": [
+            "Asia"
+        ],
+        "flags": {
+            "png": "https://flagcdn.com/w320/kp.png",
+            "svg": "https://flagcdn.com/kp.svg",
+            "alt": "The flag of North Korea is composed of three horizontal bands — a large central white-edged red band, and a blue band above and beneath the red band. On the hoist side of the red band is a red five-pointed star within a white circle."
+        },
+        "coatOfArms": {
+            "png": "https://mainfacts.com/media/images/coats_of_arms/kp.png",
+            "svg": "https://mainfacts.com/media/images/coats_of_arms/kp.svg"
+        },
+        "startOfWeek": "monday",
+        "capitalInfo": {
+            "latlng": [
+                39.02,
+                125.75
+            ]
+        },
+        "postalCode": {
+            "format": "###-###",
+            "regex": "^(\\d{6})$"
+        }
+    }
+]

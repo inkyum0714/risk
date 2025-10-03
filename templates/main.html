@@ -7,7 +7,7 @@
 <body>
     <h1>날씨 검색</h1>
 
-    <form action="/Weather" method="post">
+    <form action="/main" method="post">
         <label>날짜 (YYMMDDHH):</label>
         <input type="text" name="day" placeholder="예: 202211301200" required>
         <br><br>
@@ -29,28 +29,67 @@
     {% endif %}
         <h1>환율 검색</h1>
 
-    <form action="/rate" method="post">
+    <form action="/main" method="post">
         <label>기준이 되는 나라 통화 선택: </label>
         <input type="text" name="base" placeholder="예: 대한민국" required>
         <br><br>
         <label>환율을 알고 싶은 통화 선택(쉼표로 구분): </label>
-        <input type="text" name="stn" placeholder="예: 일본" required>
+        <input type="text" name="currencies" placeholder="예: 일본" required>
         <br><br>
         <label>반환할 양 입력: </label>
-        <input type="text" name="stn" placeholder="예: 1000" required>
+        <input type="text" name="amount" placeholder="예: 1000" required>
         <br><br>
         <input type="submit" value="검색">
     </form>
 
-    {% if values %}
+    {% if mains %}
         <h2>검색 결과:</h2>
         <ul>
-        {% for row in values %}
-            <li>{{ row }}</li>
+        {% for main in mains %}
+            <li>{{ main }}</li>
         {% endfor %}
         </ul>
-    {% elif values is not none %}
+    {% elif mains is not none %}
         <p>정보를 찾을 수 없습니다.</p>
+    {% endif %}
+    <h1>위험도 검색</h1>
+        <form action="/main" method="post">
+        <label>기준이 되는 나라 통화 선택: </label>
+        <input type="text" name="riskmap" placeholder="예: 미국" required>
+        <br><br>
+        <input type="submit" value="검색">
+    </form>
+
+    {% if risks %}
+        <h2>검색 결과:</h2>
+        <ul>
+        {% for risk in risks %}
+            <li>{{ main }}</li>
+        {% endfor %}
+        </ul>
+    {% elif risks is not none %}
+        <p>정보를 찾을 수 없습니다.</p>
+    {% endif %}
+    
+        <h1>비자 확인</h1>
+    <form method="POST">
+        <label>여권 국가 코드:</label>
+        <input type="text" name="passport" required><br><br>
+
+        <label>목적지 국가 코드:</label>
+        <input type="text" name="destination" required><br><br>
+
+        <button type="submit">확인</button>
+    </form>
+
+    {% if result %}
+        <h2>결과:</h2>
+        <p>{{ result }}</p>
+    {% endif %}
+
+    {% if error_msg %}
+        <h2>오류:</h2>
+        <p>{{ error_msg }}</p>
     {% endif %}
 </body>
 </html>

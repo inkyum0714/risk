@@ -12,11 +12,11 @@ def weather():
     if request.method == 'POST':
         user_input_day = request.form.get('day', '').strip()
         user_STN = request.form.get('stn', '').strip()
-        STN = [k for k, v in country_code_data_five_number.items() if v == user_STN]
+        STN = country_code_data_five_number[user_STN]
         url = f"https://apihub.kma.go.kr/api/typ01/url/gts_syn1.php?tm={user_input_day}&dtm=3&stn=47&help=0&authKey={api_key}&stn={STN}"
         response = requests.get(url)
         text = response.text
-        
+        print(STN)
         start_idx = text.find("#START7777")
         end_idx = text.find("#7777END")
         if start_idx != -1 and end_idx != -1:

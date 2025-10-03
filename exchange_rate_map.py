@@ -7,14 +7,14 @@ app = Flask(__name__)
 api_key = "fxr_live_0e9f7bba09e36d62b800cfea2147bdd6efaf"
 
 @app.route('/main', methods=['GET', 'POST'])
-def rate(): #rate
+def rate(): 
     main = []
     if request.method == 'POST':
         user_base = request.form.get('base', '').strip()
         user_currencies = request.form.get('currencies', '').strip()
         base = country_code_data_three[user_base]
         currencies = country_code_data_three[user_currencies]
-
+        print(f"Base: {base}, Currencies: {currencies}")
         amount = request.form.get('amount', '').strip()
 
         url = f"https://api.fxratesapi.com/latest?amount={amount}&base={base}&currencies={currencies}&places=6&format=json&api_key={api_key}"
