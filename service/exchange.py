@@ -1,8 +1,9 @@
 from data.Symbol import country_code_data_three, symbol_data
 import requests
 
+EXCHANGE_API_KEY = "fxr_live_0e9f7bba09e36d62b800cfea2147bdd6efaf"
+
 def exchange(user_base, user_currencies, amount):
-    EXCHANGE_API_KEY = "fxr_live_0e9f7bba09e36d62b800cfea2147bdd6efaf"
     base = country_code_data_three[user_base]
     currencies = country_code_data_three[user_currencies]
     print(f"Base: {base}, Currencies: {currencies}")

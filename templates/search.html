@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>맞춤 여행 점수 판단 서비스 - 검색결과</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            min-height: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        .top, .bottom {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .top {
+            height: 30%;
+            background: linear-gradient(to right, #89f7fe, #66a6ff);
+            padding: 20px;
+        }
+
+        .bottom {
+            width: 100%;
+            min-height: 70%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        /* 검색폼 */
+        .search-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .search-form input[type="text"],
+        .search-form input[type="date"] {
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-form input[type="text"] { width: 220px; }
+        .search-form input[type="date"] { width: 160px; }
+
+        .search-form button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            background-color: #ff6b6b;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .search-form button:hover { background-color: #ff4757; }
+
+        /* 결과 공통 스타일 */
+        .results {
+            width: 100%;
+            max-width: 720px;
+            padding: 20px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.95);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+
+        .results h2 { margin-bottom: 15px; color: #333; }
+
+        .results ul { list-style: none; }
+        .results li {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            color: #555;
+        }
+        .results li:last-child { border-bottom: none; }
+
+        .no-result {
+            text-align: center;
+            color: #888;
+            font-size: 16px;
+        }
+
+        /* 환율 전용 색상 */
+        .exchange-results { border-left: 4px solid #ffa502; }
+    </style>
+</head>
+<body>
+    <!-- 상단 검색 영역 -->
+    <div class="top">
+        <h1>맞춤 여행 점수 판단 서비스</h1>
+        <form class="search-form" action="/search" method="post" autocomplete="off">
+            <input type="text" placeholder="나라를 입력하세요" name="country" required>
+            <input type="date" name="travel_date" required>
+            <button type="submit">검색</button>
+        </form>
+    </div>
+
+    <!-- 하단 검색 결과 -->
+    <div class="bottom">
+
+        <!-- 날씨 결과 -->
+        {% if weather_results %}
+        <div class="results weather-results">
+            <h2>날씨 결과:</h2>
+            <ul>
+                {% for weather_result in weather_results %}
+                    <li>{{ weather_result }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% elif weather_results is not none %}
+        <div class="results weather-results">
+            <p class="no-result">날씨 정보를 찾을 수 없습니다.</p>
+        </div>
+        {% endif %}
+
+        <!-- 환율 결과 -->
+        {% if exchange_results and exchange_results|length > 0 %}
+        <div class="results exchange-results">
+            <h2>환율 결과:</h2>
+            <ul>
+                {% for exchange_result in exchange_results %}
+                    <li>{{ exchange_result }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% else %}
+        <div class="results exchange-results">
+            <p class="no-result">환율 정보를 찾을 수 없습니다.</p>
+        </div>
+        {% endif %}
+
+    </div>
+</body>
+</html>

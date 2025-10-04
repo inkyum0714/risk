@@ -1,14 +1,12 @@
 import requests
 from data.Symbol import symbol_data, country_code_data_three, country_code_data_two, country_code_data_five_number
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect
 from service.exchange import exchange
 from service.weather import get_weather
 from service.service import find_country_by_city
 
 app = Flask(__name__)
 
-EXCHANGE_API_KEY = "fxr_live_0e9f7bba09e36d62b800cfea2147bdd6efaf"
-WEATHER_API_KEY = "lfwWiH5cTMe8Foh-XJzH6g"
 RISK_API_KEY = "jiDRCL1%2FKFqcHeMt6Q8%2FwIFNhQoj79XSfFhNpfZCeNWBmGu8oDp%2B7P0gPHWcCr96h1YrqMtF2QGeyMItKFO%2FTA%3D%3D"
 
 @app.route("/", methods=["GET"])
@@ -45,9 +43,11 @@ def search():
         city = request.form.get('country', '').strip()
         date = request.form.get('travel_date', '').strip()
         weather_result = get_weather(city, date)
-        country = find_country_by_city(country)
+        country = find_country_by_city(city)
         exchange_result = exchange("대한민국", country, "10000")
 
+        return render_template('search.html', weather_results=weather_result, exchange_results=exchange_result,country_code_data_five_number=country_code_data_five_number)
+    return redirect("/")
         
 
 @app.route('/exchange', methods=['GET', 'POST'])
