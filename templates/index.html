@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>맞춤 여행 점수 판단 서비스</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        /* 상하 분할 */
+        .top, .bottom {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .top {
+            height: 40%;
+            background: linear-gradient(to right, #89f7fe, #66a6ff);
+            flex-direction: column;
+        }
+
+        .bottom {
+            height: 60%;
+            background-color: #f2f2f2;
+            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* 검색창 + 날짜 폼 스타일 */
+        .search-form input[type="text"],
+        .search-form input[type="date"] {
+            padding: 10px;
+            border: 2px solid #66a6ff;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-form input[type="text"] {
+            width: 200px;
+        }
+
+        .search-form input[type="date"] {
+            width: 160px;
+            margin-left: 10px;
+        }
+
+        .search-form input:focus {
+            border-color: #89f7fe;
+        }
+
+        .search-form button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            background-color: #66a6ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-form button:hover {
+            background-color: #89f7fe;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        /* 추천 여행지 카드 */
+        .destination {
+            background-color: white;
+            width: 90%;
+            max-width: 600px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            display: flex;
+            overflow: hidden;
+        }
+
+        .destination img {
+            width: 40%;
+            object-fit: cover;
+        }
+
+        .destination-info {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 60%;
+        }
+
+        .destination-info h3 {
+            margin-bottom: 10px;
+        }
+
+        .destination-info p {
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .score {
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+        /* 자동완성 드롭다운 스타일 */
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid #d4d4d4;
+            border-top: none;
+            z-index: 99;
+            background-color: white;
+            max-height: 200px;
+            overflow-y: auto;
+            width: 200px; /* 검색창과 동일하게 맞춤 */
+        }
+
+        .autocomplete-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .autocomplete-item:hover {
+            background-color: #e9e9e9;
+        }
+    </style>
+
+</head>
+<body>
+    <!-- 상단 검색 영역 -->
+    <div class="top">
+        <h1>맞춤 여행 점수 판단 서비스</h1>
+<!-- 검색창 부분 수정 -->
+        <form class="search-form" action="/search" method="post" autocomplete="off">
+            <input type="text" placeholder="나라를 입력하세요" name="country" id="country-input" required>
+            <input type="date" name="travel_date" required>
+            <button type="submit">검색</button>
+            <div id="autocomplete-list" class="autocomplete-items"></div>
+        </form>
+    </div>
+
+    <!-- 하단 추천 여행지 영역 -->
+    <div class="bottom">
+        <div class="destination">
+            <img src="https://via.placeholder.com/200x150" alt="추천 여행지 사진">
+            <div class="destination-info">
+                <h3>파리</h3>
+                <p>추천 이유: 문화와 미식</p>
+                <p class="score">점수: 95/100</p>
+            </div>
+        </div>
+
+        <div class="destination">
+            <img src="https://via.placeholder.com/200x150" alt="추천 여행지 사진">
+            <div class="destination-info">
+                <h3>도쿄</h3>
+                <p>추천 이유: 최신 트렌드와 쇼핑</p>
+                <p class="score">점수: 90/100</p>
+            </div>
+        </div>
+    </div>
+        <script>
+// Jinja2로 country_code_data_five_number의 key 값 전달
+const countries = {{ country_code_data_five_number.keys() | list | tojson }};
+
+const input = document.getElementById('country-input');
+const autocompleteList = document.getElementById('autocomplete-list');
+
+input.addEventListener('input', function() {
+    const val = this.value.toLowerCase();
+    // 기존 드롭다운 제거
+    autocompleteList.innerHTML = '';
+    if (!val) return false;
+
+    // 입력값과 매칭되는 국가 찾기
+    const matches = countries.filter(country => country.toLowerCase().startsWith(val));
+
+    // 드롭다운 생성
+    matches.forEach(match => {
+        const item = document.createElement('div');
+        item.classList.add('autocomplete-item');
+        item.innerHTML = `<strong>${match.substr(0, val.length)}</strong>${match.substr(val.length)}`;
+        item.addEventListener('click', function() {
+            input.value = match;
+            autocompleteList.innerHTML = '';
+        });
+        autocompleteList.appendChild(item);
+    });
+});
+
+// 페이지 외부 클릭 시 드롭다운 닫기
+document.addEventListener('click', function(e) {
+    if (e.target != input) {
+        autocompleteList.innerHTML = '';
+    }
+});
+</script>
+</body>
+</html>

@@ -46,7 +46,7 @@ for label in labels:
     if matches:
         all_result.update({name: int(code) for name, code in matches})
 
-with open("countries.json", "w", encoding="utf-8") as f:
+with open("test.json", "w", encoding="utf-8") as f:
     json.dump(all_result, f, ensure_ascii=False, indent=4)
 
 print("countries.json 파일이 생성되었습니다.")

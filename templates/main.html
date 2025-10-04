@@ -12,19 +12,19 @@
         <input type="text" name="day" placeholder="예: 202211301200" required>
         <br><br>
         <label>지점 코드:</label>
-        <input type="text" name="stn" placeholder="예: 47411" required>
+        <input type="text" name="stn" placeholder="예: 후쿠오카" required>
         <br><br>
         <input type="submit" value="검색">
     </form>
 
-    {% if values %}
+    {% if weather_resylts %}
         <h2>검색 결과:</h2>
         <ul>
-        {% for row in values %}
+        {% for row in weather_resylts %}
             <li>{{ row }}</li>
         {% endfor %}
         </ul>
-    {% elif values is not none %}
+    {% elif weather_resylts is not none %}
         <p>정보를 찾을 수 없습니다.</p>
     {% endif %}
         <h1>환율 검색</h1>

@@ -1,22 +1,16 @@
+from data.Symbol import country_code_data_five_number
 import requests
-from flask import Flask, request, render_template
-from Symbol import country_code_data_five_number
-app = Flask(__name__)
 
-api_key = "lfwWiH5cTMe8Foh-XJzH6g"
+WEATHER_API_KEY = "lfwWiH5cTMe8Foh-XJzH6g"
 
-@app.route('/main', methods=['GET', 'POST'])
-def weather():
-    values = []
-    data = []
-    if request.method == 'POST':
-        user_input_day = request.form.get('day', '').strip()
-        user_STN = request.form.get('stn', '').strip()
-        STN = country_code_data_five_number[user_STN]
-        url = f"https://apihub.kma.go.kr/api/typ01/url/gts_syn1.php?tm={user_input_day}&dtm=3&stn=47&help=0&authKey={api_key}&stn={STN}"
+def get_weather(user_input_country, user_input_day):
+        weather_result = []
+        weather_data = []
+        country = country_code_data_five_number[user_input_country]
+        url = f"https://apihub.kma.go.kr/api/typ01/url/gts_syn1.php?tm={user_input_day}&dtm=3&stn=47&help=0&authKey={WEATHER_API_KEY}&stn={country}"
         response = requests.get(url)
         text = response.text
-        print(STN)
+        print(country)
         start_idx = text.find("#START7777")
         end_idx = text.find("#7777END")
         if start_idx != -1 and end_idx != -1:
@@ -40,13 +34,12 @@ def weather():
                 try:
                     for i in range(10):
                         if parts[i] != "-99.0" and parts[i] != "-999":
-                            data.append(parts[i])
-                    values = [f"{a}: {b}" for a, b in zip(help, parts)]
+                            weather_data.append(parts[i])
+                    weather_result = [f"{a}: {b}" for a, b in zip(help, parts)]
 
                 except ValueError:
-                    continue    
-    print("TA values:", values)
-    return render_template("main.html", values=values)
+                    continue  
 
-if __name__ == '__main__':
-    app.run(port=8000, host='0.0.0.0', debug=True)
+                print("TA values:", weather_result)
+
+                return weather_result
