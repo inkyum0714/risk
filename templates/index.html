@@ -178,6 +178,36 @@
         </form>
     </div>
 
+        <div class="top">
+        <h1>항공권 검색</h1>
+        <form class="search-form" action="/search" method="post" autocomplete="off">
+            <input type="text" placeholder="출발하려는 공항을 입력하세요" name="fromId" id="country-input" required>
+            <button type="submit">검색</button>
+            <div id="autocomplete-list" class="autocomplete-items"></div>
+
+            <input type="text" placeholder="도착하려는 공항을 입력하세요" name="toId" id="country-input" required>
+            <button type="submit">검색</button>
+            <div id="autocomplete-list" class="autocomplete-items"></div>
+
+            <input type="date" placeholder="출발하는 날짜를 입력하세요" name="departDate" required>
+            <button type="submit">검색</button>
+            <div id="autocomplete-list" class="autocomplete-items"></div>
+
+            <input type="text" placeholder="좌석등급을 선택하세요" name="cabinClass" id="country-input" required>
+            <button type="submit">검색</button>
+            <div id="autocomplete-list" class="autocomplete-items"></div>
+
+            <input type="text" placeholder="비행기에 탑승할 어른이 몇명인지 입력하세요" name="person_adult" id="country-input" required>
+            <button type="submit">검색</button>
+            <div id="autocomplete-list" class="autocomplete-items"></div>
+
+            <input type="text" placeholder="비행기에 탑승할 아이가 몇명인지 입력하세요" name="person_children" id="country-input" required>
+            <button type="submit">검색</button>
+            <div id="autocomplete-list" class="autocomplete-items"></div>
+
+        </form>
+    </div>
+
     <!-- 하단 추천 여행지 영역 -->
     <div class="bottom">
         <div class="destination">

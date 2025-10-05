@@ -4,7 +4,7 @@ from flask import Flask, request, render_template, redirect
 from service.exchange import exchange
 from service.weather import get_weather
 from service.service import find_country_by_city
-
+from service.air_ticket import air_ticket
 app = Flask(__name__)
 
 RISK_API_KEY = "jiDRCL1%2FKFqcHeMt6Q8%2FwIFNhQoj79XSfFhNpfZCeNWBmGu8oDp%2B7P0gPHWcCr96h1YrqMtF2QGeyMItKFO%2FTA%3D%3D"
@@ -37,6 +37,18 @@ def risk():
 
     return render_template('main.html', risks=[risk_data] if risk_data else None)
 
+@app.route('/air', methods = ['GET', 'POST'])
+def air():
+    if request.method == 'POST':
+        user_input_fromId = request.form.get('fromId"', '').strip()
+        user_input_toId = request.form.get('toId', '').strip()
+        departDate = request.form.get('departDate', '').strip()
+        cabinClass = request.form.get('cabinClass', '').strip()
+        person_adult = request.form.get('person_adult', '').strip()
+        person_children = request.form.get('person_children', '').strip()
+        return render_template('main.html', user_input_toId = user_input_toId)
+
+
 @app.route("/search", methods = ['POST'])
 def search():
     if request.method == 'POST':
@@ -45,8 +57,14 @@ def search():
         weather_result = get_weather(city, date)
         country = find_country_by_city(city)
         exchange_result = exchange("대한민국", country, "10000")
-
-        return render_template('search.html', weather_results=weather_result, exchange_results=exchange_result,country_code_data_five_number=country_code_data_five_number)
+        user_input_fromId = request.form.get('fromId"', '').strip()
+        user_input_toId = request.form.get('toId', '').strip()
+        departDate = request.form.get('departDate', '').strip()
+        cabinClass = request.form.get('cabinClass', '').strip()
+        person_adult = request.form.get('person_adult', '').strip()
+        person_children = request.form.get('person_children', '').strip()
+        airport_result = air_ticket(user_input_fromId, user_input_toId, departDate, cabinClass, person_adult, person_children)
+        return render_template('search.html', weather_results=weather_result, exchange_results=exchange_result,country_code_data_five_number=country_code_data_five_number, airport_resultㄴ = airport_result)
     return redirect("/")
         
 
