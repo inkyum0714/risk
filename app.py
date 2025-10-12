@@ -1,5 +1,5 @@
 import requests
-from data.Symbol import symbol_data, country_code_data_three, country_code_data_two, country_code_data_five_number
+from data.Symbol import symbol_data, country_code_data_three, country_code_data_two, country_code_data_five_number, country_airport, airport_seat
 from flask import Flask, request, render_template, redirect
 from service.exchange import exchange
 from service.weather import get_weather
@@ -11,7 +11,7 @@ RISK_API_KEY = "jiDRCL1%2FKFqcHeMt6Q8%2FwIFNhQoj79XSfFhNpfZCeNWBmGu8oDp%2B7P0gPH
 
 @app.route("/", methods=["GET"])
 def home():
-    return render_template("index.html", country_code_data_five_number= country_code_data_five_number)
+    return render_template("index.html", country_code_data_five_number= country_code_data_five_number, airport_names=list(country_airport.keys()))
 
 @app.route('/main', methods=['GET', 'POST'])
 def risk():
@@ -46,49 +46,76 @@ def air():
         cabinClass = request.form.get('cabinClass', '').strip()
         person_adult = request.form.get('person_adult', '').strip()
         person_children = request.form.get('person_children', '').strip()
-        return render_template('main.html', user_input_toId = user_input_toId)
+        return render_template('main.html', user_input_toId = user_input_toId, user_input_fromId = user_input_fromId, departDate = departDate, cabinClass = cabinClass, person_adult = person_adult, person_children = person_children)
 
 
-@app.route("/search", methods = ['POST'])
-def search():
-    if request.method == 'POST':
-        city = request.form.get('country', '').strip()
-        date = request.form.get('travel_date', '').strip()
-        weather_result = get_weather(city, date)
-        country = find_country_by_city(city)
-        exchange_result = exchange("대한민국", country, "10000")
-        user_input_fromId = request.form.get('fromId"', '').strip()
-        user_input_toId = request.form.get('toId', '').strip()
-        departDate = request.form.get('departDate', '').strip()
-        cabinClass = request.form.get('cabinClass', '').strip()
-        person_adult = request.form.get('person_adult', '').strip()
-        person_children = request.form.get('person_children', '').strip()
-        airport_result = air_ticket(user_input_fromId, user_input_toId, departDate, cabinClass, person_adult, person_children)
-        return render_template('search.html', weather_results=weather_result, exchange_results=exchange_result,country_code_data_five_number=country_code_data_five_number, airport_resultㄴ = airport_result)
-    return redirect("/")
-        
+@app.route("/search_weather", methods=["POST"])
+def search_weather():
+    city = request.form.get("country", "").strip()
+    user_input_day = request.form.get("user_input_day", "").strip()
 
-@app.route('/exchange', methods=['GET', 'POST'])
-def rate(): 
-    main = []
-    if request.method == 'POST':
-        user_base = request.form.get('base', '').strip()
-        user_currencies = request.form.get('currencies', '').strip()
-        amount = request.form.get('amount', '').strip()
-        exchange_result = exchange(user_base, user_currencies, amount)
-    return render_template('main.html', mains=main)
+    if not city or not user_input_day:
+        return render_template("error.html", message="날씨 검색 입력이 비어 있습니다.")
+
+    weather_result = get_weather(city, user_input_day)
+    country = find_country_by_city(city)
+    exchange_result = exchange("대한민국", country, "10000")
+
+    return render_template(
+        "search.html",
+        weather_results=weather_result,
+        exchange_results=exchange_result,
+        country_code_data_five_number=country_code_data_five_number,
+        airport_names=list(country_airport.keys())
+    )
+
+
+@app.route("/search_flight", methods=["POST"]) #점수 형식: 기본적으로 반비례. 가격 - 25만원에 가까울. 가격 점수 = (25,000,000 / 가격) * 2 / 5. 위탁수하물 점수 = 
+def search_flight():
+    user_input_fromId = request.form.get("fromId", "").strip()
+    user_input_toId = request.form.get("toId", "").strip()
+    departDate = request.form.get("departDate", "").strip()
+    cabinClass = request.form.get("cabinClass", "").strip()
+    person_adult = request.form.get("person_adult", "").strip()
+    person_children = request.form.get("person_children", "").strip()
+
+    if not user_input_fromId or not user_input_toId:
+        return render_template("error.html", message="출발지와 도착지를 모두 입력하세요.")
+    airport_result = air_ticket(
+        user_input_fromId,
+        user_input_toId,
+        departDate,
+        cabinClass,
+        person_adult,
+        person_children,
+    )
+    for i in range(len(airport_result)):
+        air_socre = 10000000 / airport_result[i]["가격"] + airport_result[i]["위탁수하물 용량"] * 20 
+    return render_template(
+        "search.html",
+        airport_results=airport_result,
+        country_code_data_five_number=country_code_data_five_number,
+        airport_names=list(country_airport.keys())
+    )ㄷ
+    
+@app.route("/exchange", methods=["POST"])
+def rate():
+    user_base = request.form.get("base", "").strip()
+    user_currencies = request.form.get("currencies", "").strip()
+    amount = request.form.get("amount", "").strip()
+    exchange_result = exchange(user_base, user_currencies, amount)
+    return render_template("main.html", exchange_results=exchange_result)
 
 
 
 @app.route('/weather', methods=['GET', 'POST'])
 def weather():
     if request.method == 'POST':
-        user_input_day = request.form.get('day', '').strip()
+        user_input_day = request.form.get('user_input_day', '').strip()
         user_input_country = request.form.get('country', '').strip() 
         weather_result = get_weather(user_input_country, user_input_day)
-    return render_template("main.html", weather_resyuts=weather_result)
+    return render_template("main.html", weather_results=weather_result)
 
 if __name__ == '__main__':
     app.run(port=8000, host='0.0.0.0', debug=True)
 
-    

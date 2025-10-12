@@ -86733,4 +86733,9 @@ country_airport = {
     "힐튼 헤드 공항": "HHH"
 }
 
-airport_seat = {"이코노미" : "ECONOMY", "프리미엄 이코노미": "PREMIUM ECONOMY", "비즈니스": "BUSINESS", "퍼스트": "FRIST"}
+airport_seat = {
+  "이코노미" : "ECONOMY",
+  "프리미엄 이코노미": "PREMIUM ECONOMY",
+  "비즈니스": "BUSINESS",
+  "퍼스트": "FRIST"
+}

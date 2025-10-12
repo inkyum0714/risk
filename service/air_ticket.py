@@ -1,6 +1,6 @@
 from data.Symbol import country_airport, airport_seat
-import requests
-import json
+import requests, json, datetime
+
 
 
 def air_ticket(user_input_fromId, user_input_toId, departDate, cabinClass, person_adult, person_children):
@@ -11,7 +11,12 @@ def air_ticket(user_input_fromId, user_input_toId, departDate, cabinClass, perso
     fromId = country_airport[user_input_fromId]
     toId = country_airport[user_input_toId]
     cabinClass = airport_seat[cabinClass]
-    querystring = {"fromId":{fromId},"toId":{toId},
+    try:
+        departDate = datetime.datetime.strptime(departDate, "%Y-%m-%d").strftime("%Y-%m-%d")
+    except ValueError:
+        print("⚠ 날짜 형식이 잘못되었습니다. 올바른 예: 20251006")
+    print(fromId, toId, departDate, cabinClass, person_adult, person_children)
+    querystring = {"fromId": f"{fromId}.AIRPORT","toId":f"{toId}.AIRPORT",
                    "stops":"none","pageNo":"1","adults":{person_adult},
                    "children":{person_children},"sort":"BEST",
                    "cabinClass":{cabinClass},"currency_code":"KRW", "departDate":{departDate}}
@@ -24,6 +29,7 @@ def air_ticket(user_input_fromId, user_input_toId, departDate, cabinClass, perso
 
     response = requests.get(url, headers=headers, params=querystring)
     response_data = response.json() 
+    
     for i in range(3):  
         deals = response_data["data"]["flightDeals"][i]["price"]
         flightDeals_data.append(deals)
@@ -39,10 +45,34 @@ def air_ticket(user_input_fromId, user_input_toId, departDate, cabinClass, perso
                         deal_dic["도착 나라"] = response_data["data"]["flightOffers"][j]["segments"][0]["arrivalAirport"]["countryName"]
                         deal_dic["최초 탑승 시간"] = response_data["data"]["flightOffers"][j]["segments"][0]["departureTime"]
                         deal_dic["마지막 탑승 시간"] = response_data["data"]["flightOffers"][j]["segments"][0]["arrivalTime"]
-                        deal_dic["위탁수하물 용량"] = str(round(response_data["data"]["flightOffers"][j]["segments"][0]["travellerCheckedLuggage"][0]["luggageAllowance"]["maxWeightPerPiece"] * 0.45359237, 3)) + "kg"                           
-                        deal_dic["기내수하물 용량"] = str(round(response_data["data"]["flightOffers"][j]["segments"][0]["travellerCabinLuggage"][0]["luggageAllowance"]["maxWeightPerPiece"] * 0.45359237, 3)) + "kg"
+                        # 위탁수하물 정보가 존재할 때만 추가
+                        checked_luggage = response_data["data"]["flightOffers"][j]["segments"][0].get("travellerCheckedLuggage", [])
+                        if checked_luggage and "luggageAllowance" in checked_luggage[0]:
+                            deal_dic["위탁수하물 용량"] = (
+                                str(
+                                    round(
+                                        checked_luggage[0]["luggageAllowance"]["maxWeightPerPiece"] * 0.45359237,
+                                        1
+                                    )
+                                ) + "kg"
+                            )
+
+                        cabin_luggage = response_data["data"]["flightOffers"][j]["segments"][0].get("travellerCabinLuggage", [])
+                        if cabin_luggage and "luggageAllowance" in cabin_luggage[0]:
+                           deal_dic["기내수하물 용량"] = (
+                               str(
+                                   round(
+                                       cabin_luggage[0]["luggageAllowance"]["maxWeightPerPiece"] * 0.45359237,
+                                       1
+                                   )
+                               ) + "kg"
+                           )
+
+
                         air_ticket_result.append(deal_dic)
 
+
     print(air_ticket_result)
-    with open("flights.json", "w", encoding="utf-8") as f:
+    with open("flights_result.json", "w", encoding="utf-8") as f:
         json.dump(air_ticket_result, f, ensure_ascii=False, indent=4)
+    return air_ticket_result      

@@ -164,69 +164,116 @@
             font-weight: bold;
             color: #ff6b6b;
         }
+
+        /* 항공권 검색 폼 */
+.flight-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+/* 각 입력 그룹 (라벨 + 입력창) */
+.flight-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+/* 입력창 스타일 통합 */
+.flight-group input {
+    flex: 1 1 45%;
+    min-width: 200px;
+    padding: 10px;
+    font-size: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.flight-group input:focus {
+    border-color: #66a6ff;
+}
+
+/* 버튼 스타일 */
+.flight-form button {
+    margin-top: 10px;
+    padding: 12px 25px;
+    background: linear-gradient(135deg, #66a6ff, #89f7fe);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.3s;
+}
+
+.flight-form button:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #5a91ff, #7fe3f7);
+}
+
     </style>
 </head>
 <body>
+<div class="top">
     <!-- 상단 검색 영역 -->
-    <div class="top">
-        <h1>맞춤 여행 점수 판단 서비스</h1>
-        <form class="search-form" action="/search" method="post" autocomplete="off">
-            <input type="text" placeholder="나라를 입력하세요" name="country" id="country-input" required>
-            <input type="date" name="travel_date" required>
-            <button type="submit">검색</button>
-            <div id="autocomplete-list" class="autocomplete-items"></div>
-        </form>
-    </div>
+    <form class="search-form" action="/search_weather" method="post" autocomplete="off">
+        <input id="country-input" type="text" placeholder="나라를 입력하세요" name="country" required>
+        <div id="autocomplete-list" class="autocomplete-items"></div>
+        <input type="date" name="user_input_day" required>
+        <button type="submit">검색</button>
+    </form>
 
-        <div class="top">
-        <h1>항공권 검색</h1>
-        <form class="search-form" action="/search" method="post" autocomplete="off">
-            <input type="text" placeholder="출발하려는 공항을 입력하세요" name="fromId" id="country-input" required>
-            <button type="submit">검색</button>
-            <div id="autocomplete-list" class="autocomplete-items"></div>
+    <!-- 항공권 검색 폼 -->
+    <form class="flight-form" action="/search_flight" method="post" autocomplete="off">
+        <div class="flight-group">
+            <div style="position: relative; width: 100%;">
+                <input id="from-airport" type="text" placeholder="출발 공항" name="fromId" required>
+                <div id="from-autocomplete" class="autocomplete-items"></div>
+            </div>
+            <div style="position: relative; width: 100%;">
+                <input id="to-airport" type="text" placeholder="도착 공항" name="toId" required>
+                <div id="to-autocomplete" class="autocomplete-items"></div>
+            </div>
+        </div>
+        <div class="flight-group">
+            <input type="date" name="departDate" required>
+            <input type="text" placeholder="좌석 등급" name="cabinClass" required>
+        </div>
+        <div class="flight-group">
+            <input type="number" name="person_adult" min="1" placeholder="성인 수" required>
+            <input type="number" name="person_children" min="0" placeholder="어린이 수" required>
+        </div>
+        <button type="submit">항공권 검색</button>
+    </form>
+</div>
 
-            <input type="text" placeholder="도착하려는 공항을 입력하세요" name="toId" id="country-input" required>
-            <button type="submit">검색</button>
-            <div id="autocomplete-list" class="autocomplete-items"></div>
-
-            <input type="date" placeholder="출발하는 날짜를 입력하세요" name="departDate" required>
-            <button type="submit">검색</button>
-            <div id="autocomplete-list" class="autocomplete-items"></div>
-
-            <input type="text" placeholder="좌석등급을 선택하세요" name="cabinClass" id="country-input" required>
-            <button type="submit">검색</button>
-            <div id="autocomplete-list" class="autocomplete-items"></div>
-
-            <input type="text" placeholder="비행기에 탑승할 어른이 몇명인지 입력하세요" name="person_adult" id="country-input" required>
-            <button type="submit">검색</button>
-            <div id="autocomplete-list" class="autocomplete-items"></div>
-
-            <input type="text" placeholder="비행기에 탑승할 아이가 몇명인지 입력하세요" name="person_children" id="country-input" required>
-            <button type="submit">검색</button>
-            <div id="autocomplete-list" class="autocomplete-items"></div>
-
-        </form>
-    </div>
 
     <!-- 하단 추천 여행지 영역 -->
     <div class="bottom">
+        <h2 style="margin-bottom: 20px; color: #333;">추천 여행지</h2>
+        {% for dest in destinations %}
         <div class="destination">
-            <img src="https://via.placeholder.com/200x150" alt="추천 여행지 사진">
+            <img src="{{ dest.image_url }}" alt="{{ dest.name }}">
             <div class="destination-info">
-                <h3>파리</h3>
-                <p>추천 이유: 문화와 미식</p>
-                <p class="score">점수: 95/100</p>
+                <h3>{{ dest.name }}</h3>
+                <p>여행 점수: <span class="score">{{ dest.score }}</span></p>
+                <p>설명: {{ dest.description }}</p>
             </div>
         </div>
-
-        <div class="destination">
-            <img src="https://via.placeholder.com/200x150" alt="추천 여행지 사진">
-            <div class="destination-info">
-                <h3>도쿄</h3>
-                <p>추천 이유: 최신 트렌드와 쇼핑</p>
-                <p class="score">점수: 90/100</p>
-            </div>
-        </div>
+        {% endfor %}
     </div>
 
     <script>
@@ -234,7 +281,6 @@
         const countries = {{ country_code_data_five_number.keys() | list | tojson }};
         const input = document.getElementById('country-input');
         const autocompleteList = document.getElementById('autocomplete-list');
-
         input.addEventListener('input', function() {
             const val = this.value.toLowerCase();
             autocompleteList.innerHTML = '';
@@ -257,7 +303,40 @@
             if (e.target != input) {
                 autocompleteList.innerHTML = '';
             }
+        })
+    const airports = {{ airport_names | tojson }};
+
+    function setupAutocomplete(inputId, listId) {
+        const input = document.getElementById(inputId);
+        const list = document.getElementById(listId);
+
+        input.addEventListener('input', function() {
+            const val = this.value.toLowerCase();
+            list.innerHTML = '';
+            if (!val) return;
+
+            const matches = airports.filter(a => a.toLowerCase().includes(val));
+            matches.forEach(match => {
+                const item = document.createElement('div');
+                item.classList.add('autocomplete-item');
+                item.innerHTML = `<strong>${match.substr(0, val.length)}</strong>${match.substr(val.length)}`;
+                item.addEventListener('click', function() {
+                    input.value = match;
+                    list.innerHTML = '';
+                });
+                list.appendChild(item);
+            });
         });
+
+        // 클릭 외부 시 닫기
+        document.addEventListener('click', function(e) {
+            if (e.target !== input) list.innerHTML = '';
+        });
+    }
+
+    // 출발/도착 공항 자동완성 각각 적용
+    setupAutocomplete('from-airport', 'from-autocomplete');
+    setupAutocomplete('to-airport', 'to-autocomplete');
     </script>
 </body>
 </html>

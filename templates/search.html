@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>맞춤 여행 점수 판단 서비스 - 검색결과</title>
+    <title>맞춤 여행 점수 판단 서비스</title>
     <style>
         * {
             box-sizing: border-box;
@@ -12,11 +12,12 @@
 
         body, html {
             width: 100%;
-            min-height: 100%;
+            height: 100%;
             font-family: Arial, sans-serif;
             background-color: #f2f2f2;
         }
 
+        /* 상하 분할 */
         .top, .bottom {
             width: 100%;
             display: flex;
@@ -26,18 +27,15 @@
         }
 
         .top {
-            height: 30%;
+            height: 40%;
             background: linear-gradient(to right, #89f7fe, #66a6ff);
             padding: 20px;
         }
 
         .bottom {
-            width: 100%;
-            min-height: 70%;
+            height: 60%;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            overflow-y: auto;
         }
 
         h1 {
@@ -50,6 +48,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
             gap: 10px;
             width: 100%;
             max-width: 600px;
@@ -64,8 +63,13 @@
             outline: none;
         }
 
-        .search-form input[type="text"] { width: 220px; }
-        .search-form input[type="date"] { width: 160px; }
+        .search-form input[type="text"] {
+            width: 220px;
+        }
+
+        .search-form input[type="date"] {
+            width: 160px;
+        }
 
         .search-form button {
             padding: 10px 20px;
@@ -78,87 +82,194 @@
             transition: background-color 0.3s;
         }
 
-        .search-form button:hover { background-color: #ff4757; }
-
-        /* 결과 공통 스타일 */
-        .results {
-            width: 100%;
-            max-width: 720px;
-            padding: 20px;
-            border-radius: 12px;
-            background: rgba(255,255,255,0.95);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        .search-form button:hover {
+            background-color: #ff4757;
         }
 
-        .results h2 { margin-bottom: 15px; color: #333; }
+        /* 자동완성 드롭다운 */
+        .autocomplete-items {
+            position: absolute;
+            top: 45px;
+            left: 0;
+            right: 0;
+            background-color: white;
+            border: 1px solid #d4d4d4;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            z-index: 99;
+            max-height: 200px;
+            overflow-y: auto;
+        }
 
-        .results ul { list-style: none; }
-        .results li {
+        .autocomplete-item {
             padding: 10px;
-            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+
+        .autocomplete-item:hover {
+            background-color: #e9e9e9;
+        }
+
+        /* 검색 결과 */
+        .weather-results {
+            margin-top: 20px;
+            background: rgba(255,255,255,0.8);
+            padding: 15px;
+            border-radius: 8px;
+            width: 150%;
+            max-width: 720px;
+        }
+
+        /* 추천 여행지 카드 */
+        .destination {
+            background-color: white;
+            width: 90%;
+            max-width: 600px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            display: flex;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .destination:hover {
+            transform: translateY(-5px);
+        }
+
+        .destination img {
+            width: 40%;
+            object-fit: cover;
+        }
+
+        .destination-info {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 60%;
+        }
+
+        .destination-info h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .destination-info p {
+            margin-bottom: 5px;
             color: #555;
         }
-        .results li:last-child { border-bottom: none; }
 
-        .no-result {
-            text-align: center;
-            color: #888;
-            font-size: 16px;
+        .score {
+            font-weight: bold;
+            color: #ff6b6b;
         }
 
-        /* 환율 전용 색상 */
-        .exchange-results { border-left: 4px solid #ffa502; }
+        /* 항공권 검색 폼 */
+.flight-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+/* 각 입력 그룹 (라벨 + 입력창) */
+.flight-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+/* 입력창 스타일 통합 */
+.flight-group input {
+    flex: 1 1 45%;
+    min-width: 200px;
+    padding: 10px;
+    font-size: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.flight-group input:focus {
+    border-color: #66a6ff;
+}
+
+/* 버튼 스타일 */
+.flight-form button {
+    margin-top: 10px;
+    padding: 12px 25px;
+    background: linear-gradient(135deg, #66a6ff, #89f7fe);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.3s;
+}
+
+.flight-form button:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #5a91ff, #7fe3f7);
+}
+
     </style>
 </head>
 <body>
-    <!-- 상단 검색 영역 -->
     <div class="top">
+        <!-- 상단 검색 영역 -->
         <h1>맞춤 여행 점수 판단 서비스</h1>
-        <form class="search-form" action="/search" method="post" autocomplete="off">
-            <input type="text" placeholder="나라를 입력하세요" name="country" required>
-            <input type="date" name="travel_date" required>
+        <form class="search-form" action="/search_weather" method="post" autocomplete="off">
+            <input id="country-input" type="text" placeholder="나라를 입력하세요" name="country" required>
+            <div id="autocomplete-list" class="autocomplete-items"></div>
+            <input type="date" name="user_input_day" required>
             <button type="submit">검색</button>
         </form>
-    </div>
-        <div class="top">
-        <h1>항공권 검색</h1>
-        <form class="search-form" action="/search" method="post" autocomplete="off">
-            <input type="text" placeholder="출발하려는 공항을 입력하세요" name="fromId" id="country-input" required>
-            <button type="submit">검색</button>
-            <div id="autocomplete-list" class="autocomplete-items"></div>
 
-            <input type="text" placeholder="도착하려는 공항을 입력하세요" name="toId" id="country-input" required>
-            <button type="submit">검색</button>
-            <div id="autocomplete-list" class="autocomplete-items"></div>
-
-            <input type="date" placeholder="출발하는 날짜를 입력하세요" name="departDate" required>
-            <button type="submit">검색</button>
-            <div id="autocomplete-list" class="autocomplete-items"></div>
-
-            <input type="text" placeholder="좌석등급을 선택하세요" name="cabinClass" id="country-input" required>
-            <button type="submit">검색</button>
-            <div id="autocomplete-list" class="autocomplete-items"></div>
-
-            <input type="text" placeholder="비행기에 탑승할 어른이 몇명인지 입력하세요" name="person_adult" id="country-input" required>
-            <button type="submit">검색</button>
-            <div id="autocomplete-list" class="autocomplete-items"></div>
-
-            <input type="text" placeholder="비행기에 탑승할 아이가 몇명인지 입력하세요" name="person_children" id="country-input" required>
-            <button type="submit">검색</button>
-            <div id="autocomplete-list" class="autocomplete-items"></div>
-
+        <!-- 항공권 검색 폼 -->
+        <form class="flight-form" action="/search_flight" method="post" autocomplete="off">
+            <div class="flight-group">
+                <div style="position: relative; width: 100%;">
+                    <input id="from-airport" type="text" placeholder="출발 공항" name="fromId" required>
+                    <div id="from-autocomplete" class="autocomplete-items"></div>
+                </div>
+                <div style="position: relative; width: 100%;">
+                    <input id="to-airport" type="text" placeholder="도착 공항" name="toId" required>
+                    <div id="to-autocomplete" class="autocomplete-items"></div>
+                </div>
+            </div>
+            <div class="flight-group">
+                <input type="date" name="departDate" required>
+                <input type="text" placeholder="좌석 등급" name="cabinClass" required>
+            </div>
+            <div class="flight-group">
+                <input type="number" name="person_adult" min="1" placeholder="성인 수" required>
+                <input type="number" name="person_children" min="0" placeholder="어린이 수" required>
+            </div>
+            <button type="submit">항공권 검색</button>
         </form>
     </div>
+
     <!-- 하단 검색 결과 -->
     <div class="bottom">
-
         <!-- 날씨 결과 -->
         {% if weather_results %}
         <div class="results weather-results">
             <h2>날씨 결과:</h2>
-            <ul>
+            <ul style="list-style-type: none; padding: 0;">
                 {% for weather_result in weather_results %}
-                    <li>{{ weather_result }}</li>
+                    <li style="margin-bottom: 10px; padding: 5px; background-color: #f9f9f9; border-radius: 5px;">{{ weather_result }}</li>
                 {% endfor %}
             </ul>
         </div>
@@ -170,31 +281,32 @@
 
         <!-- 환율 결과 -->
         {% if exchange_results and exchange_results|length > 0 %}
-        <div class="results exchange-results">
+        <div class="results exchange-results" style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 20px;">
             <h2>환율 결과:</h2>
-            <ul>
+            <ul style="list-style-type: none; padding: 0;">
                 {% for exchange_result in exchange_results %}
-                    <li>{{ exchange_result }}</li>
+                    <li style="margin-bottom: 10px; padding: 5px; background-color: #f9f9f9; border-radius: 5px;">{{ exchange_result }}</li>
                 {% endfor %}
             </ul>
         </div>
         {% else %}
-        <div class="results exchange-results">
+        <div class="results exchange-results" style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 20px;">
             <p class="no-result">환율 정보를 찾을 수 없습니다.</p>
         </div>
         {% endif %}
 
+        <!-- 항공사 검색 결과 -->
         {% if airport_results and airport_results|length > 0 %}
-        <div class="results airport_results">
+        <div class="results airport_results" style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 20px;">
             <h2>검색 결과:</h2>
-            <ul>
+            <ul style="list-style-type: none; padding: 0;">
                 {% for airport_result in airport_results %}
-                    <li>{{ airport_result }}</li>
+                    <li style="margin-bottom: 10px; padding: 5px; background-color: #f9f9f9; border-radius: 5px;">{{ airport_result }}</li>
                 {% endfor %}
             </ul>
         </div>
         {% else %}
-        <div class="results airport_results">
+        <div class="results airport_results" style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 20px;">
             <p class="no-result">정보를 찾을 수 없습니다.</p>
         </div>
         {% endif %}
