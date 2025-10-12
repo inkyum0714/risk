@@ -229,34 +229,11 @@
 <body>
 <div class="top">
     <!-- 상단 검색 영역 -->
-    <form class="search-form" action="/search_weather" method="post" autocomplete="off">
-        <input id="country-input" type="text" placeholder="나라를 입력하세요" name="country" required>
+    <form class="search-form" action="/search" method="post" autocomplete="off">
+        <input id="country-input" type="text" placeholder="나라, 도시, 공항중 하나를 입력하세요" name="user_input_traevel" required>
         <div id="autocomplete-list" class="autocomplete-items"></div>
         <input type="date" name="user_input_day" required>
         <button type="submit">검색</button>
-    </form>
-
-    <!-- 항공권 검색 폼 -->
-    <form class="flight-form" action="/search_flight" method="post" autocomplete="off">
-        <div class="flight-group">
-            <div style="position: relative; width: 100%;">
-                <input id="from-airport" type="text" placeholder="출발 공항" name="fromId" required>
-                <div id="from-autocomplete" class="autocomplete-items"></div>
-            </div>
-            <div style="position: relative; width: 100%;">
-                <input id="to-airport" type="text" placeholder="도착 공항" name="toId" required>
-                <div id="to-autocomplete" class="autocomplete-items"></div>
-            </div>
-        </div>
-        <div class="flight-group">
-            <input type="date" name="departDate" required>
-            <input type="text" placeholder="좌석 등급" name="cabinClass" required>
-        </div>
-        <div class="flight-group">
-            <input type="number" name="person_adult" min="1" placeholder="성인 수" required>
-            <input type="number" name="person_children" min="0" placeholder="어린이 수" required>
-        </div>
-        <button type="submit">항공권 검색</button>
     </form>
 </div>
 

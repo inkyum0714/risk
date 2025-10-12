@@ -230,15 +230,12 @@
     <div class="top">
         <!-- 상단 검색 영역 -->
         <h1>맞춤 여행 점수 판단 서비스</h1>
-        <form class="search-form" action="/search_weather" method="post" autocomplete="off">
+        <form class="search-form" action="/search" method="post" autocomplete="off">
             <input id="country-input" type="text" placeholder="나라를 입력하세요" name="country" required>
             <div id="autocomplete-list" class="autocomplete-items"></div>
             <input type="date" name="user_input_day" required>
             <button type="submit">검색</button>
-        </form>
 
-        <!-- 항공권 검색 폼 -->
-        <form class="flight-form" action="/search_flight" method="post" autocomplete="off">
             <div class="flight-group">
                 <div style="position: relative; width: 100%;">
                     <input id="from-airport" type="text" placeholder="출발 공항" name="fromId" required>
@@ -310,6 +307,18 @@
             <p class="no-result">정보를 찾을 수 없습니다.</p>
         </div>
         {% endif %}
-    </div>
+<div class="result total_scores" style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 20px;">
+    <h2>검색 결과:</h2>
+    {% if total_scores and total_scores|length > 0 %}
+        <ul style="list-style-type: none; padding: 0;">
+            {% for total_score in total_scores.values() %}
+               <li>{{ total_score.도시 }} - 점수: {{ total_score.점수 }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="no-result">정보를 찾을 수 없습니다.</p>
+    {% endif %}
+</div>
+
 </body>
 </html>

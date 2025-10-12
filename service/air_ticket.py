@@ -47,28 +47,22 @@ def air_ticket(user_input_fromId, user_input_toId, departDate, cabinClass, perso
                         deal_dic["마지막 탑승 시간"] = response_data["data"]["flightOffers"][j]["segments"][0]["arrivalTime"]
                         # 위탁수하물 정보가 존재할 때만 추가
                         checked_luggage = response_data["data"]["flightOffers"][j]["segments"][0].get("travellerCheckedLuggage", [])
-                        if checked_luggage and "luggageAllowance" in checked_luggage[0]:
-                            deal_dic["위탁수하물 용량"] = (
-                                str(
-                                    round(
-                                        checked_luggage[0]["luggageAllowance"]["maxWeightPerPiece"] * 0.45359237,
-                                        1
-                                    )
-                                ) + "kg"
-                            )
-
+                        if len(checked_luggage) >= 1:
+                            try:
+                                weight_kg = checked_luggage[0]["luggageAllowance"]["maxWeightPerPiece"] * 0.45359237
+                            except KeyError:
+                                weight_kg = "0"
+                        else: weight_kg = "0"
+                        deal_dic["위탁수하물 용량"] = round(float(weight_kg), 0)
                         cabin_luggage = response_data["data"]["flightOffers"][j]["segments"][0].get("travellerCabinLuggage", [])
                         if cabin_luggage and "luggageAllowance" in cabin_luggage[0]:
                            deal_dic["기내수하물 용량"] = (
-                               str(
                                    round(
-                                       cabin_luggage[0]["luggageAllowance"]["maxWeightPerPiece"] * 0.45359237,
-                                       1
+                                       int(cabin_luggage[0]["luggageAllowance"]["maxWeightPerPiece"]) * 0.45359237,
+                                       0
                                    )
-                               ) + "kg"
-                           )
-
-
+                               )
+                        deal_dic["총합 점수"] = 1000000 / (int(deal_dic["가격"]) / (int(person_adult)) + int(person_children) * 0.75)+ int(deal_dic["위탁수하물 용량"]) + int(deal_dic["기내수하물 용량"]) * 1.5 
                         air_ticket_result.append(deal_dic)
 
 
