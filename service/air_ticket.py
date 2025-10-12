@@ -1,9 +1,15 @@
-from data.Symbol import country_airport, airport_seat
+from data.Symbol import country_airport
 import requests, json, datetime
 
 
 
 def air_ticket(user_input_fromId, user_input_toId, departDate, cabinClass, person_adult, person_children):
+    airport_seat = {
+    "이코노미" : "ECONOMY",
+    "프리미엄 이코노미": "PREMIUM ECONOMY",
+    "비즈니스": "BUSINESS",
+    "퍼스트": "FRIST"
+    }
     flightDeals_data = []
     air_ticket_result = []
     deal_dic = {}

@@ -45,21 +45,12 @@ def get_weather(user_input_country, user_input_day):
     if not weather_data:
         return ["데이터 없음"]
 
-    labels = ["날짜", "WS : 풍속 (m/s)", "TA : 기온 (C)", "HM : 상대습도 (%)"]
-    weather_values = []
-    for col in range(1, 4): 
-        col_values = [row[col] for row in weather_data if len(row) > col]
-        avg = sum(col_values) / len(col_values) if col_values else 0
-        weather_values.append(avg)
-
-    weather_result = [f"{label}: {value:.1f}" for label, value in zip(labels[1:], weather_values)]
 
     temp = float(parts[10])       # 기온
     rh = float(parts[12])         # 상대습도
     discomfort_index = temp - 0.55 * (1 - rh/100) * (temp - 14.5)
 
     # 3) 결과에 추가
-    weather_result.append(f"불쾌지수: {discomfort_index:.1f}")
-    weather_result.insert(0, user_input_day)
+    weather_result = f"불쾌지수: {discomfort_index:.1f}"
     print(weather_result)
     return weather_result
