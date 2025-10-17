@@ -70,6 +70,7 @@ def air_ticket(user_input_fromId, user_input_toId, departDate, cabinClass, perso
                                )
                         deal_dic["총합 점수"] = 1000000 / (int(deal_dic["가격"]) / (int(person_adult)) + int(person_children) * 0.75)+ int(deal_dic["위탁수하물 용량"]) + int(deal_dic["기내수하물 용량"]) * 1.5 
                         air_ticket_result.append(deal_dic)
+                        
 
 
     print(air_ticket_result)
