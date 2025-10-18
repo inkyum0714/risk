@@ -52,6 +52,11 @@ def air():
 
 @app.route("/search", methods=["POST"])
 def search():
+    total_score = {}
+    weather_result_list= []
+    airport_result = []
+    cabinClass = "이코노미"
+    json_true_false = False
     user_input_traevel = request.form.get("user_input_traevel", "").strip() #어디갈지
     user_input_day = request.form.get("user_input_day", "").strip() #날짜
     if user_input_traevel in country_code_data_three: #나라
@@ -60,15 +65,16 @@ def search():
         user_input_traevel_type = "airport"
     elif user_input_traevel in country_code_data_five_number: #도시
         user_input_traevel_type = "city"
-    total_score = {}
-    weather_result_list= []
-    airport_result = []
-    cabinClass = "이코노미"
-    translation_result = "translation_result.json" #얘는 한국어 공항과 한국어 도시를 해주는
+    translation_result = "translation_result.json"#얘는 한국어 공항과 한국어 도시를 해주는
+    user_request_query = "user_requset_query.json"
     # 2. JSON 파일 읽기
     with open(translation_result, "r", encoding="utf-8") as f:
-        krkr_airport = json.load(f) #얘 
-    
+        krkr_airport = json.load(f)
+    with open(user_request_query, "r", encoding="utf-8") as f:
+        krkr_airport = json.load(f) 
+    for i in range(user_request_query):
+        if user_input_traevel == user_request_query[i]:
+            json_true_false = True
     # if user_input_traevel_type == "country":
     #     cons = country_cities[0]["children"]
     #     for i in range(len(cons)):
@@ -80,7 +86,13 @@ def search():
     #         ap_name = [key for key, value in krkr_airport.items() if value == city]
     #         weather = get_weather(city,user_input_day)
 
-
+    #     당장 할 수 있는 것은.
+    # 사용자가 n이라는 국가로 query를 날리면.... 
+    # 그 국가에 대한 점수를 쿼리하는데,
+    # 최종적으로 나온 점수를. 그냥 저장 때려버리기. (JSON으로.)
+    
+    # 그리고 다음번에 다시 그 국가로 query를 날리면, 있는 정보는 JSON에서 가져오고 바로.
+    # 없으면 새로 받아오기. 
 
     user_input_traevel_shift_city_list = []
     if user_input_traevel_type == "country":
