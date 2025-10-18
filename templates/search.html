@@ -230,89 +230,17 @@
     <div class="top">
         <!-- 상단 검색 영역 -->
         <h1>맞춤 여행 점수 판단 서비스</h1>
-        <form class="search-form" action="/search" method="post" autocomplete="off">
-            <input id="country-input" type="text" placeholder="나라를 입력하세요" name="country" required>
-            <div id="autocomplete-list" class="autocomplete-items"></div>
-            <input type="date" name="user_input_day" required>
-            <button type="submit">검색</button>
-
-            <div class="flight-group">
-                <div style="position: relative; width: 100%;">
-                    <input id="from-airport" type="text" placeholder="출발 공항" name="fromId" required>
-                    <div id="from-autocomplete" class="autocomplete-items"></div>
-                </div>
-                <div style="position: relative; width: 100%;">
-                    <input id="to-airport" type="text" placeholder="도착 공항" name="toId" required>
-                    <div id="to-autocomplete" class="autocomplete-items"></div>
-                </div>
-            </div>
-            <div class="flight-group">
-                <input type="date" name="departDate" required>
-                <input type="text" placeholder="좌석 등급" name="cabinClass" required>
-            </div>
-            <div class="flight-group">
-                <input type="number" name="person_adult" min="1" placeholder="성인 수" required>
-                <input type="number" name="person_children" min="0" placeholder="어린이 수" required>
-            </div>
-            <button type="submit">항공권 검색</button>
         </form>
     </div>
 
     <!-- 하단 검색 결과 -->
     <div class="bottom">
-        <!-- 날씨 결과 -->
-        {% if weather_results %}
-        <div class="results weather-results">
-            <h2>날씨 결과:</h2>
-            <ul style="list-style-type: none; padding: 0;">
-                {% for weather_result in weather_results %}
-                    <li style="margin-bottom: 10px; padding: 5px; background-color: #f9f9f9; border-radius: 5px;">{{ weather_result }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        {% elif weather_results is not none %}
-        <div class="results weather-results">
-            <p class="no-result">날씨 정보를 찾을 수 없습니다.</p>
-        </div>
-        {% endif %}
-
-        <!-- 환율 결과 -->
-        {% if exchange_results and exchange_results|length > 0 %}
-        <div class="results exchange-results" style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 20px;">
-            <h2>환율 결과:</h2>
-            <ul style="list-style-type: none; padding: 0;">
-                {% for exchange_result in exchange_results %}
-                    <li style="margin-bottom: 10px; padding: 5px; background-color: #f9f9f9; border-radius: 5px;">{{ exchange_result }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        {% else %}
-        <div class="results exchange-results" style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 20px;">
-            <p class="no-result">환율 정보를 찾을 수 없습니다.</p>
-        </div>
-        {% endif %}
-
-        <!-- 항공사 검색 결과 -->
-        {% if airport_results and airport_results|length > 0 %}
-        <div class="results airport_results" style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 20px;">
-            <h2>검색 결과:</h2>
-            <ul style="list-style-type: none; padding: 0;">
-                {% for airport_result in airport_results %}
-                    <li style="margin-bottom: 10px; padding: 5px; background-color: #f9f9f9; border-radius: 5px;">{{ airport_result }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        {% else %}
-        <div class="results airport_results" style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 20px;">
-            <p class="no-result">정보를 찾을 수 없습니다.</p>
-        </div>
-        {% endif %}
 <div class="result total_scores" style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 20px;">
     <h2>검색 결과:</h2>
     {% if total_scores and total_scores|length > 0 %}
         <ul style="list-style-type: none; padding: 0;">
             {% for total_score in total_scores.values() %}
-               <li>{{ total_score.도시 }} - 점수: {{ total_score.점수 }}</li>
+               <li>도시: {{ total_score.도시 }}, 사용할 항공사: {{ total_score.사용할_항공사}}, 점수: {{ total_score.점수 }}</li>
             {% endfor %}
         </ul>
     {% else %}

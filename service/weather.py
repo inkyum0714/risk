@@ -4,24 +4,21 @@ import requests
 
 WEATHER_API_KEY = "lfwWiH5cTMe8Foh-XJzH6g"
 
-def get_weather(user_input_country, user_input_day):
+def get_weather(user_input_city, user_input_day):
     weather_result = []
     weather_data = []
-
-    # 1. 입력값 처리
+    print(user_input_city)
     user_input_day = user_input_day.replace("-", "")
     user_input_day_dt = datetime.strptime(user_input_day, "%Y%m%d")
     today = datetime.today()
 
-    # 과거년도 보정
     if user_input_day_dt > today:
         user_input_day_dt = user_input_day_dt.replace(year=user_input_day_dt.year - 1)
 
-    # 7일 범위 날짜 리스트
     date_list_datetime = [user_input_day_dt + timedelta(days=i) for i in range(-3, 4)]
     dates = [int(d.strftime("%Y%m%d")) for d in date_list_datetime]
 
-    country = country_code_data_five_number[user_input_country]
+    country = country_code_data_five_number[user_input_city]
 
     for day in dates:
         url = f"https://apihub.kma.go.kr/api/typ01/url/gts_syn1.php?tm={day}1200&dtm=2&stn=47&help=0&authKey={WEATHER_API_KEY}&stn={country}"
@@ -43,6 +40,7 @@ def get_weather(user_input_country, user_input_day):
                 weather_data.append(part)
 
     if not weather_data:
+        print("데이터 없음")
         return ["데이터 없음"]
 
 
@@ -52,5 +50,4 @@ def get_weather(user_input_country, user_input_day):
 
     # 3) 결과에 추가
     weather_result = f"불쾌지수: {discomfort_index:.1f}"
-    print(weather_result)
     return weather_result

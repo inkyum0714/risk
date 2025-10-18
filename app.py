@@ -1,5 +1,5 @@
-import requests
-from data.Symbol import symbol_data, country_code_data_three, country_code_data_two, country_code_data_five_number, country_airport, airport_seat, country_city
+import requests, os, json
+from data.Symbol import symbol_data, country_code_data_three, country_code_data_two, country_code_data_five_number, country_airport, country_cities
 from flask import Flask, request, render_template, redirect
 from service.exchange import exchange
 from service.weather import get_weather
@@ -49,103 +49,141 @@ def air():
         return render_template('main.html', user_input_toId = user_input_toId, user_input_fromId = user_input_fromId, departDate = departDate, cabinClass = cabinClass, person_adult = person_adult, person_children = person_children)
 
 
-@app.route("/search_weather", methods=["POST"])
-def search_weather():
-    city = request.form.get("country", "").strip()
-    user_input_day = request.form.get("user_input_day", "").strip()
-
-    if not city or not user_input_day:
-        return render_template("error.html", message="날씨 검색 입력이 비어 있습니다.")
-
-    weather_result = get_weather(city, user_input_day)
-    country = find_country_by_city(city)
-    exchange_result = exchange("대한민국", country, "10000")
-
-    return render_template(
-        "search.html",
-        weather_results=weather_result,
-        exchange_results=exchange_result,
-        country_code_data_five_number=country_code_data_five_number,
-        airport_names=list(country_airport.keys())
-    )
-
 
 @app.route("/search", methods=["POST"])
 def search():
-    user_input_traevel = request.form.get("user_input_traevel", "").strip()
-    if user_input_traevel in country_code_data_three:
+    user_input_traevel = request.form.get("user_input_traevel", "").strip() #어디갈지
+    user_input_day = request.form.get("user_input_day", "").strip() #날짜
+    if user_input_traevel in country_code_data_three: #나라
         user_input_traevel_type = "country"
-    elif user_input_traevel in country_airport:
+    elif user_input_traevel in country_airport: #공항
         user_input_traevel_type = "airport"
-    elif user_input_traevel in country_code_data_five_number:
+    elif user_input_traevel in country_code_data_five_number: #도시
         user_input_traevel_type = "city"
-
     total_score = {}
     weather_result_list= []
-    user_input_fromId = request.form.get("fromId", "").strip()
-    user_input_toId = request.form.get("toId", "").strip()
-    cabinClass = request.form.get("cabinClass", "").strip()
-    person_adult = request.form.get("person_adult", "").strip()
-    person_children = request.form.get("person_children", "").strip()
+    airport_result = []
+    cabinClass = "이코노미"
+    translation_result = "translation_result.json" #얘는 한국어 공항과 한국어 도시를 해주는
+    # 2. JSON 파일 읽기
+    with open(translation_result, "r", encoding="utf-8") as f:
+        krkr_airport = json.load(f) #얘 
+    
+    # if user_input_traevel_type == "country":
+    #     cons = country_cities[0]["children"]
+    #     for i in range(len(cons)):
+    #         if cons[i]['name'] == user_input_traevel:
+    #             cities_name = []
+    #             for city in cons[i]['childeren']:
+    #                 cities_name.append(city['name'])
+    #     for city in cities_name:
+    #         ap_name = [key for key, value in krkr_airport.items() if value == city]
+    #         weather = get_weather(city,user_input_day)
 
-    city = request.form.get("country", "").strip()
-    user_input_day = request.form.get("user_input_day", "").strip()
 
-    user_input_day = request.form.get("user_input_day", "").strip()
-    user_input_traevel = request.form.get("user_input_traevel", "").strip()
-    if not user_input_fromId or not user_input_toId:
-        return render_template("error.html", message="출발지와 도착지를 모두 입력하세요.")
-    if not city or not user_input_day:
-        return render_template("error.html", message="날씨 검색 입력이 비어 있습니다.")
-    if user_input_traevel in country_code_data_three:
-        user_input_traevel_type = "country"
-        for continent in country_city:            
-            for country in continent["children"]:  
-                if country["name"] == user_input_traevel:
-                    for city in country["children"]:
-                        weather_result_list.append([city , get_weather(city, user_input_day)])
-                        airport_result = air_ticket(
-                            user_input_fromId,
-                            user_input_toId,
-                            user_input_day,
-                            cabinClass,
-                            person_adult,
-                            person_children
-                        )
-                        for i in range(len(airport_result)):
-                            total_score[i] = {}
-                            score = int(airport_result[i]["총합 점수"]) + float(weather_result_list[i][1]["점수"])
-                            total_score[i]["도시"] = city
-                            total_score[i]["점수"] = round(score, 0)
-                        print(total_score)
-    elif user_input_traevel in country_airport:
-        user_input_traevel_type = "airport"
-        for continent in country_city:  #한국어 공항 입력- city_to_airport - city_en_kr 로 도시 찾고  cluntry_cities에서 도시로 국가 찾기
-            for country in continent["children"]:  
-                for city in country["children"]:
-                    for airport in city["children"]:
-                        if airport["name"] == user_input_traevel:
-                            weather_result_list.append([city["name"] , get_weather(city["name"], user_input_day)])
+
+    user_input_traevel_shift_city_list = []
+    if user_input_traevel_type == "country":
+        for continent in country_cities:
+            for country in continent["children"]:
+                for i in range(len(country["children"])):
+                    if country["children"][i]["groupNm"] == user_input_traevel:
+                        user_input_traevel_city_country = country["name"]
+                        if user_input_traevel == country["children"][i]["groupNm"]:
+                            user_input_traevel_shift_city_list.append(country["children"][i]["name"])
+                            weather_result_list.append([user_input_traevel , get_weather(user_input_traevel_shift_city_list[i], user_input_day)])
+                            found_key = None
+                            print(user_input_traevel_shift_city_list[i])
+                            for key, value in krkr_airport.items():
+                                if value == user_input_traevel_shift_city_list[i]:
+                                    found_key = key
+                                    toId = key
+                                    break
                             airport_result = air_ticket(
-                                user_input_fromId,
-                                user_input_toId,
+                                    toId,
+                                    user_input_day,
+                                    cabinClass,
+                                )
+                            try:
+                                if airport_result:  # 결과가 있을 때만
+                                    weather_score = float(weather_result_list[0][1].split(':')[1].strip())
+                                    score = int(airport_result[0]["총합 점수"]) + weather_score  # 항상 첫 번째 요소 사용
+                                    total_score[i] = {}
+                                    total_score[i]["도시"] = user_input_traevel_shift_city_list[i]
+                                    total_score[i]["사용할_항공사"] = airport_result[0]["항공사 이름"]
+                                    total_score[i]["점수"] = round(score, 0)
+                                print(total_score)
+                            except:
+                                total_score["도시"] = user_input_traevel_shift_city_list[i]
+                                total_score["사용할_항공사"] = "존재하지 않습니다."
+                                total_score["점수"] = "존재하지 않습니다."
+                                error_num += 1
+        total_score = {k: v for k, v in total_score.items() if k < 30}
+        total_score = dict(sorted(total_score.items(), key=lambda item: item[1]['점수'], reverse=True))
+        return render_template("search.html", total_scores = total_score, weather_result_list = weather_result_list,
+                                                airport_results = airport_result)
+    elif user_input_traevel_type == "airport":
+        for continent in country_cities:
+            for country in continent["children"]:
+                for i in range(len(country["children"])):
+                    if country["children"][i]["name"] == user_input_traevel:
+                        user_input_traevel_city_country = country["name"]
+                        weather_result_list.append([user_input_traevel , get_weather(user_input_traevel, user_input_day)])
+                        found_key = None
+                        for key, value in krkr_airport.items():
+                            if value == user_input_traevel:
+                                found_key = key
+                                toId = key
+                                break
+                        airport_result = air_ticket(
+                                toId,
                                 user_input_day,
                                 cabinClass,
-                                person_adult,
-                                person_children
                             )
-                            for i in range(len(airport_result)):
-                                total_score[i] = {}
-                                score = int(airport_result[i]["총합 점수"]) + float(weather_result_list[i][1]["점수"])
-                                total_score[i]["도시"] = city["name"]
-                                total_score[i]["점수"] = round(score, 0)
-                            print(total_score)
+                        for i in range(len(airport_result)):
+                            total_score[i] = {}
+                            # i번째 도시의 날씨 점수 사용
+                            weather_score = float(weather_result_list[0][1].split(':')[1].strip())
+                            score = int(airport_result[i]["총합 점수"]) + weather_score
+                            total_score[i]["도시"] = user_input_traevel
+                            total_score[i]["사용할_항공사"] = airport_result[i]["항공사 이름"]
+                            total_score[i]["점수"] = round(score, 0)
+                        print(total_score)
+                        return render_template("search.html", total_scores = total_score, weather_result_list = weather_result_list,
+                                               airport_results = airport_result)
+
+    elif user_input_traevel_type == "city":
+        for continent in country_cities:
+            for country in continent["children"]:
+                for i in range(len(country["children"])):
+                    if country["children"][i]["name"] == user_input_traevel:
+                        user_input_traevel_city_country = country["name"]
+                        weather_result_list.append([user_input_traevel , get_weather(user_input_traevel, user_input_day)])
+                        found_key = None
+                        for key, value in krkr_airport.items():
+                            if value == user_input_traevel:
+                                found_key = key
+                                toId = key
+                                break
+                        airport_result = air_ticket(
+                                toId,
+                                user_input_day,
+                                cabinClass,
+                            )
+                        for i in range(len(airport_result)):
+                            total_score[i] = {}
+                            # i번째 도시의 날씨 점수 사용
+                            weather_score = float(weather_result_list[0][1].split(':')[1].strip())
+                            score = int(airport_result[i]["총합 점수"]) + weather_score
+                            total_score[i]["도시"] = user_input_traevel
+                            total_score[i]["사용할_항공사"] = airport_result[i]["항공사 이름"]
+                            total_score[i]["점수"] = round(score, 0)
+                        print(total_score)
+    return render_template("search.html", total_scores = total_score, weather_result_list = weather_result_list,
+                                               airport_results = airport_result)
+    
 
 
-    elif user_input_traevel in country_code_data_five_number:
-        user_input_traevel_type = "city"
-        for city in range():
-            if city["name"] == user_input_traevel:
 
 
 
