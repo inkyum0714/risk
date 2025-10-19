@@ -5,6 +5,7 @@ import requests
 WEATHER_API_KEY = "lfwWiH5cTMe8Foh-XJzH6g"
 
 def get_weather(user_input_city, user_input_day):
+    print("wea")
     weather_result = []
     weather_data = []
     print(user_input_city)
@@ -50,4 +51,5 @@ def get_weather(user_input_city, user_input_day):
 
     # 3) 결과에 추가
     weather_result = f"불쾌지수: {discomfort_index:.1f}"
+    print("wea")
     return weather_result

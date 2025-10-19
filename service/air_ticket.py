@@ -10,6 +10,7 @@ def air_ticket(user_input_toId, departDate, cabinClass):
     "비즈니스": "BUSINESS",
     "퍼스트": "FRIST"
     }
+    print("air")
     flightDeals_data = []
     air_ticket_result = []
     deal_dic = {}
