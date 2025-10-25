@@ -5,6 +5,7 @@ import requests
 WEATHER_API_KEY = "lfwWiH5cTMe8Foh-XJzH6g"
 
 def get_weather(user_input_city, user_input_day):
+    print(user_input_city,user_input_day)
     print("wea")
     weather_result = []
     weather_data = []

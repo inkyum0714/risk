@@ -225,21 +225,26 @@
 }
 
     </style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
 <body>
 <div class="top">
     <!-- 상단 검색 영역 -->
-    <form class="search-form" action="/search" method="post" autocomplete="off">
+    <form class="search-form" action="/index" method="get" autocomplete="off">
         <input id="country-input" type="text" placeholder="나라, 도시, 공항중 하나를 입력하세요" name="user_input_traevel" required>
         <div id="autocomplete-list" class="autocomplete-items"></div>
-        <input type="date" name="user_input_day" required>
-        <button type="submit">검색</button>
+        <input type="date" id ="user_input_day" name="user_input_day" required>
+        <button type="button" onclick="inputvalue()">검색</button>
     </form>
 </div>
 
 
     <!-- 하단 추천 여행지 영역 -->
     <div class="bottom">
+        <div id="response-container" class="weather-results">
+
+        </div>
         <h2 style="margin-bottom: 20px; color: #333;">추천 여행지</h2>
         {% for dest in destinations %}
         <div class="destination">
@@ -252,7 +257,82 @@
         </div>
         {% endfor %}
     </div>
+    <script>
+    function appendResult(message) {
+        const container = document.querySelector("#response-container")
+        const div = document.createElement("div")
+        div.innerHTML = message
+        container.appendChild(div)
+    }
+    
+        async function inputvalue() {
+            const user_input_traevel = document.getElementById('country-input').value;
+            const container = document.querySelector("#response-container")
+            container.innerHTML = "";
+            const url = "http://127.0.0.1:8000/inputvalue?user_input_traevel="+user_input_traevel;
+                $.ajax({
+                    url : url,
+                    method : "GET",
+                    success: function(response) {
+                        let user_input_traevel_data = response.result;
+                        console.log(user_input_traevel_data)
+                        console.log(user_input_traevel_data.country)
+                        console.log(user_input_traevel_data.city)
+                        console.log(user_input_traevel_data.airport)
+                        getAllWeather(user_input_traevel_data.city);
 
+                    }
+                })
+        }
+        async function getAllWeather(cities) {
+                cities.forEach(city => {
+                    weather(city);
+                });
+                getAllairticket(cities)
+            }           
+        async function weather(user_input_traevel_city) {
+            const date = document.getElementById('user_input_day').value;
+            const url = "http://127.0.0.1:8000/weather?user_input_traevel_city="+user_input_traevel_city +"&date="+date;
+                $.ajax({
+                    url : url,
+                    method : "GET",
+                    success: function(response) {
+                        console.log(response);
+                        appendResult(response.result)
+                    }
+                })
+        }
+        async function getAllairticket(cities) {
+                cities.forEach(city => {
+                    airticket(city);
+                });
+                risk(user_input_traevel_country)
+            }   
+        async function airticket(user_input_traevel_city) {
+            const date = document.getElementById('user_input_day').value;
+            const url = "http://127.0.0.1:8000/weather?user_input_traevel_city="+user_input_traevel_city +"&date="+date;
+                $.ajax({
+                    url : url,
+                    method : "GET",
+                    success: function(response) {
+                        console.log(response);
+                        appendResult(response.result)
+                    }
+                })
+        }
+        async function risk(user_input_traevel_country) {
+            const date = document.getElementById('user_input_day').value;
+            const url = "http://127.0.0.1:8000/weather?user_input_traevel_city="+user_input_traevel_city +"&date="+date;
+                $.ajax({
+                    url : url,
+                    method : "GET",
+                    success: function(response) {
+                        console.log(response);
+                        appendResult(response.result)
+                    }
+                })
+        }
+    </script>
     <script>
         // Jinja2로 country_code_data_five_number의 key 값 전달
         const countries = {{ country_code_data_five_number.keys() | list | tojson }};
@@ -314,6 +394,8 @@
     // 출발/도착 공항 자동완성 각각 적용
     setupAutocomplete('from-airport', 'from-autocomplete');
     setupAutocomplete('to-airport', 'to-autocomplete');
+
+    
     </script>
 </body>
 </html>

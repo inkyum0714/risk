@@ -19,3 +19,20 @@ def user_risk(user_input_country):
             if risk_data[i]["alertAl"] == "Y":
                 risk_data_score += 3                   
     return risk_data_score
+
+
+
+
+    #for i in range(user_request_query):
+    #    if user_input_traevel == user_request_query[i]:
+    #        json_true_false = True
+    # if user_input_traevel_type == "country":
+    #     cons = country_cities[0]["children"]
+    #     for i in range(len(cons)):
+    #         if cons[i]['name'] == user_input_traevel:
+    #             cities_name = []
+    #             for city in cons[i]['childeren']:
+    #                 cities_name.append(city['name'])
+    #     for city in cities_name:
+    #         ap_name = [key for key, value in krkr_airport.items() if value == city]
+    #         weather = get_weather(city,user_input_day)

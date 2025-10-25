@@ -4,13 +4,14 @@ import requests, json, datetime, time
 
 app = Flask(__name__)
 
-def air_ticket(user_input_toId, departDate, cabinClass):
+def air_ticket(user_input_toId, departDate):
     airport_seat = {
     "이코노미" : "ECONOMY",
     "프리미엄 이코노미": "PREMI UM ECONOMY",
     "비즈니스": "BUSINESS",
     "퍼스트": "FRIST"
     }
+    cabinClass = "이코노미"
     print("air")
     flightDeals_data = []
     air_ticket_result = []
@@ -76,6 +77,7 @@ def air_ticket(user_input_toId, departDate, cabinClass):
                             
                             deal_dic["총합 점수"] = 1000000 / (int(deal_dic["가격"]) * 0.75) + int(deal_dic["위탁수하물 용량"]) + int(deal_dic["기내수하물 용량"]) * 1.5 
                             air_ticket_result.append(deal_dic)
+
 
     except:
         air_ticket_result = [{"항공사 이름": "정보 없음", "총합 점수": 0}]
