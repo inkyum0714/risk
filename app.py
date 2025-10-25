@@ -1,4 +1,4 @@
-import requests, os, json
+import requests, os, json, time
 from data.Symbol import symbol_data, country_code_data_three, country_code_data_two, country_code_data_five_number, country_airport, country_cities
 from flask import Flask, request, render_template, redirect
 from service.exchange import exchange
@@ -88,7 +88,7 @@ def search():
     #         ap_name = [key for key, value in krkr_airport.items() if value == city]
     #         weather = get_weather(city,user_input_day)
 
-    #     당장 할 수 있는 것은.
+    # 당장 할 수 있는 것은.
     # 사용자가 n이라는 국가로 query를 날리면.... 
     # 그 국가에 대한 점수를 쿼리하는데,
     # 최종적으로 나온 점수를. 그냥 저장 때려버리기. (JSON으로.)
@@ -121,13 +121,26 @@ def search():
                                 )
                             risk_score = user_risk(user_input_traevel)
                             print(weather_result_list)
-                            weather_score = float(weather_result_list[0][1].split(':')[1].strip())
+                            weather_score = float(weather_result_list[0][1].split(':')[1].strip()) #여기까지 최적화
                             score = int(airport_result[0]["총합 점수"]) + weather_score - risk_score  # 항상 첫 번째 요소 사용
                             total_score[i] = {}
                             total_score[i]["도시"] = user_input_traevel_shift_city_list[i]
                             total_score[i]["사용할_항공사"] = airport_result[0]["항공사 이름"]
                             total_score[i]["점수"] = round(score, 0)
                             print(total_score)
+                            if os.path.exists(user_request_query):
+                                with open(user_request_query, "r", encoding="utf-8") as f:
+                                    data = json.load(f)
+                            else:
+                                data = {}
+
+                            # total_score 갱신
+                            data["total_score"] = total_score
+
+                            # 저장
+                            with open(user_request_query, "w", encoding="utf-8") as f:
+                                json.dump(data, f, ensure_ascii=False, indent=4)
+                            print("[INFO] total_score가 JSON에 추가/갱신되었습니다.")
 
         print(total_score)
         return render_template("search.html", total_scores = total_score, weather_result_list = weather_result_list,
@@ -157,6 +170,20 @@ def search():
                     total_score[i]["사용할_항공사"] = airport_result[i]["항공사 이름"]
                     total_score[i]["점수"] = round(score, 0)
                 print(total_score)
+                    # 기존 데이터 불러오기
+                if os.path.exists(user_request_query):
+                    with open(user_request_query, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                else:
+                    data = {}
+
+                # total_score 갱신
+                data["total_score"] = total_score
+
+                # 저장
+                with open(user_request_query, "w", encoding="utf-8") as f:
+                    json.dump(data, f, ensure_ascii=False, indent=4)
+                print("[INFO] total_score가 JSON에 추가/갱신되었습니다.")
                 return render_template("search.html", total_scores = total_score, weather_result_list = weather_result_list,
                                                airport_results = airport_result)
 
@@ -186,13 +213,10 @@ def search():
                             total_score[i]["도시"] = user_input_traevel
                             total_score[i]["사용할_항공사"] = airport_result[i]["항공사 이름"]
                             total_score[i]["점수"] = round(score, 0)
-    
+                        
     return render_template("search.html", total_scores = total_score, weather_result_list = weather_result_list,
                                                airport_results = airport_result)
     
-
-
-
 
 
 @app.route("/exchange", methods=["POST"])

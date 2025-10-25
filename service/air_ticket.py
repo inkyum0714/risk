@@ -1,5 +1,5 @@
 from data.Symbol import country_airport
-import requests, json, datetime
+import requests, json, datetime, time
 
 
 
@@ -35,7 +35,8 @@ def air_ticket(user_input_toId, departDate, cabinClass):
     response = requests.get(url, headers=headers, params=querystring)
     response_data = response.json() 
     try:
-        for i in range(3):  
+        start = time.time()  
+        for i in range(3):
             deals = response_data["data"]["flightDeals"][i]["price"]
             flightDeals_data.append(deals)
             token = response_data["data"]["flightDeals"][i]["offerToken"]
@@ -72,6 +73,8 @@ def air_ticket(user_input_toId, departDate, cabinClass):
                                     deal_dic["기내수하물 용량"] = 0
                             deal_dic["총합 점수"] = 1000000 / (int(deal_dic["가격"]) * 0.75)+ int(deal_dic["위탁수하물 용량"]) + int(deal_dic["기내수하물 용량"]) * 1.5 
                             air_ticket_result.append(deal_dic)
+                            print(f"항공권 정보 {i+1}개 수집 완료. 소요 시간: {end - start:.2f}초")
+        end = time.time()
     except:
         air_ticket_result = [{"항공사 이름": "정보 없음", "총합 점수": 0}]
                         
