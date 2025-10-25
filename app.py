@@ -144,6 +144,7 @@ def airticket():
         return jsonify({"message": "success","result": airport_result})
     except:
         return jsonify({"message": "success","result": "응답하지 않습니다"})
+
 @app.route("/risk", methods=["GET", "POST"])
 def risk():
     user_input_traevel_country = request.args.get("user_input_traevel_country")

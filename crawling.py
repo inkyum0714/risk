@@ -44,7 +44,7 @@ try:
 
         translated_data[key] = top_text
         # 너무 빠르면 구글에서 차단할 수 있으므로 약간 대기
-        time.sleep(1.5)
+        time.sleep(0.5)
 
 finally:
     driver.quit()

@@ -23,12 +23,12 @@ def get_weather(user_input_city, user_input_day):
     country = country_code_data_five_number[user_input_city]
 
     for day in dates:
-        url = f"https://apihub.kma.go.kr/api/typ01/url/gts_syn1.php?tm={day}1200&dtm=2&stn=47&help=0&authKey={WEATHER_API_KEY}&stn={country}"
+        url = f"https://apihub.kma.go.kr/api/typ01/url/gts_syn1.php?tm={day}1200&dtm=2&stn=47&help=0&authKey={WEATHER_API_KEY}&stn={country}" #https://apihub.kma.go.kr/api/typ01/url/gts_syn1.php?tm=2025-10-261200&dtm=2&stn=47&help=0&authKey=lfwWiH5cTMe8Foh-XJzH6g&stn={country}
         response = requests.get(url)
         text = response.text
 
         start_idx = text.find("#START7777")
-        end_idx = text.find("#7777END")
+        end_idx = text.find("#7777END")   
         if start_idx == -1 or end_idx == -1:
             continue
 
@@ -39,6 +39,8 @@ def get_weather(user_input_city, user_input_day):
             parts = line.split()
             if len(parts) >= 13:
                 part = [int(float(parts[0])), int(float(parts[9])), int(float(parts[10])), int(float(parts[12]))]
+                part - [int(float(x)) for x in part]
+
                 weather_data.append(part)
 
     if not weather_data:
