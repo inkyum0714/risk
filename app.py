@@ -56,6 +56,7 @@ def search():
     total_score = {}
     weather_result_list= []
     airport_result = []
+    user_input_traevel_shift_city_list = []
     cabinClass = "이코노미"
     json_true_false = False
     error_num = 0
@@ -72,8 +73,7 @@ def search():
     # 2. JSON 파일 읽기
     with open(translation_result, "r", encoding="utf-8") as f:
         krkr_airport = json.load(f)
-    #with open(user_request_query, "r", encoding="utf-8") as f:
-    #   krkr_airport = json.load(f) 
+
     #for i in range(user_request_query):
     #    if user_input_traevel == user_request_query[i]:
     #        json_true_false = True
@@ -96,8 +96,7 @@ def search():
     # 그리고 다음번에 다시 그 국가로 query를 날리면, 있는 정보는 JSON에서 가져오고 바로.
     # 없으면 새로 받아오기. 
 
-    user_input_traevel_shift_city_list = []
-    if user_input_traevel_type == "country":
+    if user_input_traevel_type == "country": #사용자의 입력값이 나라일때 동작
         for continent in country_cities:
             for country in continent["children"]:
                 for i in range(len(country["children"])):
@@ -107,7 +106,6 @@ def search():
                             user_input_traevel_shift_city_list.append(country["children"][i]["name"])
                             # 올바른 구조
                             weather_result_list.append([user_input_traevel_shift_city_list[i], get_weather(user_input_traevel_shift_city_list[i], user_input_day)])
-
                             found_key = None
                             for key, value in krkr_airport.items():
                                 if value == user_input_traevel_shift_city_list[i]:
@@ -123,23 +121,20 @@ def search():
                             print(weather_result_list)
                             weather_score = float(weather_result_list[0][1].split(':')[1].strip()) #여기까지 최적화
                             score = int(airport_result[0]["총합 점수"]) + weather_score - risk_score  # 항상 첫 번째 요소 사용
-                            total_score[i] = {}
-                            total_score[i]["도시"] = user_input_traevel_shift_city_list[i]
-                            total_score[i]["사용할_항공사"] = airport_result[0]["항공사 이름"]
-                            total_score[i]["점수"] = round(score, 0)
+                            total_score[user_input_traevel_shift_city_list[i]] = {}
+                            total_score[user_input_traevel_shift_city_list[i]]["도시"] = user_input_traevel_shift_city_list[i]
+                            total_score[user_input_traevel_shift_city_list[i]]["사용할_항공사"] = airport_result[0]["항공사 이름"]
+                            total_score[user_input_traevel_shift_city_list[i]]["점수"] = round(score, 0)
                             print(total_score)
                             if os.path.exists(user_request_query):
                                 with open(user_request_query, "r", encoding="utf-8") as f:
                                     data = json.load(f)
                             else:
                                 data = {}
-
-                            # total_score 갱신
-                            data["total_score"] = total_score
-
+                            print(data)
                             # 저장
                             with open(user_request_query, "w", encoding="utf-8") as f:
-                                json.dump(data, f, ensure_ascii=False, indent=4)
+                                json.dump(total_score, f, ensure_ascii=False, indent=4)
                             print("[INFO] total_score가 JSON에 추가/갱신되었습니다.")
 
         print(total_score)
@@ -162,27 +157,23 @@ def search():
                     )
                 print(airport_result)
                 for i in range(len(airport_result)):
-                    total_score[i] = {}
+                    total_score[user_input_traevel] = {}
                     # i번째 도시의 날씨 점수 사용
                     weather_score = float(weather_result_list[0][1].split(':')[1].strip())
-                    score = int(airport_result[i]["총합 점수"]) + weather_score
-                    total_score[i]["도시"] = user_input_traevel
-                    total_score[i]["사용할_항공사"] = airport_result[i]["항공사 이름"]
-                    total_score[i]["점수"] = round(score, 0)
+                    score = int(airport_result[0]["총합 점수"]) + weather_score
+                    total_score[user_input_traevel]["도시"] = user_input_traevel
+                    total_score[user_input_traevel]["사용할_항공사"] = airport_result[i]["항공사 이름"]
+                    total_score[user_input_traevel]["점수"] = round(score, 0)
                 print(total_score)
-                    # 기존 데이터 불러오기
                 if os.path.exists(user_request_query):
                     with open(user_request_query, "r", encoding="utf-8") as f:
                         data = json.load(f)
                 else:
                     data = {}
-
-                # total_score 갱신
-                data["total_score"] = total_score
-
+                print(data)
                 # 저장
                 with open(user_request_query, "w", encoding="utf-8") as f:
-                    json.dump(data, f, ensure_ascii=False, indent=4)
+                    json.dump(total_score, f, ensure_ascii=False, indent=4)
                 print("[INFO] total_score가 JSON에 추가/갱신되었습니다.")
                 return render_template("search.html", total_scores = total_score, weather_result_list = weather_result_list,
                                                airport_results = airport_result)
@@ -206,14 +197,23 @@ def search():
                                 cabinClass,
                             )
                         for i in range(len(airport_result)):
-                            total_score[i] = {}
+                            total_score[user_input_traevel] = {}
                             # i번째 도시의 날씨 점수 사용
                             weather_score = float(weather_result_list[0][1].split(':')[1].strip())
-                            score = int(airport_result[i]["총합 점수"]) + weather_score
-                            total_score[i]["도시"] = user_input_traevel
-                            total_score[i]["사용할_항공사"] = airport_result[i]["항공사 이름"]
-                            total_score[i]["점수"] = round(score, 0)
-                        
+                            score = int(airport_result[0]["총합 점수"]) + weather_score
+                            total_score[user_input_traevel]["도시"] = user_input_traevel
+                            total_score[user_input_traevel]["사용할_항공사"] = airport_result[i]["항공사 이름"]
+                            total_score[user_input_traevel]["점수"] = round(score, 0)
+                            if os.path.exists(user_request_query):
+                                with open(user_request_query, "r", encoding="utf-8") as f:
+                                    data = json.load(f)
+                            else:
+                                data = {}
+                            print(data)
+                            # 저장
+                            with open(user_request_query, "w", encoding="utf-8") as f:
+                                json.dump(total_score, f, ensure_ascii=False, indent=4)
+                            print("[INFO] total_score가 JSON에 추가/갱신되었습니다.")
     return render_template("search.html", total_scores = total_score, weather_result_list = weather_result_list,
                                                airport_results = airport_result)
     
