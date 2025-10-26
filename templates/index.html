@@ -223,6 +223,131 @@
     transform: scale(1.05);
     background: linear-gradient(135deg, #5a91ff, #7fe3f7);
 }
+.travel-card {
+  margin-bottom: 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.travel-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.city-name {
+  margin: 0;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.info-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  background: #f8f9fa;
+}
+
+.weather-section {
+  background: #e3f2fd;
+  border-left: 4px solid #2196f3;
+}
+
+.score-section {
+  background: #fff3e0;
+  border-left: 4px solid #ff9800;
+}
+
+.label {
+  font-weight: 600;
+  color: #555;
+  font-size: 14px;
+}
+
+.value {
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+}
+
+.value.score {
+  background: #ff9800;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-weight: 600;
+}
+
+.ticket-details {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #f0f0f0;
+}
+
+.details-title {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  color: #666;
+  font-weight: 600;
+}
+
+.detail-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: #fafafa;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.detail-label {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+.detail-value {
+  font-size: 14px;
+  color: #333;
+  font-weight: 600;
+}
+
+.detail-value.price {
+  color: #4caf50;
+  font-size: 16px;
+}
+
+.detail-value.airline {
+  color: #667eea;
+}
+
+/* 반응형 디자인 */
+@media (min-width: 768px) {
+  .detail-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 
     </style>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -258,13 +383,100 @@
         {% endfor %}
     </div>
     <script>
+
     function appendResult(message) {
         const container = document.querySelector("#response-container")
         const div = document.createElement("div")
         div.innerHTML = message
         container.appendChild(div)
     }
-    
+        async function getAllmain(user_input_traevel_cities, user_input_traevel_country) {
+            for (const city of user_input_traevel_cities) {
+                await main(city, user_input_traevel_country);
+            }
+        }
+        
+    async function main(user_input_traevel_city, user_input_traevel_country) {
+            try {
+                const [weatherData, ticketData, riskData] = await Promise.all([
+                    weather(user_input_traevel_city),
+                    airticket(user_input_traevel_city),
+                    risk(user_input_traevel_country)
+                ]);
+                console.log("항공권 응답:", ticketData);
+                console.log("도시 데이터:", weatherData, ticketData);
+                console.log("국가 위험도:", riskData);
+
+        appendResult(`
+        <div class="travel-card">
+            <div class="card-header">
+            <h3 class="city-name">${user_input_traevel_city}</h3>
+            </div>
+            
+            <div class="card-body">
+            <div class="info-section weather-section">
+                <span class="label">예상 날씨</span>
+                <span class="value">${weatherData.result}</span>
+                <span class="value">${weatherData.result_list}
+            </div>
+            
+            <div class="info-section score-section">
+                <span class="label">항공권 점수</span>
+                <span class="value score">${ticketData.result}</span>
+            </div>
+            
+            <div class="ticket-details">
+                <h4 class="details-title">항공권 상세 정보</h4>
+                <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">가격</span>
+                    <span class="detail-value price">${ticketData.result_data[0]["가격"] }</span>
+                </div>ticketData.result_data
+                <div class="detail-item">
+                    <span class="detail-label">최초 탑승 시간</span>
+                    <span class="detail-value">${ticketData.result_data[0]["최초 탑승 시간"]}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">마지막 탑승 시간</span>
+                    <span class="detail-value">${ticketData.result_data[0]["마지막 탑승 시간"]}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">위탁수하물 용량</span>
+                    <span class="detail-value">${ticketData.result_data[0]["위탁수하물 용량"]}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">항공사 이름</span>
+                    <span class="detail-value airline">${ticketData.result_data[0]["항공사 이름"]}</span>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        `);
+        const riskLevel = riskData.result.score;
+        const alerts = riskData.result.alert;
+        const color = riskLevel >= 10 ? '#ef4444' : riskLevel >= 6 ? '#f59e0b' : '#10b981';
+            
+        appendResult(`
+          <div style="padding: 20px; background: white; border-radius: 8px; border-left: 4px solid ${color}; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <h3 style="margin: 0; color: #333;">국가 위험도</h3>
+              <span style="font-size: 32px; font-weight: bold; color: ${color};">${riskLevel}</span>
+            </div>
+            ${alerts && alerts.length > 0 ? `
+              <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee;">
+                <p style="margin: 0 0 8px 0; font-weight: 600; color: #666;">경보:</p>
+                ${alerts.map(alert => `<p style="margin: 4px 0; color: #666;">• ${alert}</p>`).join('')}
+              </div>
+            ` : ''}
+          </div>
+        `);
+            } catch (err) {
+                appendResult("에러 발생");
+                console.error("에러 발생:", err);
+            }
+        }
+
         async function inputvalue() {
             const user_input_traevel = document.getElementById('country-input').value;
             const container = document.querySelector("#response-container")
@@ -279,60 +491,28 @@
                         console.log(user_input_traevel_data.country)
                         console.log(user_input_traevel_data.city)
                         console.log(user_input_traevel_data.airport)
-                        getAllWeather(user_input_traevel_data.city);
+                        getAllmain(user_input_traevel_data.city, user_input_traevel_data.country)
+                    }
+                })
+        }
+        async function weather(city) {
+            const date = document.getElementById('user_input_day').value;
+            const res = await fetch(`http://127.0.0.1:8000/weather?user_input_traevel_city=${city}&date=${date}`);
+            return res.json(); // JSON 결과 바로 반환
+        }
 
-                    }
-                })
-        }
-        async function getAllWeather(cities) {
-                cities.forEach(city => {
-                    weather(city);
-                });
-                getAllairticket(cities)
-            }           
-        async function weather(user_input_traevel_city) {
+        async function airticket(city) {
             const date = document.getElementById('user_input_day').value;
-            const url = "http://127.0.0.1:8000/weather?user_input_traevel_city="+user_input_traevel_city +"&date="+date;
-                $.ajax({
-                    url : url,
-                    method : "GET",
-                    success: function(response) {
-                        console.log(response);
-                        appendResult(response.result)
-                    }
-                })
+            const res = await fetch(`http://127.0.0.1:8000/airticket?user_input_traevel_city=${city}&date=${date}`);
+            return res.json();
         }
-        async function getAllairticket(cities) {
-                cities.forEach(city => {
-                    airticket(city);
-                });
-                risk(user_input_traevel_country)
-            }   
-        async function airticket(user_input_traevel_city) {
+
+        async function risk(country) {
             const date = document.getElementById('user_input_day').value;
-            const url = "http://127.0.0.1:8000/weather?user_input_traevel_city="+user_input_traevel_city +"&date="+date;
-                $.ajax({
-                    url : url,
-                    method : "GET",
-                    success: function(response) {
-                        console.log(response);
-                        appendResult(response.result)
-                    }
-                })
+            const res = await fetch(`http://127.0.0.1:8000/risk?user_input_traevel_country=${country}&date=${date}`);
+            return res.json();
         }
-        async function risk(user_input_traevel_country) {
-            const date = document.getElementById('user_input_day').value;
-            const url = "http://127.0.0.1:8000/weather?user_input_traevel_city="+user_input_traevel_city +"&date="+date;
-                $.ajax({
-                    url : url,
-                    method : "GET",
-                    success: function(response) {
-                        console.log(response);
-                        appendResult(response.result)
-                    }
-                })
-        }
-    </script>
+        </script>
     <script>
         // Jinja2로 country_code_data_five_number의 key 값 전달
         const countries = {{ country_code_data_five_number.keys() | list | tojson }};
