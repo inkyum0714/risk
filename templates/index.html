@@ -33,9 +33,9 @@
         }
 
         .bottom {
-            height: 60%;
             padding: 20px;
             overflow-y: auto;
+            width: 100%;
         }
 
         h1 {
@@ -51,7 +51,7 @@
             position: relative;
             gap: 10px;
             width: 100%;
-            max-width: 600px;
+            
         }
 
         .search-form input[type="text"],
@@ -116,8 +116,9 @@
             background: rgba(255,255,255,0.8);
             padding: 15px;
             border-radius: 8px;
-            width: 150%;
+            width: 120%;
             max-width: 720px;
+            height: 120000px;
         }
 
         /* 추천 여행지 카드 */
@@ -224,13 +225,8 @@
     background: linear-gradient(135deg, #5a91ff, #7fe3f7);
 }
 .travel-card {
-  margin-top: 300px;  
-  margin-bottom: 24px;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  background: #fff;
-  transition: transform 0.2s, box-shadow 0.2s;
+    max-width: 720px;
+    margin: 16px auto;       /* 상하 여백 + 중앙 정렬 */
 }
 
 .travel-card:hover {
@@ -342,6 +338,20 @@
 .detail-value.airline {
   color: #667eea;
 }
+#response-container > div:first-child {
+    max-width: 720px;
+    margin: 0 auto 16px auto;  /* 상하 마진 + 중앙 정렬 */
+}
+
+#response-container {
+    max-width: 720px;       /* 카드 최대 너비 */
+    width: 100%;
+    margin: 0 auto;         /* 중앙 정렬 */
+    overflow-y: auto;
+    background: rgba(255,255,255,0.8);
+    padding: 15px;
+    border-radius: 8px;
+}
 
 /* 반응형 디자인 */
 @media (min-width: 768px) {
@@ -358,12 +368,27 @@
 <div class="top">
     <!-- 상단 검색 영역 -->
     <form class="search-form" action="/index" method="get" autocomplete="off">
-        <input id="country-input" type="text" placeholder="나라, 도시, 공항중 하나를 입력하세요" name="user_input_traevel" required>
-        <div id="autocomplete-list" class="autocomplete-items"></div>
-        <input type="date" id ="user_input_day" name="user_input_day" required>
+        <div class="input-group">
+            <label for="country-input-start">출발</label>
+            <input id="country-input-start" type="text" value="대한민국" disabled="true">
+        </div>
+
+        <div class="input-group">
+            <label for="country-input">도착</label>
+            <input id="country-input" type="text" placeholder="나라, 도시, 공항중 하나를 입력하세요" name="user_input_traevel" required>
+            <div id="autocomplete-list" class="autocomplete-items"></div>
+        </div>
+
+        <div class="input-group">
+            <label for="user_input_day">출발일</label>
+            <input type="date" id="user_input_day" name="user_input_day" required>
+            <small id="date-warning" style="color: red; display: none; margin-top: 4px;">과거 날짜는 선택할 수 없습니다.</small>
+        </div>
+
         <button type="button" onclick="inputvalue()">검색</button>
     </form>
 </div>
+
 
 
     <!-- 하단 추천 여행지 영역 -->
@@ -391,92 +416,96 @@
         div.innerHTML = message
         container.appendChild(div)
     }
-        async function getAllmain(user_input_traevel_cities, user_input_traevel_country) {
-            for (const city of user_input_traevel_cities) {
-                await main(city, user_input_traevel_country);
-            }
-        }
-        
-    async function main(user_input_traevel_city, user_input_traevel_country) {
-            try {
-                const [weatherData, ticketData, riskData] = await Promise.all([
-                    weather(user_input_traevel_city),
-                    airticket(user_input_traevel_city),
-                    risk(user_input_traevel_country)
-                ]);
-                console.log("항공권 응답:", ticketData);
-                console.log("도시 데이터:", weatherData, ticketData);
-                console.log("국가 위험도:", riskData);
+async function getAllmain(user_input_traevel_cities, user_input_traevel_country) {
+    // 1. 국가 위험도 한 번만 가져오기
+    const riskData = await risk(user_input_traevel_country);
+    const riskLevel = riskData.result.score;
+    const alerts = riskData.result.alert;
+    const color = riskLevel >= 10 ? '#ef4444' : riskLevel >= 6 ? '#f59e0b' : '#10b981';
 
-        appendResult(`
-        <div class="travel-card">
-            <div class="card-header">
-            <h3 class="city-name">${user_input_traevel_city}</h3>
-            </div>
-            
-            <div class="card-body">
-            <div class="info-section weather-section">
-                <span class="label">날씨 점수(불쾌 지수)</span>
-                <span class="value">${weatherData.result}</span>
-
-            </div>
-            
-            <div class="info-section score-section">
-                <span class="label">항공권 점수</span>
-                <span class="value score">${ticketData.result}</span>
-            </div>
-            
-            <div class="ticket-details">
-                <h4 class="details-title">항공권 상세 정보</h4>
-                <div class="detail-grid">
-                <div class="detail-item">
-                    <span class="detail-label">가격</span>
-                    <span class="detail-value price">${ticketData.result_data[0]["가격"] }</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">최초 탑승 시간</span>
-                    <span class="detail-value">${ticketData.result_data[0]["최초 탑승 시간"]}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">마지막 탑승 시간</span>
-                    <span class="detail-value">${ticketData.result_data[0]["마지막 탑승 시간"]}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">위탁수하물 용량</span>
-                    <span class="detail-value">${ticketData.result_data[0]["위탁수하물 용량"]}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">항공사 이름</span>
-                    <span class="detail-value airline">${ticketData.result_data[0]["항공사 이름"]}</span>
-                </div>
-                </div>
-            </div>
-            </div>
-        </div>
-        `);
-        const riskLevel = riskData.result.score;
-        const alerts = riskData.result.alert;
-        const color = riskLevel >= 10 ? '#ef4444' : riskLevel >= 6 ? '#f59e0b' : '#10b981';
-            
-        appendResult(`
-          <div style="padding: 20px; background: white; border-radius: 8px; border-left: 4px solid ${color}; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <h3 style="margin: 0; color: #333;">국가 위험도</h3>
-              <span style="font-size: 32px; font-weight: bold; color: ${color};">${riskLevel}</span>
-            </div>
-            ${alerts && alerts.length > 0 ? `
-              <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee;">
-                <p style="margin: 0 0 8px 0; font-weight: 600; color: #666;">경보:</p>
-                ${alerts.map(alert => `<p style="margin: 4px 0; color: #666;">• ${alert}</p>`).join('')}
-              </div>
-            ` : ''}
+    // 2. 위험도 출력 (맨 위에)
+    appendResult(`
+        <div style="padding: 20px; background: white; border-radius: 8px; border-left: 4px solid ${color}; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; color: #333;">국가 위험도</h3>
+            <span style="font-size: 32px; font-weight: bold; color: ${color};">${riskLevel}</span>
           </div>
+          ${alerts && alerts.length > 0 ? `
+            <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee;">
+              <p style="margin: 0 0 8px 0; font-weight: 600; color: #666;">경보:</p>
+              ${alerts.map(alert => `<p style="margin: 4px 0; color: #666;">• ${alert}</p>`).join('')}
+            </div>
+          ` : ''}
+        </div>
+    `);
+
+    // 3. 각 도시별 여행 카드 출력 (riskData 전달)
+    for (const city of user_input_traevel_cities) {
+        await main(city, user_input_traevel_country, riskData);
+    }
+}
+
+// main() 함수에서 riskData를 매개변수로 받도록 수정
+async function main(user_input_traevel_city, user_input_traevel_country, riskData) {
+    try {
+        const [weatherData, ticketData] = await Promise.all([
+            weather(user_input_traevel_city),
+            airticket(user_input_traevel_city)
+        ]);
+
+        // total 점수 계산시 이미 가져온 riskData 사용
+        const total_score = await total(weatherData.result, ticketData.result, riskData.result.score);
+
+        appendResult(`
+            <div class="travel-card">
+                <div class="card-header">
+                    <h3 class="city-name">${user_input_traevel_city}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="info-section weather-section">
+                        <span class="label">날씨 점수(불쾌 지수)</span>
+                        <span class="value">${weatherData.result}</span>
+                        <span class="label">총합 점수</span>
+                        <span class="value">${total_score}</span>
+                    </div>
+                    <div class="info-section score-section">
+                        <span class="label">항공권 점수</span>
+                        <span class="value score">${ticketData.result}</span>
+                    </div>
+                    <div class="ticket-details">
+                        <h4 class="details-title">항공권 상세 정보</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">가격</span>
+                                <span class="detail-value price">${ticketData.result_data[0]["가격"] }</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">최초 탑승 시간</span>
+                                <span class="detail-value">${ticketData.result_data[0]["최초 탑승 시간"]}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">마지막 탑승 시간</span>
+                                <span class="detail-value">${ticketData.result_data[0]["마지막 탑승 시간"]}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">위탁수하물 용량</span>
+                                <span class="detail-value">${ticketData.result_data[0]["위탁수하물 용량"]}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">항공사 이름</span>
+                                <span class="detail-value airline">${ticketData.result_data[0]["항공사 이름"]}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         `);
-            } catch (err) {
-                appendResult("에러 발생");
-                console.error("에러 발생:", err);
-            }
-        }
+
+    } catch (err) {
+        console.error("에러 발생:", err);
+    }
+}
+
 
         async function inputvalue() {
             const user_input_traevel = document.getElementById('country-input').value;
@@ -513,6 +542,13 @@
             const res = await fetch(`http://127.0.0.1:8000/risk?user_input_traevel_country=${country}&date=${date}`);
             return res.json();
         }
+        async function total(weather, air_ticket, risk) {
+            const res = await fetch(`http://127.0.0.1:8000/total?weather=${weather}&air_ticket=${air_ticket}&risk=${risk}`);
+            const data = await res.json(); 
+            console.log(data) 
+            return data.result; 
+        }
+
         </script>
 <script>
     // Jinja2로 세 가지 목록 받기
@@ -556,5 +592,28 @@
     });
 </script>
 
+
+<script>
+const dateInput = document.getElementById('user_input_day');
+const warningText = document.getElementById('date-warning');
+const searchButton = document.querySelector('.search-form button');
+
+dateInput.addEventListener('change', function() {
+    const selectedDate = new Date(this.value);
+    const today = new Date();
+    today.setHours(0,0,0,0); // 오늘 날짜 00:00 기준
+
+    if (selectedDate < today) {
+        warningText.style.display = 'block';
+        searchButton.disabled = true; // 버튼 비활성화
+        searchButton.style.backgroundColor = '#ccc'; // 비활성화 색
+        this.value = ''; // 입력 초기화
+    } else {
+        warningText.style.display = 'none';
+        searchButton.disabled = false; // 버튼 활성화
+        searchButton.style.backgroundColor = '#ff6b6b'; // 원래 색
+    }
+});
+</script>
 </body>
 </html>

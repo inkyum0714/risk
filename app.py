@@ -10,8 +10,6 @@ from service.risk import user_risk
 
 app = Flask(__name__)
 
-RISK_API_KEY = "jiDRCL1%2FKFqcHeMt6Q8%2FwIFNhQoj79XSfFhNpfZCeNWBmGu8oDp%2B7P0gPHWcCr96h1YrqMtF2QGeyMItKFO%2FTA%3D%3D"
-
 @app.route("/", methods=["GET"])
 def home():
     return render_template("index.html", country_code_data_five_number= country_code_data_five_number, airport_names=list(country_airport.keys()), country_code_data_three=country_code_data_three)
@@ -98,8 +96,6 @@ def weather():
                 get_weather(city.strip(), user_input_day)
             ])
         print(weather_result_list[0][1][0])
-        for i, v in enumerate(weather_result_list[0][1][0]):
-            print(i, v, type(v))
         sum_score = sum(weather_result_list[0][1][0])
         total_weather_score = sum_score / len(weather_result_list[0][1][0])
         return jsonify({"message": "success","result_list": weather_result_list, "result": round(total_weather_score)})
@@ -118,7 +114,7 @@ def airticket():
         user_input_traevel_city = request.args.get("user_input_traevel_city")
         user_input_day = request.args.get("date")
 
-        found_key = None
+        found_key = None    
         for key, value in krkr_airport.items():
             if value.strip().lower() == user_input_traevel_city.lower():
                 found_key = key
@@ -144,6 +140,18 @@ def risk():
     print("위험도 끝남")
     return jsonify({"message": "success","result": risk_data})
 
+@app.route("/total", methods=["GET", "POST"])
+def total():
+    print("총합 점수 계산 도착")
+    weather = float(request.args.get('weather', 0))
+    air_ticket = float(request.args.get('air_ticket', 0))
+    risk = float(request.args.get('risk', 0))
+    print(weather, air_ticket, risk)
+    total_data = (30 + air_ticket - risk- weather) 
+    print(total_data)
+    return jsonify({"message": "success","result": total_data})
+
+
 
 @app.route("/exchange", methods=["POST"])
 def rate():
@@ -158,3 +166,9 @@ def rate():
 if __name__ == '__main__':
     app.run(port=8000, host='0.0.0.0', debug=True)
 
+
+#weather - 40%
+#air_ticket - 40%
+#risk - 10%ㄴ
+#total_score - 10% 
+#각 올때마다 실질적인 퍼센트 증가, 각 완료하면 Progress_Bar에서는 0.02초에 1%씩 증가 - 여행 카드오면 사라짐 바는 주황색 가운데에 퍼센트지 있음 js에서 작성
