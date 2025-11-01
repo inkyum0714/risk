@@ -147,7 +147,7 @@ def total():
     air_ticket = float(request.args.get('air_ticket', 0))
     risk = float(request.args.get('risk', 0))
     print(weather, air_ticket, risk)
-    total_data = (30 + air_ticket - risk- weather) 
+    total_data = round((30 + air_ticket - risk- weather)) 
     print(total_data)
     return jsonify({"message": "success","result": total_data})
 
@@ -166,9 +166,3 @@ def rate():
 if __name__ == '__main__':
     app.run(port=8000, host='0.0.0.0', debug=True)
 
-
-#weather - 40%
-#air_ticket - 40%
-#risk - 10%ㄴ
-#total_score - 10% 
-#각 올때마다 실질적인 퍼센트 증가, 각 완료하면 Progress_Bar에서는 0.02초에 1%씩 증가 - 여행 카드오면 사라짐 바는 주황색 가운데에 퍼센트지 있음 js에서 작성

@@ -352,6 +352,57 @@
     padding: 15px;
     border-radius: 8px;
 }
+/* 진행바 스타일 */
+.progress-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px auto;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 80%;
+    max-width: 600px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.progress-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+progress {
+    width: 100%;
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+progress::-webkit-progress-bar {
+    background-color: #f3f3f3;
+    border-radius: 10px;
+}
+
+progress::-webkit-progress-value {
+    background: linear-gradient(90deg, #4facfe 0%);
+    border-radius: 10px;
+    transition: width 0.1s ease;
+}
+
+/* 등장 애니메이션 */
+.fade-in {
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
 /* 반응형 디자인 */
 @media (min-width: 768px) {
@@ -360,7 +411,7 @@
   }
 }
 
-    </style>
+</style>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 </head>
@@ -385,7 +436,7 @@
             <small id="date-warning" style="color: red; display: none; margin-top: 4px;">과거 날짜는 선택할 수 없습니다.</small>
         </div>
 
-        <button type="button" onclick="inputvalue()">검색</button>
+        <button id="searchButton">검색</button>
     </form>
 </div>
 
@@ -409,35 +460,75 @@
         {% endfor %}
     </div>
     <script>
+document.getElementById('searchButton').addEventListener('click', function(event){
+    event.preventDefault(); // 기본 submit 방지
+    inputvalue();           // AJAX 호출
+});
 
+async function inputvalue() {
+    const user_input_traevel = document.getElementById('country-input').value;
+    const container = document.querySelector("#response-container")
+    container.innerHTML = "";
+    const url = "http://127.0.0.1:8000/inputvalue?user_input_traevel="+user_input_traevel;
+    $.ajax({
+        url : url,
+        method : "GET",
+        success: function(response) {
+            let user_input_traevel_data = response.result;
+            console.log(user_input_traevel_data)
+            console.log(user_input_traevel_data.country)
+            console.log(user_input_traevel_data.city)
+            console.log(user_input_traevel_data.airport)
+            getAllmain(user_input_traevel_data.city, user_input_traevel_data.country)
+        },
+        error: function(err) {
+            console.error("inputvalue AJAX error:", err);
+        }
+    })
+}
+</script>
+<script>
+    function incrementProgress(target, step = 1, interval = 20) {
+    return new Promise((resolve) => {
+        const timer = setInterval(() => {
+            progress += step;
+            if (progress > target) progress = target; // 최대값 제한
+            progressBar.value = progress;
+            if (progress >= target) {
+                clearInterval(timer);
+                resolve();
+            }
+        }, interval);
+    });
+}
     function appendResult(message) {
         const container = document.querySelector("#response-container")
         const div = document.createElement("div")
         div.innerHTML = message
         container.appendChild(div)
     }
-async function getAllmain(user_input_traevel_cities, user_input_traevel_country) {
-    // 1. 국가 위험도 한 번만 가져오기
-    const riskData = await risk(user_input_traevel_country);
-    const riskLevel = riskData.result.score;
-    const alerts = riskData.result.alert;
-    const color = riskLevel >= 10 ? '#ef4444' : riskLevel >= 6 ? '#f59e0b' : '#10b981';
-
-    // 2. 위험도 출력 (맨 위에)
-    appendResult(`
-        <div style="padding: 20px; background: white; border-radius: 8px; border-left: 4px solid ${color}; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 16px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h3 style="margin: 0; color: #333;">국가 위험도</h3>
-            <span style="font-size: 32px; font-weight: bold; color: ${color};">${riskLevel}</span>
-          </div>
-          ${alerts && alerts.length > 0 ? `
-            <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee;">
-              <p style="margin: 0 0 8px 0; font-weight: 600; color: #666;">경보:</p>
-              ${alerts.map(alert => `<p style="margin: 4px 0; color: #666;">• ${alert}</p>`).join('')}
-            </div>
-          ` : ''}
-        </div>
-    `);
+        async function getAllmain(user_input_traevel_cities, user_input_traevel_country) {
+            // 1. 국가 위험도 한 번만 가져오기
+            const riskData = await risk(user_input_traevel_country);
+            const riskLevel = riskData.result.score;
+            const alerts = riskData.result.alert;
+            const color = riskLevel >= 10 ? '#ef4444' : riskLevel >= 6 ? '#f59e0b' : '#10b981';
+        
+            // 2. 위험도 출력 (맨 위에)
+            appendResult(`
+                <div style="padding: 20px; background: white; border-radius: 8px; border-left: 4px solid ${color}; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 16px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="margin: 0; color: #333;">국가 위험도</h3>
+                    <span style="font-size: 32px; font-weight: bold; color: ${color};">${riskLevel}</span>
+                  </div>
+                  ${alerts && alerts.length > 0 ? `
+                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee;">
+                      <p style="margin: 0 0 8px 0; font-weight: 600; color: #666;">경보:</p>
+                      ${alerts.map(alert => `<p style="margin: 4px 0; color: #666;">• ${alert}</p>`).join('')}
+                    </div>
+                  ` : ''}
+                </div>
+            `);
 
     // 3. 각 도시별 여행 카드 출력 (riskData 전달)
     for (const city of user_input_traevel_cities) {
@@ -447,17 +538,65 @@ async function getAllmain(user_input_traevel_cities, user_input_traevel_country)
 
 // main() 함수에서 riskData를 매개변수로 받도록 수정
 async function main(user_input_traevel_city, user_input_traevel_country, riskData) {
+    // 도시마다 고유 ID 부여
+    const progressId = `progress-${user_input_traevel_city.replace(/\s+/g, '-')}`;
+    const labelId = `label-${user_input_traevel_city.replace(/\s+/g, '-')}`;
+
+    let progress = 0;
     try {
-        const [weatherData, ticketData] = await Promise.all([
-            weather(user_input_traevel_city),
-            airticket(user_input_traevel_city)
-        ]);
-
-        // total 점수 계산시 이미 가져온 riskData 사용
-        const total_score = await total(weatherData.result, ticketData.result, riskData.result.score);
-
         appendResult(`
-            <div class="travel-card">
+            <div class="progress-container" id="container-${progressId}">
+                <label id="${labelId}" for="${progressId}" class="progress-label">
+                    ${user_input_traevel_city} 데이터 불러오는 중...
+                </label>
+                <progress id="${progressId}" value="0" max="100"></progress>
+            </div>
+        `);
+
+        const progressBar = document.getElementById(progressId);
+        const label = document.getElementById(labelId);
+
+        // 내부 전용 진행 함수
+        function incrementProgress(target, step = 1, interval = 20) {
+            return new Promise((resolve) => {
+                const timer = setInterval(() => {
+                    progress += step;
+                    if (progress > target) progress = target;
+                    progressBar.value = progress;
+                    if (progress >= target) {
+                        clearInterval(timer);
+                        resolve();
+                    }
+                }, interval);
+            });
+        }
+
+        // weather
+        const weatherPromise = weather(user_input_traevel_city)
+            .then(async (weatherData) => {
+                await incrementProgress(40, 1, 15);
+                return weatherData;
+            });
+
+        // airticket
+        const ticketPromise = airticket(user_input_traevel_city)
+            .then(async (ticketData) => {
+                await incrementProgress(80, 1, 15);
+                return ticketData;
+            });
+
+        // 모두 완료
+        const [weatherData, ticketData] = await Promise.all([weatherPromise, ticketPromise]);
+        const total_score = await total(weatherData.result, ticketData.result, riskData.result.score);
+        await incrementProgress(100, 1, 10);
+
+        // 완료 후 진행바 제거
+        const container = document.getElementById(`container-${progressId}`);
+        container.remove();
+
+        // 결과 표시
+        appendResult(`
+            <div class="travel-card fade-in">
                 <div class="card-header">
                     <h3 class="city-name">${user_input_traevel_city}</h3>
                 </div>
@@ -500,11 +639,11 @@ async function main(user_input_traevel_city, user_input_traevel_country, riskDat
                 </div>
             </div>
         `);
-
     } catch (err) {
         console.error("에러 발생:", err);
     }
 }
+
 
 
         async function inputvalue() {
@@ -601,17 +740,17 @@ const searchButton = document.querySelector('.search-form button');
 dateInput.addEventListener('change', function() {
     const selectedDate = new Date(this.value);
     const today = new Date();
-    today.setHours(0,0,0,0); // 오늘 날짜 00:00 기준
+    today.setHours(0,0,0,0);
 
     if (selectedDate < today) {
         warningText.style.display = 'block';
-        searchButton.disabled = true; // 버튼 비활성화
-        searchButton.style.backgroundColor = '#ccc'; // 비활성화 색
-        this.value = ''; // 입력 초기화
+        searchButton.disabled = true;
+        searchButton.style.backgroundColor = '#ccc';
+        this.value = '';
     } else {
         warningText.style.display = 'none';
-        searchButton.disabled = false; // 버튼 활성화
-        searchButton.style.backgroundColor = '#ff6b6b'; // 원래 색
+        searchButton.disabled = false;
+        searchButton.style.backgroundColor = '#ff6b6b';
     }
 });
 </script>
