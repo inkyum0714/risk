@@ -224,6 +224,7 @@
     background: linear-gradient(135deg, #5a91ff, #7fe3f7);
 }
 .travel-card {
+  margin-top: 300px;  
   margin-bottom: 24px;
   border-radius: 12px;
   overflow: hidden;
@@ -415,9 +416,9 @@
             
             <div class="card-body">
             <div class="info-section weather-section">
-                <span class="label">예상 날씨</span>
+                <span class="label">날씨 점수(불쾌 지수)</span>
                 <span class="value">${weatherData.result}</span>
-                <span class="value">${weatherData.result_list}
+
             </div>
             
             <div class="info-section score-section">
@@ -431,7 +432,7 @@
                 <div class="detail-item">
                     <span class="detail-label">가격</span>
                     <span class="detail-value price">${ticketData.result_data[0]["가격"] }</span>
-                </div>ticketData.result_data
+                </div>
                 <div class="detail-item">
                     <span class="detail-label">최초 탑승 시간</span>
                     <span class="detail-value">${ticketData.result_data[0]["최초 탑승 시간"]}</span>
@@ -513,69 +514,47 @@
             return res.json();
         }
         </script>
-    <script>
-        // Jinja2로 country_code_data_five_number의 key 값 전달
-        const countries = {{ country_code_data_five_number.keys() | list | tojson }};
-        const input = document.getElementById('country-input');
-        const autocompleteList = document.getElementById('autocomplete-list');
-        input.addEventListener('input', function() {
-            const val = this.value.toLowerCase();
-            autocompleteList.innerHTML = '';
-            if (!val) return false;
+<script>
+    // Jinja2로 세 가지 목록 받기
+    const countries = {{ country_code_data_five_number.keys() | list | tojson }};
+    const cities = {{ country_code_data_three.keys() | list | tojson }};
+    const airports = {{ airport_names | list | tojson }};
 
-            const matches = countries.filter(country => country.toLowerCase().startsWith(val));
-            matches.forEach(match => {
-                const item = document.createElement('div');
-                item.classList.add('autocomplete-item');
-                item.innerHTML = `<strong>${match.substr(0, val.length)}</strong>${match.substr(val.length)}`;
-                item.addEventListener('click', function() {
-                    input.value = match;
-                    autocompleteList.innerHTML = '';
-                });
-                autocompleteList.appendChild(item);
-            });
-        });
+    // 세 목록을 하나로 합침 (중복 제거)
+    const allPlaces = [...new Set([...countries, ...cities, ...airports])];
 
-        document.addEventListener('click', function(e) {
-            if (e.target != input) {
+    const input = document.getElementById('country-input');
+    const autocompleteList = document.getElementById('autocomplete-list');
+
+    // 입력 이벤트
+    input.addEventListener('input', function() {
+        const val = this.value.toLowerCase();
+        autocompleteList.innerHTML = '';
+        if (!val) return false;
+
+        // 나라·도시·공항 통합 검색 (입력값이 포함된 항목)
+        const matches = allPlaces.filter(place => place.toLowerCase().includes(val));
+
+        matches.forEach(match => {
+            const item = document.createElement('div');
+            item.classList.add('autocomplete-item');
+            // 일치 부분 강조
+            const startIndex = match.toLowerCase().indexOf(val);
+            item.innerHTML = 
+                `${match.substring(0, startIndex)}<strong>${match.substr(startIndex, val.length)}</strong>${match.substr(startIndex + val.length)}`;
+            item.addEventListener('click', function() {
+                input.value = match;
                 autocompleteList.innerHTML = '';
-            }
-        })
-    const airports = {{ airport_names | tojson }};
-
-    function setupAutocomplete(inputId, listId) {
-        const input = document.getElementById(inputId);
-        const list = document.getElementById(listId);
-
-        input.addEventListener('input', function() {
-            const val = this.value.toLowerCase();
-            list.innerHTML = '';
-            if (!val) return;
-
-            const matches = airports.filter(a => a.toLowerCase().includes(val));
-            matches.forEach(match => {
-                const item = document.createElement('div');
-                item.classList.add('autocomplete-item');
-                item.innerHTML = `<strong>${match.substr(0, val.length)}</strong>${match.substr(val.length)}`;
-                item.addEventListener('click', function() {
-                    input.value = match;
-                    list.innerHTML = '';
-                });
-                list.appendChild(item);
             });
+            autocompleteList.appendChild(item);
         });
+    });
 
-        // 클릭 외부 시 닫기
-        document.addEventListener('click', function(e) {
-            if (e.target !== input) list.innerHTML = '';
-        });
-    }
+    // 입력창 외부 클릭 시 리스트 닫기
+    document.addEventListener('click', function(e) {
+        if (e.target != input) autocompleteList.innerHTML = '';
+    });
+</script>
 
-    // 출발/도착 공항 자동완성 각각 적용
-    setupAutocomplete('from-airport', 'from-autocomplete');
-    setupAutocomplete('to-airport', 'to-autocomplete');
-
-    
-    </script>
 </body>
 </html>

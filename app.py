@@ -14,7 +14,7 @@ RISK_API_KEY = "jiDRCL1%2FKFqcHeMt6Q8%2FwIFNhQoj79XSfFhNpfZCeNWBmGu8oDp%2B7P0gPH
 
 @app.route("/", methods=["GET"])
 def home():
-    return render_template("index.html", country_code_data_five_number= country_code_data_five_number, airport_names=list(country_airport.keys()))
+    return render_template("index.html", country_code_data_five_number= country_code_data_five_number, airport_names=list(country_airport.keys()), country_code_data_three=country_code_data_three)
 
 @app.route("/inputvalue", methods=["GET", "POST"])
 def inputvalue():
@@ -84,8 +84,7 @@ def inputvalue():
 @app.route("/weather", methods=["GET", "POST"])
 def weather():
     try:
-        print("app")
-        sum_x = 0
+        sum_score = 0
         translation_result = "translation_result.json"
         with open(translation_result, "r", encoding="utf-8") as f:
             krkr_airport = json.load(f)
@@ -98,11 +97,11 @@ def weather():
                 city,
                 get_weather(city.strip(), user_input_day)
             ])
-        print(weather_result_list)
-        sum_x = sum(weather_result_list[0][1])
-        total_weather_score = sum_x / 7
-        print(total_weather_score)
-        print("날씨 끝남")
+        print(weather_result_list[0][1][0])
+        for i, v in enumerate(weather_result_list[0][1][0]):
+            print(i, v, type(v))
+        sum_score = sum(weather_result_list[0][1][0])
+        total_weather_score = sum_score / len(weather_result_list[0][1][0])
         return jsonify({"message": "success","result_list": weather_result_list, "result": round(total_weather_score)})
     except Exception as e:
         print(e)
@@ -132,6 +131,7 @@ def airticket():
         airport_result = air_ticket(toId, user_input_day)
         airport_result_score = airport_result[0]["총합 점수"]
         print("항공권 끝남")
+        print(airport_result)
         return jsonify({"message": "success","result": round(airport_result_score, 1), "result_data": airport_result})
     except:
         return jsonify({"message": "success","result": "응답하지 않습니다"})
