@@ -3,420 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>맞춤 여행 점수 판단 서비스</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body, html {
-            width: 100%;
-            height: 100%;
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-        }
-
-        /* 상하 분할 */
-        .top, .bottom {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        .top {
-            height: 40%;
-            background: linear-gradient(to right, #89f7fe, #66a6ff);
-            padding: 20px;
-        }
-
-        .bottom {
-            padding: 20px;
-            overflow-y: auto;
-            width: 100%;
-        }
-
-        h1 {
-            color: white;
-            margin-bottom: 20px;
-        }
-
-        /* 검색폼 */
-        .search-form {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            gap: 10px;
-            width: 100%;
-            
-        }
-
-        .search-form input[type="text"],
-        .search-form input[type="date"] {
-            padding: 10px;
-            border-radius: 8px;
-            border: none;
-            font-size: 16px;
-            outline: none;
-        }
-
-        .search-form input[type="text"] {
-            width: 220px;
-        }
-
-        .search-form input[type="date"] {
-            width: 160px;
-        }
-
-        .search-form button {
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            background-color: #ff6b6b;
-            color: white;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-
-        .search-form button:hover {
-            background-color: #ff4757;
-        }
-
-        /* 자동완성 드롭다운 */
-        .autocomplete-items {
-            position: absolute;
-            top: 45px;
-            left: 0;
-            right: 0;
-            background-color: white;
-            border: 1px solid #d4d4d4;
-            border-top: none;
-            border-radius: 0 0 8px 8px;
-            z-index: 99;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .autocomplete-item {
-            padding: 10px;
-            cursor: pointer;
-        }
-
-        .autocomplete-item:hover {
-            background-color: #e9e9e9;
-        }
-
-        /* 검색 결과 */
-        .weather-results {
-            margin-top: 20px;
-            background: rgba(255,255,255,0.8);
-            padding: 15px;
-            border-radius: 8px;
-            width: 120%;
-            max-width: 720px;
-            height: 120000px;
-        }
-
-        /* 추천 여행지 카드 */
-        .destination {
-            background-color: white;
-            width: 90%;
-            max-width: 600px;
-            margin-bottom: 20px;
-            border-radius: 12px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-            display: flex;
-            overflow: hidden;
-            transition: transform 0.3s;
-        }
-
-        .destination:hover {
-            transform: translateY(-5px);
-        }
-
-        .destination img {
-            width: 40%;
-            object-fit: cover;
-        }
-
-        .destination-info {
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            width: 60%;
-        }
-
-        .destination-info h3 {
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .destination-info p {
-            margin-bottom: 5px;
-            color: #555;
-        }
-
-        .score {
-            font-weight: bold;
-            color: #ff6b6b;
-        }
-
-        /* 항공권 검색 폼 */
-.flight-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 800px;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    margin-top: 20px;
-}
-
-/* 각 입력 그룹 (라벨 + 입력창) */
-.flight-group {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    width: 100%;
-    gap: 15px;
-    margin-bottom: 15px;
-}
-
-/* 입력창 스타일 통합 */
-.flight-group input {
-    flex: 1 1 45%;
-    min-width: 200px;
-    padding: 10px;
-    font-size: 15px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    outline: none;
-    transition: border-color 0.2s;
-}
-
-.flight-group input:focus {
-    border-color: #66a6ff;
-}
-
-/* 버튼 스타일 */
-.flight-form button {
-    margin-top: 10px;
-    padding: 12px 25px;
-    background: linear-gradient(135deg, #66a6ff, #89f7fe);
-    border: none;
-    border-radius: 10px;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.2s, background-color 0.3s;
-}
-
-.flight-form button:hover {
-    transform: scale(1.05);
-    background: linear-gradient(135deg, #5a91ff, #7fe3f7);
-}
-.travel-card {
-    max-width: 720px;
-    margin: 16px auto;       /* 상하 여백 + 중앙 정렬 */
-}
-
-.travel-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.card-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
-}
-
-.city-name {
-  margin: 0;
-  color: #fff;
-  font-size: 24px;
-  font-weight: 600;
-}
-
-.card-body {
-  padding: 20px;
-}
-
-.info-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  margin-bottom: 12px;
-  border-radius: 8px;
-  background: #f8f9fa;
-}
-
-.weather-section {
-  background: #e3f2fd;
-  border-left: 4px solid #2196f3;
-}
-
-.score-section {
-  background: #fff3e0;
-  border-left: 4px solid #ff9800;
-}
-
-.label {
-  font-weight: 600;
-  color: #555;
-  font-size: 14px;
-}
-
-.value {
-  font-size: 16px;
-  color: #333;
-  font-weight: 500;
-}
-
-.value.score {
-  background: #ff9800;
-  color: #fff;
-  padding: 4px 12px;
-  border-radius: 16px;
-  font-weight: 600;
-}
-
-.ticket-details {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 2px solid #f0f0f0;
-}
-
-.details-title {
-  margin: 0 0 16px 0;
-  font-size: 16px;
-  color: #666;
-  font-weight: 600;
-}
-
-.detail-grid {
-  display: grid;
-  gap: 12px;
-}
-
-.detail-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 12px;
-  background: #fafafa;
-  border-radius: 6px;
-  border: 1px solid #e0e0e0;
-}
-
-.detail-label {
-  font-size: 13px;
-  color: #666;
-  font-weight: 500;
-}
-
-.detail-value {
-  font-size: 14px;
-  color: #333;
-  font-weight: 600;
-}
-
-.detail-value.price {
-  color: #4caf50;
-  font-size: 16px;
-}
-
-.detail-value.airline {
-  color: #667eea;
-}
-#response-container > div:first-child {
-    max-width: 720px;
-    margin: 0 auto 16px auto;  /* 상하 마진 + 중앙 정렬 */
-}
-
-#response-container {
-    max-width: 720px;       /* 카드 최대 너비 */
-    width: 100%;
-    margin: 0 auto;         /* 중앙 정렬 */
-    overflow-y: auto;
-    background: rgba(255,255,255,0.8);
-    padding: 15px;
-    border-radius: 8px;
-}
-/* 진행바 스타일 */
-.progress-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: white;
-    border-radius: 10px;
-    padding: 15px;
-    margin: 15px auto;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    width: 80%;
-    max-width: 600px;
-    animation: fadeIn 0.3s ease-in-out;
-}
-
-.progress-label {
-    font-size: 15px;
-    font-weight: 600;
-    color: #555;
-    margin-bottom: 8px;
-}
-
-progress {
-    width: 100%;
-    height: 20px;
-    border-radius: 10px;
-    overflow: hidden;
-    -webkit-appearance: none;
-    appearance: none;
-}
-
-progress::-webkit-progress-bar {
-    background-color: #f3f3f3;
-    border-radius: 10px;
-}
-
-progress::-webkit-progress-value {
-    background: linear-gradient(90deg, #4facfe 0%);
-    border-radius: 10px;
-    transition: width 0.1s ease;
-}
-
-/* 등장 애니메이션 */
-.fade-in {
-    animation: fadeIn 0.6s ease-in-out;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* 반응형 디자인 */
-@media (min-width: 768px) {
-  .detail-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-</style>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 <div class="top">
+    <h2>맞춤 여행 점수 판단 서비스</h2>
     <!-- 상단 검색 영역 -->
     <form class="search-form" action="/index" method="get" autocomplete="off">
         <div class="input-group">
@@ -427,7 +19,6 @@ progress::-webkit-progress-value {
         <div class="input-group">
             <label for="country-input">도착</label>
             <input id="country-input" type="text" placeholder="나라, 도시, 공항중 하나를 입력하세요" name="user_input_traevel" required>
-            <div id="autocomplete-list" class="autocomplete-items"></div>
         </div>
 
         <div class="input-group">
@@ -435,7 +26,6 @@ progress::-webkit-progress-value {
             <input type="date" id="user_input_day" name="user_input_day" required>
             <small id="date-warning" style="color: red; display: none; margin-top: 4px;">과거 날짜는 선택할 수 없습니다.</small>
         </div>
-
         <button id="searchButton">검색</button>
     </form>
 </div>
@@ -460,75 +50,75 @@ progress::-webkit-progress-value {
         {% endfor %}
     </div>
     <script>
-document.getElementById('searchButton').addEventListener('click', function(event){
-    event.preventDefault(); // 기본 submit 방지
-    inputvalue();           // AJAX 호출
-});
+        document.getElementById('searchButton').addEventListener('click', function(event){
+            event.preventDefault(); // 기본 submit 방지
+            inputvalue();           // AJAX 호출
+        });
 
-async function inputvalue() {
-    const user_input_traevel = document.getElementById('country-input').value;
-    const container = document.querySelector("#response-container")
-    container.innerHTML = "";
-    const url = "http://127.0.0.1:8000/inputvalue?user_input_traevel="+user_input_traevel;
-    $.ajax({
-        url : url,
-        method : "GET",
-        success: function(response) {
-            let user_input_traevel_data = response.result;
-            console.log(user_input_traevel_data)
-            console.log(user_input_traevel_data.country)
-            console.log(user_input_traevel_data.city)
-            console.log(user_input_traevel_data.airport)
-            getAllmain(user_input_traevel_data.city, user_input_traevel_data.country)
-        },
-        error: function(err) {
-            console.error("inputvalue AJAX error:", err);
+        async function inputvalue() {
+            const user_input_traevel = document.getElementById('country-input').value;
+            const container = document.querySelector("#response-container")
+            container.innerHTML = "";
+            const url = "http://127.0.0.1:8000/inputvalue?user_input_traevel="+user_input_traevel;
+            $.ajax({
+                url : url,
+                method : "GET",
+                success: function(response) {
+                    let user_input_traevel_data = response.result;
+                    console.log(user_input_traevel_data)
+                    console.log(user_input_traevel_data.country)
+                    console.log(user_input_traevel_data.city)
+                    console.log(user_input_traevel_data.airport)
+                    getAllmain(user_input_traevel_data.city, user_input_traevel_data.country)
+                },
+                error: function(err) {
+                    console.error("inputvalue AJAX error:", err);
+                }
+            })
         }
-    })
-}
-</script>
-<script>
+    </script>
+    <script>
     function incrementProgress(target, step = 1, interval = 20) {
-    return new Promise((resolve) => {
-        const timer = setInterval(() => {
-            progress += step;
-            if (progress > target) progress = target; // 최대값 제한
-            progressBar.value = progress;
-            if (progress >= target) {
-                clearInterval(timer);
-                resolve();
-            }
-        }, interval);
-    });
-}
+        return new Promise((resolve) => {
+            const timer = setInterval(() => {
+                progress += step;
+                if (progress > target) progress = target; // 최대값 제한
+                progressBar.value = progress;
+                if (progress >= target) {
+                    clearInterval(timer);
+                    resolve();
+                }
+            }, interval);
+        });
+    }
     function appendResult(message) {
         const container = document.querySelector("#response-container")
         const div = document.createElement("div")
         div.innerHTML = message
         container.appendChild(div)
     }
-        async function getAllmain(user_input_traevel_cities, user_input_traevel_country) {
-            // 1. 국가 위험도 한 번만 가져오기
-            const riskData = await risk(user_input_traevel_country);
-            const riskLevel = riskData.result.score;
-            const alerts = riskData.result.alert;
-            const color = riskLevel >= 10 ? '#ef4444' : riskLevel >= 6 ? '#f59e0b' : '#10b981';
-        
-            // 2. 위험도 출력 (맨 위에)
-            appendResult(`
-                <div style="padding: 20px; background: white; border-radius: 8px; border-left: 4px solid ${color}; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 16px;">
-                  <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3 style="margin: 0; color: #333;">국가 위험도</h3>
-                    <span style="font-size: 32px; font-weight: bold; color: ${color};">${riskLevel}</span>
-                  </div>
-                  ${alerts && alerts.length > 0 ? `
-                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee;">
-                      <p style="margin: 0 0 8px 0; font-weight: 600; color: #666;">경보:</p>
-                      ${alerts.map(alert => `<p style="margin: 4px 0; color: #666;">• ${alert}</p>`).join('')}
-                    </div>
-                  ` : ''}
+    async function getAllmain(user_input_traevel_cities, user_input_traevel_country) {
+        // 1. 국가 위험도 한 번만 가져오기
+        const riskData = await risk(user_input_traevel_country);
+        const riskLevel = riskData.result.score;
+        const alerts = riskData.result.alert;
+        const color = riskLevel >= 10 ? '#ef4444' : riskLevel >= 6 ? '#f59e0b' : '#10b981';
+    
+        // 2. 위험도 출력 (맨 위에)
+        appendResult(`
+            <div style="padding: 20px; background: white; border-radius: 8px; border-left: 4px solid ${color}; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; color: #333;">국가 위험도</h3>
+                <span style="font-size: 32px; font-weight: bold; color: ${color};">${riskLevel}</span>
                 </div>
-            `);
+                ${alerts && alerts.length > 0 ? `
+                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee;">
+                    <p style="margin: 0 0 8px 0; font-weight: 600; color: #666;">경보:</p>
+                    ${alerts.map(alert => `<p style="margin: 4px 0; color: #666;">• ${alert}</p>`).join('')}
+                </div>
+                ` : ''}
+            </div>
+        `);
 
     // 3. 각 도시별 여행 카드 출력 (riskData 전달)
     for (const city of user_input_traevel_cities) {
@@ -645,25 +235,6 @@ async function main(user_input_traevel_city, user_input_traevel_country, riskDat
 }
 
 
-
-        async function inputvalue() {
-            const user_input_traevel = document.getElementById('country-input').value;
-            const container = document.querySelector("#response-container")
-            container.innerHTML = "";
-            const url = "http://127.0.0.1:8000/inputvalue?user_input_traevel="+user_input_traevel;
-                $.ajax({
-                    url : url,
-                    method : "GET",
-                    success: function(response) {
-                        let user_input_traevel_data = response.result;
-                        console.log(user_input_traevel_data)
-                        console.log(user_input_traevel_data.country)
-                        console.log(user_input_traevel_data.city)
-                        console.log(user_input_traevel_data.airport)
-                        getAllmain(user_input_traevel_data.city, user_input_traevel_data.country)
-                    }
-                })
-        }
         async function weather(city) {
             const date = document.getElementById('user_input_day').value;
             const res = await fetch(`http://127.0.0.1:8000/weather?user_input_traevel_city=${city}&date=${date}`);
@@ -688,71 +259,68 @@ async function main(user_input_traevel_city, user_input_traevel_country, riskDat
             return data.result; 
         }
 
-        </script>
-<script>
-    // Jinja2로 세 가지 목록 받기
-    const countries = {{ country_code_data_five_number.keys() | list | tojson }};
-    const cities = {{ country_code_data_three.keys() | list | tojson }};
-    const airports = {{ airport_names | list | tojson }};
+    </script>
+    <script>
+        // Jinja2로 세 가지 목록 받기
+        const countries = {{ country_code_data_five_number.keys() | list | tojson }};
+        const cities = {{ country_code_data_three.keys() | list | tojson }};
+        const airports = {{ airport_names | list | tojson }};
 
-    // 세 목록을 하나로 합침 (중복 제거)
-    const allPlaces = [...new Set([...countries, ...cities, ...airports])];
+        // 세 목록을 하나로 합침 (중복 제거)
+        const allPlaces = [...new Set([...countries, ...cities, ...airports])];
 
-    const input = document.getElementById('country-input');
-    const autocompleteList = document.getElementById('autocomplete-list');
+        const input = document.getElementById('country-input');
 
-    // 입력 이벤트
-    input.addEventListener('input', function() {
-        const val = this.value.toLowerCase();
-        autocompleteList.innerHTML = '';
-        if (!val) return false;
+        // 입력 이벤트
+        input.addEventListener('input', function() {
+            const val = this.value.toLowerCase();
+            autocompleteList.innerHTML = '';
+            if (!val) return false;
 
-        // 나라·도시·공항 통합 검색 (입력값이 포함된 항목)
-        const matches = allPlaces.filter(place => place.toLowerCase().includes(val));
+            // 나라·도시·공항 통합 검색 (입력값이 포함된 항목)
+            const matches = allPlaces.filter(place => place.toLowerCase().includes(val));
 
-        matches.forEach(match => {
-            const item = document.createElement('div');
-            item.classList.add('autocomplete-item');
-            // 일치 부분 강조
-            const startIndex = match.toLowerCase().indexOf(val);
-            item.innerHTML = 
-                `${match.substring(0, startIndex)}<strong>${match.substr(startIndex, val.length)}</strong>${match.substr(startIndex + val.length)}`;
-            item.addEventListener('click', function() {
-                input.value = match;
-                autocompleteList.innerHTML = '';
+            matches.forEach(match => {
+                const item = document.createElement('div');
+                item.classList.add('autocomplete-item');
+                // 일치 부분 강조
+                const startIndex = match.toLowerCase().indexOf(val);
+                item.innerHTML = 
+                    `${match.substring(0, startIndex)}<strong>${match.substr(startIndex, val.length)}</strong>${match.substr(startIndex + val.length)}`;
+                item.addEventListener('click', function() {
+                    input.value = match;
+                    autocompleteList.innerHTML = '';
+                });
+                autocompleteList.appendChild(item);
             });
-            autocompleteList.appendChild(item);
         });
+
+        // 입력창 외부 클릭 시 리스트 닫기
+        document.addEventListener('click', function(e) {
+            if (e.target != input) autocompleteList.innerHTML = '';
+        });
+    </script>
+    <script>
+    const dateInput = document.getElementById('user_input_day');
+    const warningText = document.getElementById('date-warning');
+    const searchButton = document.querySelector('.search-form button');
+
+    dateInput.addEventListener('change', function() {
+        const selectedDate = new Date(this.value);
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        if (selectedDate < today) {
+            warningText.style.display = 'block';
+            searchButton.disabled = true;
+            searchButton.style.backgroundColor = '#ccc';
+            this.value = '';
+        } else {
+            warningText.style.display = 'none';
+            searchButton.disabled = false;
+            searchButton.style.backgroundColor = '#ff6b6b';
+        }
     });
-
-    // 입력창 외부 클릭 시 리스트 닫기
-    document.addEventListener('click', function(e) {
-        if (e.target != input) autocompleteList.innerHTML = '';
-    });
-</script>
-
-
-<script>
-const dateInput = document.getElementById('user_input_day');
-const warningText = document.getElementById('date-warning');
-const searchButton = document.querySelector('.search-form button');
-
-dateInput.addEventListener('change', function() {
-    const selectedDate = new Date(this.value);
-    const today = new Date();
-    today.setHours(0,0,0,0);
-
-    if (selectedDate < today) {
-        warningText.style.display = 'block';
-        searchButton.disabled = true;
-        searchButton.style.backgroundColor = '#ccc';
-        this.value = '';
-    } else {
-        warningText.style.display = 'none';
-        searchButton.disabled = false;
-        searchButton.style.backgroundColor = '#ff6b6b';
-    }
-});
-</script>
+    </script>
 </body>
 </html>
