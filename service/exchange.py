@@ -3,16 +3,15 @@ import requests
 
 EXCHANGE_API_KEY = "fxr_live_0e9f7bba09e36d62b800cfea2147bdd6efaf"
 
-def exchange(user_base, user_currencies, amount):
+def exchange(user_base):
+    print(user_base)
     base = country_code_data_three[user_base]
-    currencies = country_code_data_three[user_currencies]
-    print(f"Base: {base}, Currencies: {currencies}")
-    exchange_result = []
-    url = f"https://api.fxratesapi.com/latest?amount={amount}&base={base}&currencies={currencies}&places=6&format=json&api_key={EXCHANGE_API_KEY}"
-
+    print(f"Base: {base}")
+    url = f"https://api.fxratesapi.com/latest?amount=1&base={base}&currencies=KRW&places=6&format=json&api_key={EXCHANGE_API_KEY}"
+    print(url)
     symbol = None
     for currency in symbol_data:
-        if currency["code"] == currencies:
+        if currency["code"] == base:
             symbol = currency["symbol"]
             break
 
@@ -22,10 +21,11 @@ def exchange(user_base, user_currencies, amount):
 
         symbol = None
         for currency in symbol_data:
-            if currency["code"] == currencies:
+            if currency["code"] == 'KRW':
                 symbol = currency["symbol"]
                 break
-        printr_data_1 = round(data['rates'][currencies], 2)
+        printr_data_1 = round(data['rates']['KRW'], 2)
         printr_data = f"{printr_data_1}{symbol}"
-        exchange_result.append(printr_data)
-        return exchange_result
+        printr_data
+        print("환율 데이터 가져오기 성공:", printr_data)
+        return printr_data

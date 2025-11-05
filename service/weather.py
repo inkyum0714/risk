@@ -1,29 +1,50 @@
 from data.Symbol import country_code_data_five_number
 from datetime import datetime, timedelta
-import requests
+import requests, json, os
 
 WEATHER_API_KEY = "lfwWiH5cTMe8Foh-XJzH6g"
 
 def get_weather(user_input_city, user_input_day):
-    number = 1
-    print(user_input_city,user_input_day)
-    print("wea")
-    weather_result = []
+    file_path = "weather_data.json"
+    if not os.path.exists(file_path):
+        data = {}
+    else:
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                content = f.read().strip()
+                data = json.loads(content) if content else {}
+        except json.JSONDecodeError:
+            data = {}
+    weather_result = [] 
     weather_data = []
-    print(user_input_city)
     user_input_day = user_input_day.replace("-", "")
     user_input_day_dt = datetime.strptime(user_input_day, "%Y%m%d")
     today = datetime.today()
-
+    flag = False
     if user_input_day_dt > today:
         user_input_day_dt = user_input_day_dt.replace(year=user_input_day_dt.year - 1)
 
     date_list_datetime = [user_input_day_dt + timedelta(days=i) for i in range(-3, 4)]
     dates = [int(d.strftime("%Y%m%d")) for d in date_list_datetime]
-
     country = country_code_data_five_number[user_input_city]
+    print("try진입")
     try:
         for day in dates:
+            str_day = str(day)
+            flag = False
+            for i in range(len(data.get(user_input_city, []))):
+                if str(data[user_input_city][i]["날짜"])[:8] == str_day:
+                    print("최적화")
+                    weather_data.append(data[user_input_city][i])
+                    temp = data[user_input_city][i]["기온"]
+                    rh = data[user_input_city][i]["상대습도"]
+                    discomfort_index = discomfort_index = temp - 0.55 * (1 - rh/100) * (temp - 14.5)
+                    weather_result.append(round(discomfort_index, 1))
+                    flag =True
+                    break
+            if flag == True:
+                continue
+
             url = f"https://apihub.kma.go.kr/api/typ01/url/gts_syn1.php?tm={day}1200&dtm=2&stn=47&help=0&authKey={WEATHER_API_KEY}&stn={country}" #https://apihub.kma.go.kr/api/typ01/url/gts_syn1.php?tm=2025-10-261200&dtm=2&stn=47&help=0&authKey=lfwWiH5cTMe8Foh-XJzH6g&stn=
             print(url)
             response = requests.get(url)
@@ -40,20 +61,35 @@ def get_weather(user_input_city, user_input_day):
             for line in lines:
                 parts = line.split()
                 if len(parts) >= 13:
-                    part = [int(float(parts[0])), int(float(parts[9])), int(float(parts[10])), int(float(parts[12]))]
-                    weather_data.append(part)
+                    date = int(float(parts[0]))
+                    wind = int(float(parts[9]))
+                    temp = int(float(parts[10]))
+                    rh = int(float(parts[12]))
 
-                    # discomfort_index 계산을 반복문 안으로 이동
-                    temp = float(parts[10])       # 기온
-                    rh = float(parts[12])         # 상대습도
-                    discomfort_index = temp - 0.55 * (1 - rh/100) * (temp - 14.5)
+                    # weather_data와 weather_result 처리
+                    weather_data.append([date, wind, temp, rh])
+                    discomfort_index = float(parts[10]) - 0.55 * (1 - float(parts[12])/100) * (float(parts[10]) - 14.5)
                     weather_result.append(round(discomfort_index, 1))
 
+                    # city key 존재 확인
+                    if user_input_city not in data or not isinstance(data[user_input_city], list):
+                        data[user_input_city] = []
+
+                    # 중복 체크 후 데이터 추가
+                    if not any(record["날짜"] == date for record in data[user_input_city]):
+                        data[user_input_city].append({
+                            "날짜": date,
+                            "풍속": wind,
+                            "기온": temp,
+                            "상대습도": rh,
+                            "총합": [date, wind, temp, rh]
+                        })
+
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
         if not weather_data:
             return ["데이터 없음"]
     except TimeoutError as e:
         print("기상청 서버 문제")
 
-
-    print(weather_result)
     return weather_result, weather_data 
