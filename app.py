@@ -7,8 +7,6 @@ from service.weather import get_weather
 from service.service import find_country_by_city
 from service.air_ticket import air_ticket
 from service.risk import user_risk
-from service.inputvalue import inputvalue_service
-import traceback
 
 app = Flask(__name__)
 
@@ -20,10 +18,63 @@ def home():
 def inputvalue():
     country_cities_number = 0
     user_input_traevel = request.args.get("user_input_traevel")
-    print(user_input_traevel)
-    user_input_traevel_data = inputvalue_service(user_input_traevel)
-    print(user_input_traevel_data)
-    return jsonify({"message": "success", "result": user_input_traevel_data})
+    user_input_day = request.form.get("user_input_day", "").strip() #날짜
+    translation_result = "translation_result.json"#얘는 한국어 공항과 한국어 도시를 해주는
+    user_request_query = "user_requset_query.json"
+    # 2. JSON 파일 읽기
+    with open(translation_result, "r", encoding="utf-8") as f:
+        krkr_airport = json.load(f)
+    user_input_traevel_data = {
+        "country": "",
+        "city": [],
+        "airport": []
+    }
+    user_total_city_data = {}
+    if user_input_traevel in country_code_data_three: #나라
+        user_input_traevel_type = "country"
+        user_input_traevel_data["country"] = user_input_traevel
+        for i in range(len(country_cities[0]["children"])):
+            if country_cities[0]["children"][i]["name"] == user_input_traevel:
+                print("옴")
+                for j in range(len(country_cities[0]["children"][i]["children"])):
+                    user_input_traevel_data["city"].append(country_cities[0]["children"][i]["children"][j]["name"])
+
+        country_cities_number = 0
+        print(user_input_traevel_data["city"])
+        for key, value in krkr_airport.items():
+            for city in user_input_traevel_data["city"]:
+                if value == city:
+                    user_input_traevel_data["airport"].append(key)
+        return jsonify({"message": "success", "result": user_input_traevel_data})
+
+
+    elif user_input_traevel in country_airport: #공항
+        user_input_traevel_type = "airport"
+        for i in range(len(country_cities[0]["children"])):
+            for j in range(len(country_cities[0]["children"][i]["children"])):
+                if country_cities[0]["children"][i]["children"][j]["name"] == krkr_airport[user_input_traevel]:
+                    user_input_traevel_data["country"] = country_cities[0]["children"][i]["name"]
+                    break
+        user_input_traevel_data["city"] = [krkr_airport[user_input_traevel]]
+        user_input_traevel_data["airport"] = user_input_traevel
+        return jsonify({"message": "success", "result": user_input_traevel_data})
+
+
+    elif user_input_traevel in country_code_data_five_number: #도시
+        user_input_traevel_type = "city"
+        for i in range(len(country_cities[0]["children"])):
+            for j in range(len(country_cities[0]["children"][i]["children"])):
+                if country_cities[0]["children"][i]["children"][j]["name"] == user_input_traevel:
+                    user_input_traevel_data["country"] = country_cities[0]["children"][i]["name"]
+                    break
+        found_key = None
+        for key, value in krkr_airport.items():
+            if value == user_input_traevel:
+                found_key = key
+                user_input_traevel_data["airport"].append(key)
+                country_cities_number += 1
+        user_input_traevel_data["city"] = [user_input_traevel]
+        return jsonify({"message": "success", "result": user_input_traevel_data})
         
 @app.route("/weather", methods=["GET", "POST"])
 def weather():
@@ -40,7 +91,6 @@ def weather():
                 get_weather(city.strip(), user_input_day)
             ])
         print(weather_result_list[0][1][0])
-        
         sum_score = sum(weather_result_list[0][1][0])
         total_weather_score = sum_score / len(weather_result_list[0][1][0])
         return jsonify({"message": "success","result_list": weather_result_list, "result": round(total_weather_score)})

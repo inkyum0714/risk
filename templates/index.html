@@ -19,7 +19,10 @@
         <div class="input-group">
             <label for="country-input">도착</label>
             <input id="country-input" type="text" placeholder="나라, 도시, 공항중 하나를 입력하세요" name="user_input_traevel" required>
+<<<<<<< HEAD
             <div id="autocomplete-list" class="autocomplete-list"></div>
+=======
+>>>>>>> 4b2458af3958f5c97d9a841cb612b2dc5d1885bf
         </div>
 
         <div class="input-group">
@@ -99,8 +102,11 @@
         container.appendChild(div)
     }
     async function getAllmain(user_input_traevel_cities, user_input_traevel_country) {
+<<<<<<< HEAD
         const exchangeData = await exchange(user_input_traevel_country);
         const exchangeRate = exchangeData.result;
+=======
+>>>>>>> 4b2458af3958f5c97d9a841cb612b2dc5d1885bf
         // 1. 국가 위험도 한 번만 가져오기
         const riskData = await risk(user_input_traevel_country);
         const riskLevel = riskData.result.score;
@@ -122,6 +128,7 @@
                 ` : ''}
             </div>
         `);
+<<<<<<< HEAD
 
         appendResult(`
             <div style="padding: 20px; background: white; border-radius: 8px; border-left: 4px solid #3b82f6; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 16px;">
@@ -132,6 +139,8 @@
         <p style="margin-top: 12px; color: #666;">현재 ${user_input_traevel_country} 1 단위 기준 KRW 환율</p>
     </div>
 `);
+=======
+>>>>>>> 4b2458af3958f5c97d9a841cb612b2dc5d1885bf
 
     // 3. 각 도시별 여행 카드 출력 (riskData 전달)
     for (const city of user_input_traevel_cities) {
@@ -280,16 +289,27 @@ async function main(user_input_traevel_city, user_input_traevel_country, riskDat
         }
 
     </script>
+<<<<<<< HEAD
 <script>
     const countries = {{ country_code_data_five_number.keys() | list | tojson | safe }} || [];
     const cities = {{ country_code_data_three.keys() | list | tojson | safe }} || [];
     const airports = {{ airport_names | list | tojson | safe }} || [];
 
     const allPlaces = [...new Set([...countries, ...cities, ...airports])];
+=======
+    <script>
+        // Jinja2로 세 가지 목록 받기
+        const countries = {{ country_code_data_five_number.keys() | list | tojson }};
+        const cities = {{ country_code_data_three.keys() | list | tojson }};
+        const airports = {{ airport_names | list | tojson }};
 
-    const input = document.getElementById('country-input');
-    const autocompleteList = document.getElementById('autocomplete-list');
+        // 세 목록을 하나로 합침 (중복 제거)
+        const allPlaces = [...new Set([...countries, ...cities, ...airports])];
+>>>>>>> 4b2458af3958f5c97d9a841cb612b2dc5d1885bf
 
+        const input = document.getElementById('country-input');
+
+<<<<<<< HEAD
     // 입력 이벤트
     input.addEventListener('input', function() {
         const val = this.value.toLowerCase();
@@ -315,8 +335,59 @@ async function main(user_input_traevel_city, user_input_traevel_country, riskDat
             });
 
             autocompleteList.appendChild(item);
+=======
+        // 입력 이벤트
+        input.addEventListener('input', function() {
+            const val = this.value.toLowerCase();
+            autocompleteList.innerHTML = '';
+            if (!val) return false;
+
+            // 나라·도시·공항 통합 검색 (입력값이 포함된 항목)
+            const matches = allPlaces.filter(place => place.toLowerCase().includes(val));
+
+            matches.forEach(match => {
+                const item = document.createElement('div');
+                item.classList.add('autocomplete-item');
+                // 일치 부분 강조
+                const startIndex = match.toLowerCase().indexOf(val);
+                item.innerHTML = 
+                    `${match.substring(0, startIndex)}<strong>${match.substr(startIndex, val.length)}</strong>${match.substr(startIndex + val.length)}`;
+                item.addEventListener('click', function() {
+                    input.value = match;
+                    autocompleteList.innerHTML = '';
+                });
+                autocompleteList.appendChild(item);
+            });
+>>>>>>> 4b2458af3958f5c97d9a841cb612b2dc5d1885bf
         });
+
+        // 입력창 외부 클릭 시 리스트 닫기
+        document.addEventListener('click', function(e) {
+            if (e.target != input) autocompleteList.innerHTML = '';
+        });
+    </script>
+    <script>
+    const dateInput = document.getElementById('user_input_day');
+    const warningText = document.getElementById('date-warning');
+    const searchButton = document.querySelector('.search-form button');
+
+    dateInput.addEventListener('change', function() {
+        const selectedDate = new Date(this.value);
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        if (selectedDate < today) {
+            warningText.style.display = 'block';
+            searchButton.disabled = true;
+            searchButton.style.backgroundColor = '#ccc';
+            this.value = '';
+        } else {
+            warningText.style.display = 'none';
+            searchButton.disabled = false;
+            searchButton.style.backgroundColor = '#ff6b6b';
+        }
     });
+<<<<<<< HEAD
 
     // 엔터로 선택 가능
     input.addEventListener('keydown', function(e) {
@@ -356,6 +427,8 @@ async function main(user_input_traevel_city, user_input_traevel_country, riskDat
             searchButton.style.backgroundColor = '#ff6b6b';
         }
     });
+=======
+>>>>>>> 4b2458af3958f5c97d9a841cb612b2dc5d1885bf
     </script>
 </body>
 </html>
