@@ -78,12 +78,9 @@ def air_ticket(user_input_toId, departDate):
                             deal_dic["총합 점수"] = 1000000 / (int(deal_dic["가격"]) * 0.6) + int(deal_dic["위탁수하물 용량"]) + int(deal_dic["기내수하물 용량"]) * 1.2 
                             air_ticket_result.append(deal_dic)
 
-
-    except:
-        air_ticket_result = [{"항공사 이름": "정보 없음", "총합 점수": 0}]
-                        
-
-
++   except Exception as e:
++       print("⚠ 항공권 처리 중 예외:", e)
++       air_ticket_result = [{"항공사 이름": "정보 없음", "총합 점수": 0}]
     with open("flights_result.json", "w", encoding="utf-8") as f:
         json.dump(air_ticket_result, f, ensure_ascii=False, indent=4)
-    return air_ticket_result      
+    return air_ticket_result

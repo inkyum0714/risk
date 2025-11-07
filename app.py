@@ -1,6 +1,6 @@
 import json
 from data.Symbol import country_code_data_three, country_code_data_five_number, country_airport, country_cities
-from flask import Flask, request, render_template, redirect, jsonify
+from flask import Flask, request, render_template, jsonify, make_response
 from flask_cors import CORS
 from service.exchange import exchange
 from service.weather import get_weather
@@ -14,8 +14,8 @@ app = Flask(__name__)
 def home():
     return render_template("index.html", country_code_data_five_number= country_code_data_five_number, airport_names=list(country_airport.keys()), country_code_data_three=country_code_data_three)
 
-@app.route("/inputvalue", methods=["GET", "POST"])
-def inputvalue():
+@app.route("/search", methods=["GET", "POST"])
+def search():
     country_cities_number = 0
     user_input_traevel = request.args.get("user_input_traevel")
     user_input_day = request.form.get("user_input_day", "").strip() #날짜
@@ -162,6 +162,18 @@ def rate():
     exchange_result = exchange(base)
     print({"message": "success","result": exchange_result})
     return jsonify({"message": "success","result": exchange_result})
+
+
+@app.route('/set_cookie')
+def set_cookie():
+    resp = make_response("쿠키 저장 완료!")
+    resp.set_cookie('theme', 'dark', max_age=60 * 60 * 24 * 7)  # 1주일 유지
+    return resp
+
+@app.route('/get_cookie')
+def get_cookie():
+    theme = request.cookies.get('theme', '기본값')
+    return f"현재 테마: {theme}"
 
 
 
