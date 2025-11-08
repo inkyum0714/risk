@@ -1,11 +1,11 @@
-import json
+import json, os
 
 def user_risk(user_input_country):
     risk_data_score = {}
+    current_dir = os.path.dirname(__file__) 
     risk_data_score["score"] = 0
     risk_data_score["alert"] = []
-    risk_data = "risk_data.json"
-
+    risk_data = os.path.join(current_dir, "..", "data", "country_code_data_three.json")
     with open(risk_data, "r", encoding="utf-8") as f:
         risk_data = json.load(f)
     for i in range(len(risk_data)):
