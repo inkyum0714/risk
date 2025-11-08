@@ -24,8 +24,8 @@ def home():
 @app.route("/search", methods=["GET", "POST"])
 def search():
     print("ZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
-    print(user_input_travel)
     user_input_travel = request.args.get("user_input_travel")
+    print(user_input_travel)
     user_input_travel_data = inputvalue_service(user_input_travel)
     return jsonify({"message": "success", "result": user_input_travel_data})
 
