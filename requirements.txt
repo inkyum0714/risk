@@ -14,3 +14,7 @@ requests==2.32.5
 rpds-py==0.28.0
 selenium==4.38.0
 stack-data==0.6.3
+itsdangerous==2.2.0
+debugpy==1.8.17
+certifi==2025.10.5
+click==8.3.0
