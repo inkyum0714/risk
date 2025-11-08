@@ -1,22 +1,17 @@
 import json, os, sys
-from data.Symbol import country_code_data_three, country_code_data_five_number, country_airport
+from api.data.Symbol import country_code_data_three, country_code_data_five_number, country_airport
 from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
-from service.exchange import exchange
-from service.weather import get_weather
-from service.air_ticket import air_ticket
-from service.risk import user_risk
-from service.inputvalue import inputvalue_service
+from api.service.exchange import exchange
+from api.service.weather import get_weather
+from api.service.air_ticket import air_ticket
+from api.service.risk import user_risk
+from api.service.inputvalue import inputvalue_service
 
-# 프로젝트 루트 경로를 Python 모듈 경로에 추가
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
+print("Python path:", sys.path)  # 디버그용
 
 app = Flask(__name__)
 CORS(app)
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # 현재 index.py 위치 기준
 
 @app.route("/", methods=["GET"])
 def home():
@@ -35,6 +30,7 @@ def search():
 @app.route("/weather", methods=["GET", "POST"])
 def weather():
     try:
+        sum_score = 0
         weather_result_list = []
         user_input_traevel_city = request.args.get("user_input_traevel_city")
         user_input_day = request.args.get("date")
@@ -58,8 +54,7 @@ def weather():
 @app.route("/airticket", methods=["GET", "POST"])
 def airticket():
     try:
-        file_path = os.path.join(BASE_DIR, "translation_result.json")
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open("translation_result.json", "r", encoding="utf-8") as f:
             krkr_airport = json.load(f)
 
         user_input_traevel_city = request.args.get("user_input_traevel_city")
@@ -81,8 +76,7 @@ def airticket():
             "result": round(airport_result_score, 1),
             "result_data": airport_result
         })
-    except Exception as e:
-        print("예외 발생:", e)
+    except:
         return jsonify({"message": "error", "result": "응답하지 않습니다"})
 
 @app.route("/risk", methods=["GET", "POST"])
@@ -97,7 +91,7 @@ def total():
         weather = float(request.args.get('weather', 0))
         air_ticket_score = float(request.args.get('air_ticket', 0))
         risk = float(request.args.get('risk', 0))
-        total_data = round(30 + air_ticket_score - risk - weather)
+        total_data = round((30 + air_ticket_score - risk - weather)) 
         return jsonify({"message": "success", "result": total_data})
     except ValueError:
         return jsonify({"message": "error", "result": 0})
@@ -112,6 +106,3 @@ def rate():
         "symbol": exchange_result[1]
     })
 
-# 로컬 테스트용
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)

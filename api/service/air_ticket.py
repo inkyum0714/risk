@@ -1,4 +1,4 @@
-from data.Symbol import country_airport
+from api.data.Symbol import country_airport
 from flask import Flask
 import requests, json, datetime, time
 
