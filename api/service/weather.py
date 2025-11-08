@@ -1,4 +1,3 @@
-from data.Symbol import country_code_data_five_number
 from datetime import datetime, timedelta
 import requests, json, os
 
@@ -15,6 +14,9 @@ def get_weather(user_input_city, user_input_day):
                 data = json.loads(content) if content else {}
         except json.JSONDecodeError:
             data = {}
+    json_path = os.path.join("data", "country_code_data_five.json")
+    with open(json_path, "r", encoding="utf-8") as f:
+        country_code_data_five_number = json.load(f)
     weather_result = [] 
     weather_data = []
     user_input_day = user_input_day.replace("-", "")
@@ -27,7 +29,6 @@ def get_weather(user_input_city, user_input_day):
     date_list_datetime = [user_input_day_dt + timedelta(days=i) for i in range(-3, 4)]
     dates = [int(d.strftime("%Y%m%d")) for d in date_list_datetime]
     country = country_code_data_five_number[user_input_city]
-    print("try진입")
     try:
         for day in dates:
             str_day = str(day)
@@ -48,7 +49,6 @@ def get_weather(user_input_city, user_input_day):
             url = f"https://apihub.kma.go.kr/api/typ01/url/gts_syn1.php?tm={day}1200&dtm=2&stn=47&help=0&authKey={WEATHER_API_KEY}&stn={country}" #https://apihub.kma.go.kr/api/typ01/url/gts_syn1.php?tm=2025-10-261200&dtm=2&stn=47&help=0&authKey=lfwWiH5cTMe8Foh-XJzH6g&stn=
             print(url)
             response = requests.get(url)
-            print("3")
             text = response.text
             start_idx = text.find("#START7777")
             end_idx = text.find("#7777END")   
@@ -66,16 +66,13 @@ def get_weather(user_input_city, user_input_day):
                     temp = int(float(parts[10]))
                     rh = int(float(parts[12]))
 
-                    # weather_data와 weather_result 처리
                     weather_data.append([date, wind, temp, rh])
                     discomfort_index = float(parts[10]) - 0.55 * (1 - float(parts[12])/100) * (float(parts[10]) - 14.5)
                     weather_result.append(round(discomfort_index, 1))
 
-                    # city key 존재 확인
                     if user_input_city not in data or not isinstance(data[user_input_city], list):
                         data[user_input_city] = []
 
-                    # 중복 체크 후 데이터 추가
                     if not any(record["날짜"] == date for record in data[user_input_city]):
                         data[user_input_city].append({
                             "날짜": date,

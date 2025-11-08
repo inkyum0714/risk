@@ -50090,10 +50090,10 @@
             }
             ]
         }, {
-            "name": "캄보디아왕국",
+            "name": "캄보디아",
             "children": [{
                 "name": "라타나키리",
-                "groupNm": "캄보디아왕국",
+                "groupNm": "캄보디아",
                 "groupSn": "2143",
                 "stnId": "48973",
                 "obsSpcltCd": "DB001020",
@@ -50101,7 +50101,7 @@
                 "hasSpotInfo": "N"
             }, {
                 "name": "몬돌 키리",
-                "groupNm": "캄보디아왕국",
+                "groupNm": "캄보디아",
                 "groupSn": "2143",
                 "stnId": "48971",
                 "obsSpcltCd": "DB001020",
@@ -50109,7 +50109,7 @@
                 "hasSpotInfo": "N"
             }, {
                 "name": "반테아이 메앙크헤이",
-                "groupNm": "캄보디아왕국",
+                "groupNm": "캄보디아",
                 "groupSn": "2143",
                 "stnId": "48969",
                 "obsSpcltCd": "DB001020",
@@ -50117,7 +50117,7 @@
                 "hasSpotInfo": "N"
             }, {
                 "name": "스베이 엥",
-                "groupNm": "캄보디아왕국",
+                "groupNm": "캄보디아",
                 "groupSn": "2143",
                 "stnId": "48998",
                 "obsSpcltCd": "DB001020",
@@ -50125,7 +50125,7 @@
                 "hasSpotInfo": "N"
             }, {
                 "name": "스텅 트렝",
-                "groupNm": "캄보디아왕국",
+                "groupNm": "캄보디아",
                 "groupSn": "2143",
                 "stnId": "48972",
                 "obsSpcltCd": "DB001020",
@@ -50133,7 +50133,7 @@
                 "hasSpotInfo": "N"
             }, {
                 "name": "시엠립",
-                "groupNm": "캄보디아왕국",
+                "groupNm": "캄보디아",
                 "groupSn": "2143",
                 "stnId": "48966",
                 "obsSpcltCd": "DB001020",
@@ -50141,7 +50141,7 @@
                 "hasSpotInfo": "N"
             }, {
                 "name": "칸달",
-                "groupNm": "캄보디아왕국",
+                "groupNm": "캄보디아",
                 "groupSn": "2143",
                 "stnId": "48990",
                 "obsSpcltCd": "DB001020",
@@ -50149,7 +50149,7 @@
                 "hasSpotInfo": "N"
             }, {
                 "name": "캄폿",
-                "groupNm": "캄보디아왕국",
+                "groupNm": "캄보디아",
                 "groupSn": "2143",
                 "stnId": "48985",
                 "obsSpcltCd": "DB001020",
@@ -50157,7 +50157,7 @@
                 "hasSpotInfo": "N"
             }, {
                 "name": "코흐 콩",
-                "groupNm": "캄보디아왕국",
+                "groupNm": "캄보디아",
                 "groupSn": "2143",
                 "stnId": "48986",
                 "obsSpcltCd": "DB001020",
@@ -50165,7 +50165,7 @@
                 "hasSpotInfo": "N"
             }, {
                 "name": "콤퐁 스페우",
-                "groupNm": "캄보디아왕국",
+                "groupNm": "캄보디아",
                 "groupSn": "2143",
                 "stnId": "48992",
                 "obsSpcltCd": "DB001020",
@@ -50173,7 +50173,7 @@
                 "hasSpotInfo": "N"
             }, {
                 "name": "콤퐁 크흐낭",
-                "groupNm": "캄보디아왕국",
+                "groupNm": "캄보디아",
                 "groupSn": "2143",
                 "stnId": "48967",
                 "obsSpcltCd": "DB001020",
@@ -50181,7 +50181,7 @@
                 "hasSpotInfo": "N"
             }, {
                 "name": "콤퐁 트홈",
-                "groupNm": "캄보디아왕국",
+                "groupNm": "캄보디아",
                 "groupSn": "2143",
                 "stnId": "48965",
                 "obsSpcltCd": "DB001020",
@@ -50189,7 +50189,7 @@
                 "hasSpotInfo": "N"
             }, {
                 "name": "크라모",
-                "groupNm": "캄보디아왕국",
+                "groupNm": "캄보디아",
                 "groupSn": "2143",
                 "stnId": "48968",
                 "obsSpcltCd": "DB001020",
@@ -50197,7 +50197,7 @@
                 "hasSpotInfo": "N"
             }, {
                 "name": "크라티에",
-                "groupNm": "캄보디아왕국",
+                "groupNm": "캄보디아",
                 "groupSn": "2143",
                 "stnId": "48970",
                 "obsSpcltCd": "DB001020",
@@ -50205,7 +50205,7 @@
                 "hasSpotInfo": "N"
             }, {
                 "name": "타케오",
-                "groupNm": "캄보디아왕국",
+                "groupNm": "캄보디아",
                 "groupSn": "2143",
                 "stnId": "48993",
                 "obsSpcltCd": "DB001020",
@@ -50213,7 +50213,7 @@
                 "hasSpotInfo": "N"
             }, {
                 "name": "파일린",
-                "groupNm": "캄보디아왕국",
+                "groupNm": "캄보디아",
                 "groupSn": "2143",
                 "stnId": "48963",
                 "obsSpcltCd": "DB001020",
@@ -50221,7 +50221,7 @@
                 "hasSpotInfo": "N"
             }, {
                 "name": "프놈펜",
-                "groupNm": "캄보디아왕국",
+                "groupNm": "캄보디아",
                 "groupSn": "2143",
                 "stnId": "48991",
                 "obsSpcltCd": "DB001020",
@@ -50229,7 +50229,7 @@
                 "hasSpotInfo": "N"
             }, {
                 "name": "프레아흐 비헤아르",
-                "groupNm": "캄보디아왕국",
+                "groupNm": "캄보디아",
                 "groupSn": "2143",
                 "stnId": "48964",
                 "obsSpcltCd": "DB001020",
@@ -50237,7 +50237,7 @@
                 "hasSpotInfo": "N"
             }, {
                 "name": "프레이 벵",
-                "groupNm": "캄보디아왕국",
+                "groupNm": "캄보디아",
                 "groupSn": "2143",
                 "stnId": "48997",
                 "obsSpcltCd": "DB001020",

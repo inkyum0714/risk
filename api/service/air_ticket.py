@@ -12,7 +12,6 @@ def air_ticket(user_input_toId, departDate):
     "퍼스트": "FRIST"
     }
     cabinClass = "이코노미"
-    print("air")
     flightDeals_data = []
     air_ticket_result = []
     deal_dic = {}
@@ -75,12 +74,16 @@ def air_ticket(user_input_toId, departDate):
                                 except:
                                     deal_dic["기내수하물 용량"] = 0
                             
+                            deal_dic["총합 점수"] = 1000000 / (int(deal_dic["가격"]) * 0.75) + int(deal_dic["위탁수하물 용량"]) + int(deal_dic["기내수하물 용량"]) * 1.5 
                             deal_dic["총합 점수"] = 1000000 / (int(deal_dic["가격"]) * 0.6) + int(deal_dic["위탁수하물 용량"]) + int(deal_dic["기내수하물 용량"]) * 1.2 
                             air_ticket_result.append(deal_dic)
 
-+   except Exception as e:
-+       print("⚠ 항공권 처리 중 예외:", e)
-+       air_ticket_result = [{"항공사 이름": "정보 없음", "총합 점수": 0}]
+
+    except:
+        air_ticket_result = [{"항공사 이름": "정보 없음", "총합 점수": 0}]
+                        
+
+
     with open("flights_result.json", "w", encoding="utf-8") as f:
         json.dump(air_ticket_result, f, ensure_ascii=False, indent=4)
-    return air_ticket_result
+    return air_ticket_result      

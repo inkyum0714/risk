@@ -1,5 +1,4 @@
 import json, os
-from flask import jsonify
 def inputvalue_service(user_input_traevel):
     country_cities_number = 0
     translation_result = "translation_result.json"
@@ -59,10 +58,8 @@ def inputvalue_service(user_input_traevel):
                 if country_cities[0]["children"][i]["children"][j]["name"] == user_input_traevel:
                     user_input_traevel_data["country"] = country_cities[0]["children"][i]["name"]
                     break
-        found_key = None
         for key, value in krkr_airport.items():
             if value == user_input_traevel:
-                found_key = key
                 user_input_traevel_data["airport"].append(key)
                 country_cities_number += 1
         user_input_traevel_data["city"] = [user_input_traevel]

@@ -101,6 +101,7 @@
     async function getAllmain(user_input_traevel_cities, user_input_traevel_country) {
         const exchangeData = await exchange(user_input_traevel_country);
         const exchangeRate = exchangeData.result;
+        const symbol = exchangeData.symbol
         // 1. 국가 위험도 한 번만 가져오기
         const riskData = await risk(user_input_traevel_country);
         const riskLevel = riskData.result.score;
@@ -129,7 +130,7 @@
             <h3 style="margin: 0; color: #333;">환율 정보</h3>
             <span style="font-size: 32px; font-weight: bold; color: #3b82f6;">${exchangeRate}</span>
         </div>
-        <p style="margin-top: 12px; color: #666;">현재 ${user_input_traevel_country} 1 단위 기준 KRW 환율</p>
+        <p style="margin-top: 12px; color: #666;">현재 ${user_input_traevel_country}의 1${symbol} 단위 기준 대한민국 환율</p>
     </div>
 `);
 
@@ -251,12 +252,13 @@ async function main(user_input_traevel_city, user_input_traevel_country, riskDat
         async function weather(city) {
             const date = document.getElementById('user_input_day').value;
             const res = await fetch(`http://127.0.0.1:8000/weather?user_input_traevel_city=${city}&date=${date}`);
-            return res.json(); // JSON 결과 바로 반환
+            return res.json(); 
         }
 
         async function airticket(city) {
             const date = document.getElementById('user_input_day').value;
             const res = await fetch(`http://127.0.0.1:8000/airticket?user_input_traevel_city=${city}&date=${date}`);
+            console.log(res)
             return res.json();
         }
 
@@ -275,7 +277,6 @@ async function main(user_input_traevel_city, user_input_traevel_country, riskDat
         async function total(weather, air_ticket, risk) {
             const res = await fetch(`http://127.0.0.1:8000/total?weather=${weather}&air_ticket=${air_ticket}&risk=${risk}`);
             const data = await res.json(); 
-            console.log(data) 
             return data.result; 
         }
 
@@ -343,10 +344,8 @@ async function main(user_input_traevel_city, user_input_traevel_country, riskDat
     document.getElementById('searchButton').addEventListener('click', function(event){
         event.preventDefault();
         const travelInput = document.getElementById('country-input').value;
+        document.cookie = `last_city=${encodeURIComponent(travelInput)}; max-age=2160000; path=/`;
 
-        document.cookie = `last_city=${encodeURIComponent(travelInput)}; max-age=2160000 * 7; path=/`;
-
-        search();
     });
     window.addEventListener('load', function() {
         const cookies = document.cookie.split(';').map(c => c.trim());

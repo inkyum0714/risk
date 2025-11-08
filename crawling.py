@@ -10,7 +10,6 @@ import time
 # JSON 파일 경로 지정
 json_path = os.path.join("data", "city_to_airport.json")
 
-# JSON 파일 읽기
 with open(json_path, "r", encoding="utf-8") as f:
     city_to_airport = json.load(f)
 
