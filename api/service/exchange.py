@@ -3,13 +3,16 @@ import requests, os, json
 EXCHANGE_API_KEY = "fxr_live_0e9f7bba09e36d62b800cfea2147bdd6efaf"
 
 def exchange(user_base):
-    json_path_three = os.path.join("data", "country_code_data_three.json")
-    with open(json_path_three, "r", encoding="utf-8") as f:
-        country_code_data_three = json.load(f)
-    json_path_symbol = os.path.join("data", "city_to_airport.json")
+    current_dir = os.path.dirname(__file__)
+    country_code_data_three_path = os.path.join(current_dir, "..", "data", "country_code_data_three.json")
+    with open(country_code_data_three_path, "r", encoding="utf-8") as f:
+        country_code_data_three_number = json.load(f)
+
+    json_path_symbol = os.path.join(current_dir, "..", "data", "symbol.json")
     with open(json_path_symbol, "r", encoding="utf-8") as f:
         symbol_data = json.load(f)
-    base = country_code_data_three[user_base]
+
+    base = country_code_data_three_number[user_base]
     url = f"https://api.fxratesapi.com/latest?amount=1&base={base}&currencies=KRW&places=6&format=json&api_key={EXCHANGE_API_KEY}"
     symbol = None
     for currency in symbol_data:
