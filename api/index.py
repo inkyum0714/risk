@@ -42,6 +42,7 @@ def weather():
                 city,
                 get_weather(city.strip(), user_input_day)
             ])
+        print("나옴")
         sum_score = sum(weather_result_list[0][1][0])
         total_weather_score = sum_score / len(weather_result_list[0][1][0])
         return jsonify({
@@ -55,15 +56,12 @@ def weather():
 
 @app.route("/airticket", methods=["GET", "POST"])
 def airticket():
-    print("천상천하")
     try:
-        print("넌 누구야!")
         current_dir = os.path.dirname(__file__)
         translation_result_path = os.path.join(current_dir, "..", "translation_result.json")
         # JSON 파일 읽기
-        print("칙쇼...")
         with open(translation_result_path, "r", encoding="utf-8") as f:
-            krkr_airport = json.load(f)
+            krkr_airport = json.load(f) # 여기서 오류남
         print("난데 와케룬다요~")
         user_input_travel_city = request.args.get("user_input_travel_city")
         user_input_day = request.args.get("date")
