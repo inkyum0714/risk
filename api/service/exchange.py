@@ -6,7 +6,7 @@ def exchange(user_base):
     current_dir = os.path.dirname(__file__)
     country_code_data_three_path = os.path.join(current_dir, "..", "data", "country_code_data_three.json")
     with open(country_code_data_three_path, "r", encoding="utf-8") as f:
-        country_code_data_three_number = json.load(f)
+        country_code_data_three_number = json.load(f) 
 
     json_path_symbol = os.path.join(current_dir, "..", "data", "symbol.json")
     with open(json_path_symbol, "r", encoding="utf-8") as f:
