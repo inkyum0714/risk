@@ -1,10 +1,15 @@
 from api.data.Symbol import country_airport
 from flask import Flask
-import requests, json, datetime, time
+import requests, json, datetime, time, os
 
 app = Flask(__name__)
 
 def air_ticket(user_input_toId, departDate):
+    current_dir = os.path.dirname(__file__)
+    risk_data_path = os.path.abspath(risk_data_path)
+    country_airport_path = os.path.join(current_dir, "..", "data", "country_airport.json")
+    with open(country_airport_path, "r", encoding="utf-8") as f:
+        country_airport = json.load(f)
     airport_seat = {
     "이코노미" : "ECONOMY",
     "프리미엄 이코노미": "PREMI UM ECONOMY",
