@@ -57,12 +57,19 @@ def weather():
 @app.route("/airticket", methods=["GET", "POST"])
 def airticket():
     try:
+        # 1. 프로젝트 내 data 폴더에 있다고 가정
         current_dir = os.path.dirname(__file__)
-        translation_result_path = os.path.join(current_dir, "..", "translation_result.json")
+        translation_result_path = os.path.join(current_dir, "data", "translation_result.json")
+
+        # 2. 절대경로로 변환
         translation_result_path = os.path.abspath(translation_result_path)
+
+        # 3. 파일 존재 여부 확인
+        if not os.path.exists(translation_result_path):
+            return jsonify({"message": "translation_result.json 파일을 찾을 수 없습니다."}), 500
+
         with open(translation_result_path, "r", encoding="utf-8") as f:
             krkr_airport = json.load(f)
-            print("난데 와케룬다요~")
         user_input_travel_city = request.args.get("user_input_travel_city")
         user_input_day = request.args.get("date")
 
