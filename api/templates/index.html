@@ -60,7 +60,7 @@
             const user_input_traevel = document.getElementById('country-input').value;
             const container = document.querySelector("#response-container")
             container.innerHTML = "";
-            const url = "http://127.0.0.1:8000/search?user_input_traevel="+user_input_traevel;
+            const url = "https://travel-rfi7ifsbd-inkyums-projects.vercel.app/search?user_input_traevel="+user_input_traevel;
             $.ajax({
                 url : url,
                 method : "GET",
@@ -251,31 +251,31 @@ async function main(user_input_traevel_city, user_input_traevel_country, riskDat
 
         async function weather(city) {
             const date = document.getElementById('user_input_day').value;
-            const res = await fetch(`http://127.0.0.1:8000/weather?user_input_traevel_city=${city}&date=${date}`);
+            const res = await fetch(`https://travel-rfi7ifsbd-inkyums-projects.vercel.app/weather?user_input_traevel_city=${city}&date=${date}`);
             return res.json(); 
         }
 
         async function airticket(city) {
             const date = document.getElementById('user_input_day').value;
-            const res = await fetch(`http://127.0.0.1:8000/airticket?user_input_traevel_city=${city}&date=${date}`);
+            const res = await fetch(`https://travel-rfi7ifsbd-inkyums-projects.vercel.app/airticket?user_input_traevel_city=${city}&date=${date}`);
             console.log(res)
             return res.json();
         }
 
         async function risk(country) {
             const date = document.getElementById('user_input_day').value;
-            const res = await fetch(`http://127.0.0.1:8000/risk?user_input_traevel_country=${country}&date=${date}`);
+            const res = await fetch(`https://travel-rfi7ifsbd-inkyums-projects.vercel.app/risk?user_input_traevel_country=${country}&date=${date}`);
             return res.json();
         }
 
         async function exchange(country) {
             console.log(country)
-            const res = await fetch(`http://127.0.0.1:8000/exchange?base=${country}`);
+            const res = await fetch(`https://travel-rfi7ifsbd-inkyums-projects.vercel.app/exchange?base=${country}`);
             console.log(res)
             return res.json();
         }
         async function total(weather, air_ticket, risk) {
-            const res = await fetch(`http://127.0.0.1:8000/total?weather=${weather}&air_ticket=${air_ticket}&risk=${risk}`);
+            const res = await fetch(`https://travel-rfi7ifsbd-inkyums-projects.vercel.app/total?weather=${weather}&air_ticket=${air_ticket}&risk=${risk}`);
             const data = await res.json(); 
             return data.result; 
         }
