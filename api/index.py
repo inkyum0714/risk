@@ -59,10 +59,10 @@ def airticket():
     try:
         current_dir = os.path.dirname(__file__)
         translation_result_path = os.path.join(current_dir, "..", "translation_result.json")
-        # JSON 파일 읽기
+        translation_result_path = os.path.abspath(translation_result_path)
         with open(translation_result_path, "r", encoding="utf-8") as f:
-            krkr_airport = json.load(f) # 여기서 오류남
-        print("난데 와케룬다요~")
+            krkr_airport = json.load(f)
+            print("난데 와케룬다요~")
         user_input_travel_city = request.args.get("user_input_travel_city")
         user_input_day = request.args.get("date")
 
