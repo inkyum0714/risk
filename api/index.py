@@ -84,7 +84,8 @@ def airticket():
             "result": round(airport_result_score, 1),
             "result_data": airport_result
         })
-    except:
+    except Exception as e:
+        print("예외 발생:", e)
         return jsonify({"message": "error", "result": "응답하지 않습니다"})
 
 @app.route("/risk", methods=["GET", "POST"])

@@ -5,11 +5,11 @@ WEATHER_API_KEY = "lfwWiH5cTMe8Foh-XJzH6g"
 
 def get_weather(user_input_city, user_input_day):
     current_dir = os.path.dirname(__file__)  # 현재 파일(service 폴더) 기준
-    
+
     # weather_data.json 처리
     weather_file_path = os.path.join(current_dir, "weather_data.json")
     weather_file_path = os.path.abspath(weather_file_path)
-    
+
     if not os.path.exists(weather_file_path):
         data = {}
     else:
@@ -19,11 +19,11 @@ def get_weather(user_input_city, user_input_day):
                 data = json.loads(content) if content else {}
         except json.JSONDecodeError:
             data = {}
-    
+
     # country_code_data_five.json 처리
     country_code_path = os.path.join(current_dir, "..", "data", "country_code_data_five.json")
     country_code_path = os.path.abspath(country_code_path)
-    
+
     with open(country_code_path, "r", encoding="utf-8") as f:
         country_code_data_five_number = json.load(f)
     weather_result = [] 
@@ -91,8 +91,6 @@ def get_weather(user_input_city, user_input_day):
                             "총합": [date, wind, temp, rh]
                         })
 
-        with open(file_path, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
         if not weather_data:
             return ["데이터 없음"]
     except TimeoutError as e:
