@@ -8,12 +8,14 @@ def inputvalue_service(user_input_travel):
     country_cities_path = os.path.join(current_dir, "..", "data", "country_cities.json")
     country_code_data_five_path = os.path.join(current_dir, "..", "data", "country_code_data_five.json")
     country_code_data_three_path = os.path.join(current_dir, "..", "data", "country_code_data_three.json")
-    translation_result_path = os.path.join(current_dir, "..", "translation_result.json")
-
-    # JSON 파일 읽기
+    # 1. 프로젝트 내 data 폴더에 있다고 가정
+    current_dir = os.path.dirname(__file__)
+    translation_result_path = os.path.join(current_dir, "data", "translation_result.json")
+    # 2. 절대경로로 변환
+    translation_result_path = os.path.abspath(translation_result_path)
+    # 3. 파일 존재 여부 확인
     with open(translation_result_path, "r", encoding="utf-8") as f:
         krkr_airport = json.load(f)
-
     with open(country_airport_path, "r", encoding="utf-8") as f:
         country_airport = json.load(f)
 
