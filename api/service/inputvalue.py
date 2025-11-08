@@ -1,15 +1,14 @@
 import json, os
 def inputvalue_service(user_input_trave):
     country_cities_number = 0
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     current_dir = os.path.dirname(__file__) 
     translation_result_path = os.path.join(current_dir, "..", "translation_result.json")  # 한 단계 위로
     with open(translation_result_path, "r", encoding="utf-8") as f:
         krkr_airport = json.load(f)
-    country_airport_path = os.path.join(BASE_DIR, "country_airport.json")
-    country_cities_path = os.path.join(BASE_DIR, "country_cities.json")
-    country_code_data_five_path = os.path.join(BASE_DIR, "country_code_data_five.json")
-    country_code_data_three_path = os.path.join(BASE_DIR, "country_code_data_three.json")
+    country_airport_path = os.path.join(current_dir, "country_airport.json")
+    country_cities_path = os.path.join(current_dir, "country_cities.json")
+    country_code_data_five_path = os.path.join(current_dir, "country_code_data_five.json")
+    country_code_data_three_path = os.path.join(current_dir, "country_code_data_three.json")
 
     # JSON 읽기
     with open(translation_result_path, "r", encoding="utf-8") as f:
