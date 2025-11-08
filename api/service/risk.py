@@ -6,6 +6,7 @@ def user_risk(user_input_country):
     risk_data_score["score"] = 0
     risk_data_score["alert"] = []
     risk_data_path = os.path.join(current_dir, "..", "data", "risk_data.json")
+    risk_data_path = os.path.abspath(risk_data_path)
     with open(risk_data_path, "r", encoding="utf-8") as f:
         risk_data = json.load(f)
     for i in range(len(risk_data)):
