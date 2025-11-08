@@ -8,12 +8,15 @@ def inputvalue_service(user_input_travel):
     country_cities_path = os.path.join(current_dir, "..", "data", "country_cities.json")
     country_code_data_five_path = os.path.join(current_dir, "..", "data", "country_code_data_five.json")
     country_code_data_three_path = os.path.join(current_dir, "..", "data", "country_code_data_three.json")
-    # 1. 프로젝트 내 data 폴더에 있다고 가정
-    current_dir = os.path.dirname(__file__)
-    translation_result_path = os.path.join(current_dir, "data", "translation_result.json")
-    # 2. 절대경로로 변환
+
+    current_dir = os.path.dirname(__file__)  # 이 파일 위치
+    # 파일 경로를 api/data/translation_result.json 으로 지정
+    translation_result_path = os.path.join(current_dir, "..", "data", "translation_result.json")
     translation_result_path = os.path.abspath(translation_result_path)
-    # 3. 파일 존재 여부 확인
+
+    if not os.path.exists(translation_result_path):
+        raise FileNotFoundError(f"{translation_result_path} 파일이 존재하지 않습니다.")
+
     with open(translation_result_path, "r", encoding="utf-8") as f:
         krkr_airport = json.load(f)
     with open(country_airport_path, "r", encoding="utf-8") as f:
