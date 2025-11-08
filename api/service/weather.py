@@ -90,7 +90,7 @@ def get_weather(user_input_city, user_input_day):
                             "상대습도": rh,
                             "총합": [date, wind, temp, rh]
                         })
-
+        print(weather_data)
         if not weather_data:
             return ["데이터 없음"]
     except TimeoutError as e:
