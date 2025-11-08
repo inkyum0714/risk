@@ -1,4 +1,4 @@
-import json
+import json, os, sys
 from data.Symbol import country_code_data_three, country_code_data_five_number, country_airport
 from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
@@ -7,6 +7,13 @@ from service.weather import get_weather
 from service.air_ticket import air_ticket
 from service.risk import user_risk
 from service.inputvalue import inputvalue_service
+
+# index.py 기준으로 프로젝트 루트 경로를 Python 모듈 경로에 추가
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+print("Python path:", sys.path)  # 디버그용
 
 app = Flask(__name__)
 CORS(app)
