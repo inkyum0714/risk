@@ -23,18 +23,18 @@ def home():
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
-    user_input_traevel = request.args.get("user_input_traevel")
-    user_input_traevel_data = inputvalue_service(user_input_traevel)
-    return jsonify({"message": "success", "result": user_input_traevel_data})
+    user_input_trave = request.args.get("user_input_trave")
+    user_input_trave_data = inputvalue_service(user_input_trave)
+    return jsonify({"message": "success", "result": user_input_trave_data})
 
 @app.route("/weather", methods=["GET", "POST"])
 def weather():
     try:
         sum_score = 0
         weather_result_list = []
-        user_input_traevel_city = request.args.get("user_input_traevel_city")
+        user_input_trave_city = request.args.get("user_input_trave_city")
         user_input_day = request.args.get("date")
-        cities = user_input_traevel_city.split(",")
+        cities = user_input_trave_city.split(",")
         for city in cities:
             weather_result_list.append([
                 city,
@@ -57,12 +57,12 @@ def airticket():
         with open("translation_result.json", "r", encoding="utf-8") as f:
             krkr_airport = json.load(f)
 
-        user_input_traevel_city = request.args.get("user_input_traevel_city")
+        user_input_trave_city = request.args.get("user_input_trave_city")
         user_input_day = request.args.get("date")
 
         found_key = None    
         for key, value in krkr_airport.items():
-            if value.strip().lower() == user_input_traevel_city.lower():
+            if value.strip().lower() == user_input_trave_city.lower():
                 found_key = key
                 toId = key
                 break
@@ -81,8 +81,8 @@ def airticket():
 
 @app.route("/risk", methods=["GET", "POST"])
 def risk():
-    user_input_traevel_country = request.args.get("user_input_traevel_country")
-    risk_data = user_risk(user_input_traevel_country)
+    user_input_trave_country = request.args.get("user_input_trave_country")
+    risk_data = user_risk(user_input_trave_country)
     return jsonify({"message": "success", "result": risk_data})
 
 @app.route("/total", methods=["GET", "POST"])

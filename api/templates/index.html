@@ -18,7 +18,7 @@
 
         <div class="input-group">
             <label for="country-input">도착</label>
-            <input id="country-input" type="text" placeholder="나라, 도시, 공항중 하나를 입력하세요" name="user_input_traevel" required>
+            <input id="country-input" type="text" placeholder="나라, 도시, 공항중 하나를 입력하세요" name="user_input_travel" required>
             <div id="autocomplete-list" class="autocomplete-list"></div>
         </div>
 
@@ -57,20 +57,20 @@
         });
 
         async function search() {
-            const user_input_traevel = document.getElementById('country-input').value;
+            const user_input_travel = document.getElementById('country-input').value;
             const container = document.querySelector("#response-container")
             container.innerHTML = "";
-            const url = "/search?user_input_traevel="+user_input_traevel;
+            const url = "/search?user_input_travel="+user_input_travel;
             $.ajax({
                 url : url,
                 method : "GET",
                 success: function(response) {
-                    let user_input_traevel_data = response.result;
-                    console.log(user_input_traevel_data)
-                    console.log(user_input_traevel_data.country)
-                    console.log(user_input_traevel_data.city)
-                    console.log(user_input_traevel_data.airport)
-                    getAllmain(user_input_traevel_data.city, user_input_traevel_data.country)
+                    let user_input_travel_data = response.result;
+                    console.log(user_input_travel_data)
+                    console.log(user_input_travel_data.country)
+                    console.log(user_input_travel_data.city)
+                    console.log(user_input_travel_data.airport)
+                    getAllmain(user_input_travel_data.city, user_input_travel_data.country)
                 },
                 error: function(err) {
                     console.error("search AJAX error:", err);
@@ -98,12 +98,12 @@
         div.innerHTML = message
         container.appendChild(div)
     }
-    async function getAllmain(user_input_traevel_cities, user_input_traevel_country) {
-        const exchangeData = await exchange(user_input_traevel_country);
+    async function getAllmain(user_input_travel_cities, user_input_travel_country) {
+        const exchangeData = await exchange(user_input_travel_country);
         const exchangeRate = exchangeData.result;
         const symbol = exchangeData.symbol
         // 1. 국가 위험도 한 번만 가져오기
-        const riskData = await risk(user_input_traevel_country);
+        const riskData = await risk(user_input_travel_country);
         const riskLevel = riskData.result.score;
         const alerts = riskData.result.alert;
         const color = riskLevel >= 10 ? '#ef4444' : riskLevel >= 6 ? '#f59e0b' : '#10b981';
@@ -130,28 +130,28 @@
             <h3 style="margin: 0; color: #333;">환율 정보</h3>
             <span style="font-size: 32px; font-weight: bold; color: #3b82f6;">${exchangeRate}</span>
         </div>
-        <p style="margin-top: 12px; color: #666;">현재 ${user_input_traevel_country}의 1${symbol} 단위 기준 대한민국 환율</p>
+        <p style="margin-top: 12px; color: #666;">현재 ${user_input_travel_country}의 1${symbol} 단위 기준 대한민국 환율</p>
     </div>
 `);
 
     // 3. 각 도시별 여행 카드 출력 (riskData 전달)
-    for (const city of user_input_traevel_cities) {
-        await main(city, user_input_traevel_country, riskData);
+    for (const city of user_input_travel_cities) {
+        await main(city, user_input_travel_country, riskData);
     }
 }
 
 // main() 함수에서 riskData를 매개변수로 받도록 수정
-async function main(user_input_traevel_city, user_input_traevel_country, riskData) {
+async function main(user_input_travel_city, user_input_travel_country, riskData) {
     // 도시마다 고유 ID 부여
-    const progressId = `progress-${user_input_traevel_city.replace(/\s+/g, '-')}`;
-    const labelId = `label-${user_input_traevel_city.replace(/\s+/g, '-')}`;
+    const progressId = `progress-${user_input_travel_city.replace(/\s+/g, '-')}`;
+    const labelId = `label-${user_input_travel_city.replace(/\s+/g, '-')}`;
 
     let progress = 0;
     try {
         appendResult(`
             <div class="progress-container" id="container-${progressId}">
                 <label id="${labelId}" for="${progressId}" class="progress-label">
-                    ${user_input_traevel_city} 데이터 불러오는 중...
+                    ${user_input_travel_city} 데이터 불러오는 중...
                 </label>
                 <progress id="${progressId}" value="0" max="100"></progress>
             </div>
@@ -176,14 +176,14 @@ async function main(user_input_traevel_city, user_input_traevel_country, riskDat
         }
 
         // weather
-        const weatherPromise = weather(user_input_traevel_city)
+        const weatherPromise = weather(user_input_travel_city)
             .then(async (weatherData) => {
                 await incrementProgress(40, 1, 15);
                 return weatherData;
             });
 
         // airticket
-        const ticketPromise = airticket(user_input_traevel_city)
+        const ticketPromise = airticket(user_input_travel_city)
             .then(async (ticketData) => {
                 await incrementProgress(80, 1, 15);
                 return ticketData;
@@ -200,9 +200,9 @@ async function main(user_input_traevel_city, user_input_traevel_country, riskDat
 
         // 결과 표시
         appendResult(`
-            <div class="travel-card fade-in">
+            <div class="travell-card fade-in">
                 <div class="card-header">
-                    <h3 class="city-name">${user_input_traevel_city}</h3>
+                    <h3 class="city-name">${user_input_travel_city}</h3>
                 </div>
                 <div class="card-body">
                     <div class="info-section weather-section">
@@ -251,20 +251,20 @@ async function main(user_input_traevel_city, user_input_traevel_country, riskDat
 
         async function weather(city) {
             const date = document.getElementById('user_input_day').value;
-            const res = await fetch(`/weather?user_input_traevel_city=${city}&date=${date}`);
+            const res = await fetch(`/weather?user_input_travel_city=${city}&date=${date}`);
             return res.json(); 
         }
 
         async function airticket(city) {
             const date = document.getElementById('user_input_day').value;
-            const res = await fetch(`/airticket?user_input_traevel_city=${city}&date=${date}`);
+            const res = await fetch(`/airticket?user_input_travel_city=${city}&date=${date}`);
             console.log(res)
             return res.json();
         }
 
         async function risk(country) {
             const date = document.getElementById('user_input_day').value;
-            const res = await fetch(`/risk?user_input_traevel_country=${country}&date=${date}`);
+            const res = await fetch(`/risk?user_input_travel_country=${country}&date=${date}`);
             return res.json();
         }
 
