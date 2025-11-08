@@ -56,12 +56,14 @@ def weather():
 @app.route("/airticket", methods=["GET", "POST"])
 def airticket():
     try:
+        print("넌 누구야!")
         current_dir = os.path.dirname(__file__)
         translation_result_path = os.path.join(current_dir, "..", "translation_result.json")
         # JSON 파일 읽기
+        print("칙쇼...")
         with open(translation_result_path, "r", encoding="utf-8") as f:
             krkr_airport = json.load(f)
-
+        print("난데 와케룬다요~")
         user_input_travel_city = request.args.get("user_input_travel_city")
         user_input_day = request.args.get("date")
 
