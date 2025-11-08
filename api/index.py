@@ -8,15 +8,15 @@ from service.air_ticket import air_ticket
 from service.risk import user_risk
 from service.inputvalue import inputvalue_service
 
-# index.py 기준으로 프로젝트 루트 경로를 Python 모듈 경로에 추가
+# 프로젝트 루트 경로를 Python 모듈 경로에 추가
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-print("Python path:", sys.path)  # 디버그용
-
 app = Flask(__name__)
 CORS(app)
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # 현재 index.py 위치 기준
 
 @app.route("/", methods=["GET"])
 def home():
@@ -35,7 +35,6 @@ def search():
 @app.route("/weather", methods=["GET", "POST"])
 def weather():
     try:
-        sum_score = 0
         weather_result_list = []
         user_input_traevel_city = request.args.get("user_input_traevel_city")
         user_input_day = request.args.get("date")
@@ -59,7 +58,8 @@ def weather():
 @app.route("/airticket", methods=["GET", "POST"])
 def airticket():
     try:
-        with open("translation_result.json", "r", encoding="utf-8") as f:
+        file_path = os.path.join(BASE_DIR, "translation_result.json")
+        with open(file_path, "r", encoding="utf-8") as f:
             krkr_airport = json.load(f)
 
         user_input_traevel_city = request.args.get("user_input_traevel_city")
@@ -81,7 +81,8 @@ def airticket():
             "result": round(airport_result_score, 1),
             "result_data": airport_result
         })
-    except:
+    except Exception as e:
+        print("예외 발생:", e)
         return jsonify({"message": "error", "result": "응답하지 않습니다"})
 
 @app.route("/risk", methods=["GET", "POST"])
@@ -96,7 +97,7 @@ def total():
         weather = float(request.args.get('weather', 0))
         air_ticket_score = float(request.args.get('air_ticket', 0))
         risk = float(request.args.get('risk', 0))
-        total_data = round((30 + air_ticket_score - risk - weather)) 
+        total_data = round(30 + air_ticket_score - risk - weather)
         return jsonify({"message": "success", "result": total_data})
     except ValueError:
         return jsonify({"message": "error", "result": 0})
@@ -111,7 +112,6 @@ def rate():
         "symbol": exchange_result[1]
     })
 
-# ✅ Vercel은 app 변수를 직접 import하므로 run() 제거
-# (로컬에서는 아래 코드가 있어야 함)
+# 로컬 테스트용
 if __name__ == "__main__":
-    app.run(port=8000, host='0.0.0.0', debug=True)
+    app.run(host="0.0.0.0", port=5000)
