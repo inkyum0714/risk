@@ -55,6 +55,7 @@ def weather():
 
 @app.route("/airticket", methods=["GET", "POST"])
 def airticket():
+    print("천상천하")
     try:
         print("넌 누구야!")
         current_dir = os.path.dirname(__file__)
