@@ -24,6 +24,7 @@ def home():
 @app.route("/search", methods=["GET", "POST"])
 def search():
     print("ZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
+    print(user_input_travel)
     user_input_travel = request.args.get("user_input_travel")
     user_input_travel_data = inputvalue_service(user_input_travel)
     return jsonify({"message": "success", "result": user_input_travel_data})
@@ -31,7 +32,7 @@ def search():
 @app.route("/weather", methods=["GET", "POST"])
 def weather():
     try:
-        sum_score = 0
+        sum_score = 0   
         weather_result_list = []
         user_input_travel_city = request.args.get("user_input_travel_city")
         user_input_day = request.args.get("date")
