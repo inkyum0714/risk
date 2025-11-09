@@ -90,8 +90,6 @@ def air_ticket(user_input_toId, departDate):
 
 
 
-        with open("flights_result.json", "w", encoding="utf-8") as f:
-            json.dump(air_ticket_result, f, ensure_ascii=False, indent=4)
     except Exception as e:
         print("Error occurred:", e)
         traceback.print_exc()
