@@ -20,7 +20,7 @@ def air_ticket(user_input_toId, departDate):
         cabinClass = "이코노미"
         flightDeals_data = []
         air_ticket_result = []
-        deal_dic = {}
+        deal_dic = {}   
         url = "https://booking-com15.p.rapidapi.com/api/v1/flights/searchFlights"
         toId = country_airport[user_input_toId]
         cabinClass = airport_seat[cabinClass]
