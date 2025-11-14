@@ -1,16 +1,13 @@
 import json, os
 def inputvalue_service(user_input_travel):
     country_cities_number = 0
-    current_dir = os.path.dirname(__file__)  # inputvalue.py가 있는 폴더(api/service)
+    current_dir = os.path.dirname(__file__)
 
-    # data 폴더에 있는 json 파일 경로 지정
     country_airport_path = os.path.join(current_dir, "..", "data", "country_airport.json")
     country_cities_path = os.path.join(current_dir, "..", "data", "country_cities.json")
     country_code_data_five_path = os.path.join(current_dir, "..", "data", "country_code_data_five.json")
     country_code_data_three_path = os.path.join(current_dir, "..", "data", "country_code_data_three.json")
-
-    current_dir = os.path.dirname(__file__)  # 이 파일 위치
-    # 파일 경로를 api/data/translation_result.json 으로 지정
+    current_dir = os.path.dirname(__file__)
     translation_result_path = os.path.join(current_dir, "..", "data", "translation_result.json")
     translation_result_path = os.path.abspath(translation_result_path)
 
@@ -36,7 +33,7 @@ def inputvalue_service(user_input_travel):
         "airport": []
     }
     print(user_input_travel)
-    if user_input_travel in country_code_data_three_number: #나라
+    if user_input_travel in country_code_data_three_number: 
         user_input_travel_type = "country"
         print(user_input_travel_type)
         user_input_travel_data["country"] = user_input_travel
@@ -52,7 +49,7 @@ def inputvalue_service(user_input_travel):
                     user_input_travel_data["airport"].append(key)
         return user_input_travel_data
 
-    elif user_input_travel in country_airport: #공항
+    elif user_input_travel in country_airport: 
         user_input_travel_type = "airport"
         print(user_input_travel_type)
         for i in range(len(country_cities[0]["children"])):
@@ -64,7 +61,7 @@ def inputvalue_service(user_input_travel):
         user_input_travel_data["airport"] = user_input_travel
         return user_input_travel_data
     
-    elif user_input_travel in country_code_data_five_number: #도시
+    elif user_input_travel in country_code_data_five_number: 
         user_input_travel_type = "city"
         print(user_input_travel_type)
         for i in range(len(country_cities[0]["children"])):

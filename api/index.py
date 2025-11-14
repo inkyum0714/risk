@@ -8,7 +8,7 @@ from api.service.air_ticket import air_ticket
 from api.service.risk import user_risk
 from api.service.inputvalue import inputvalue_service
 
-print("Python path:", sys.path)  # 디버그용
+print("Python path:", sys.path)  
 
 app = Flask(__name__)
 CORS(app)
@@ -23,7 +23,6 @@ def home():
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
-    print("ZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
     user_input_travel = request.args.get("user_input_travel")
     print(user_input_travel)
     user_input_travel_data = inputvalue_service(user_input_travel)
@@ -57,14 +56,9 @@ def weather():
 @app.route("/airticket", methods=["GET", "POST"])
 def airticket():
     try:
-        # 1. 프로젝트 내 data 폴더에 있다고 가정
         current_dir = os.path.dirname(__file__)
         translation_result_path = os.path.join(current_dir, "data", "translation_result.json")
-
-        # 2. 절대경로로 변환
         translation_result_path = os.path.abspath(translation_result_path)
-
-        # 3. 파일 존재 여부 확인
         if not os.path.exists(translation_result_path):
             return jsonify({"message": "translation_result.json 파일을 찾을 수 없습니다."}), 500
 
