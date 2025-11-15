@@ -15,7 +15,7 @@ def air_ticket(user_input_toId, departDate):
         "이코노미" : "ECONOMY",
         "프리미엄 이코노미": "PREMI UM ECONOMY",
         "비즈니스": "BUSINESS",
-        "퍼스트": "FRIST"
+        "퍼스트": "FIRST"
         }
         cabinClass = "이코노미"
         flightDeals_data = []

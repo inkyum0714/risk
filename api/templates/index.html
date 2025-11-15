@@ -336,22 +336,36 @@
             }
         });
         </script>
-        <script>
-        document.getElementById('searchButton').addEventListener('click', function(event){
-            event.preventDefault();
-            const travelInput = document.getElementById('country-input').value;
-            document.cookie = `last_city=${encodeURIComponent(travelInput)}; max-age=2160000; path=/`;
-
-        });
-
-        window.addEventListener('load', function() {
-            const cookies = document.cookie.split(';').map(c => c.trim());
-            const cityCookie = cookies.find(c => c.startsWith('last_city='));
-            if (cityCookie) {
-                const lastCity = decodeURIComponent(cityCookie.split('=')[1]);
-                document.getElementById('country-input').value = lastCity;
+    <script>
+    document.getElementById('searchButton').addEventListener('click', function(event){
+        event.preventDefault();
+        const travelInput = document.getElementById('country-input').value;
+    
+        // 마지막 검색 도시 쿠키 저장
+        document.cookie = `last_city=${encodeURIComponent(travelInput)}; max-age=2160000; path=/`;
+    
+        search(); // 검색 실행
+    });
+    
+    // 페이지 로드 시 실행
+    window.addEventListener('load', function() {
+        const cookies = document.cookie.split(';').map(c => c.trim());
+        const cityCookie = cookies.find(c => c.startsWith('last_city='));
+    
+        if (cityCookie) {
+            const lastCity = decodeURIComponent(cityCookie.split('=')[1]);
+        
+            // input 채우기
+            document.getElementById('country-input').value = lastCity;
+        
+            // ✅ 페이지 로딩 시 자동 검색 실행
+            // (쿠키 값이 유효하면)
+            if (lastCity.trim() !== "") {
+                search();
             }
-        });
-        </script>
+        }
+    });
+    </script>
+
     </body>
 </html>
