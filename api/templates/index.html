@@ -315,6 +315,49 @@
             });
         });
         </script>
+        <script>
+    // 쿠키 설정 함수
+    function setCookie(name, value, days) {
+        const expires = new Date();
+        expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+        document.cookie = `${name}=${encodeURIComponent(value)};expires=${expires.toUTCString()};path=/`;
+    }
+
+    // 쿠키 가져오기 함수
+    function getCookie(name) {
+        const cookieArr = document.cookie.split(';');
+        for (let cookie of cookieArr) {
+            const [cname, cvalue] = cookie.trim().split('=');
+            if (cname === name) return decodeURIComponent(cvalue);
+        }
+        return null;
+    }
+
+    // 추천 여행지 버튼 클릭 이벤트
+    document.getElementById('recommendButton').addEventListener('click', function(event){
+        event.preventDefault(); // 기본 submit 방지
+
+        const selectedCity = document.getElementById('country-input').value;
+        if (!selectedCity) {
+            alert("도시를 선택해주세요.");
+            return;
+        }
+
+        // 선택 도시 쿠키 저장 (유효기간 2일)
+        setCookie('last_city', selectedCity, 2);
+
+        // AJAX 호출
+        search(); // 이미 구현된 search() 함수 재사용
+    });
+
+    // 페이지 로드 시 쿠키에 저장된 도시가 있으면 input에 채워주기
+    window.addEventListener('load', function(){
+        const lastCity = getCookie('last_city');
+        if (lastCity) {
+            document.getElementById('country-input').value = lastCity;
+        }
+    });
+</script>
 
     </body>
 </html>
