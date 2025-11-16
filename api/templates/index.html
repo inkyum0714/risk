@@ -315,49 +315,64 @@
             });
         });
         </script>
-        <script>
-    // 쿠키 설정 함수
-    function setCookie(name, value, days) {
+<script>
+    // 쿠키 설정 함수 (리스트 저장 가능)
+    function setCookieList(name, value, days) {
+        let list = getCookieList(name) || [];
+        if (!list.includes(value)) list.push(value); // 중복 방지
         const expires = new Date();
         expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-        document.cookie = `${name}=${encodeURIComponent(value)};expires=${expires.toUTCString()};path=/`;
+        document.cookie = `${name}=${encodeURIComponent(JSON.stringify(list))};expires=${expires.toUTCString()};path=/`;
     }
 
-    // 쿠키 가져오기 함수
-    function getCookie(name) {
+    // 쿠키 가져오기 함수 (리스트 형태)
+    function getCookieList(name) {
         const cookieArr = document.cookie.split(';');
         for (let cookie of cookieArr) {
             const [cname, cvalue] = cookie.trim().split('=');
-            if (cname === name) return decodeURIComponent(cvalue);
+            if (cname === name) return JSON.parse(decodeURIComponent(cvalue));
         }
         return null;
     }
 
     // 추천 여행지 버튼 클릭 이벤트
     document.getElementById('recommendButton').addEventListener('click', function(event){
-        event.preventDefault(); // 기본 submit 방지
+        event.preventDefault();
 
-        const selectedCity = document.getElementById('country-input').value;
-        if (!selectedCity) {
-            alert("도시를 선택해주세요.");
+        // 쿠키에서 도시 리스트 가져오기
+        const cityList = getCookieList('recent_cities') || [];
+        if (cityList.length === 0) {
+            alert("먼저 도시를 선택해주세요.");
             return;
         }
 
-        // 선택 도시 쿠키 저장 (유효기간 2일)
-        setCookie('last_city', selectedCity, 2);
+        // 랜덤으로 하나 선택
+        const randomCity = cityList[Math.floor(Math.random() * cityList.length)];
+        document.getElementById('country-input').value = randomCity;
 
-        // AJAX 호출
-        search(); // 이미 구현된 search() 함수 재사용
+        // 검색 호출
+        search(); // 기존 search() 함수 사용
     });
 
-    // 페이지 로드 시 쿠키에 저장된 도시가 있으면 input에 채워주기
+    // 입력값 저장 (검색 버튼 클릭 시)
+    document.getElementById('searchButton').addEventListener('click', function(event){
+        event.preventDefault();
+        const cityInput = document.getElementById('country-input').value.trim();
+        if (cityInput) {
+            setCookieList('recent_cities', cityInput, 2); // 2일 유효
+        }
+        search();
+    });
+
+    // 페이지 로드 시 쿠키에서 최근 도시 중 마지막 값으로 input 채우기
     window.addEventListener('load', function(){
-        const lastCity = getCookie('last_city');
-        if (lastCity) {
-            document.getElementById('country-input').value = lastCity;
+        const cityList = getCookieList('recent_cities');
+        if (cityList && cityList.length > 0) {
+            document.getElementById('country-input').value = cityList[cityList.length - 1];
         }
     });
 </script>
+
 
     </body>
 </html>
