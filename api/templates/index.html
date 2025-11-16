@@ -348,7 +348,7 @@
             const expires = "expires=" + d.toUTCString();
             document.cookie = name + "=" + encodeURIComponent(value) + ";" + expires + ";path=/";
         }
-        // traveldata 쿠키에서 리스트 추출
+        // travelData 쿠키에서 리스트 추출
         function getTravelDataList(cookieName) {
             const cookieValue = getCookie(cookieName);
             if (!cookieValue) return [];
@@ -404,7 +404,7 @@
 
         // 페이지 로드 시 실행
         window.addEventListener('load', function() {
-            const cityList = getTravelDataList('traveldata');
+            const cityList = getTravelDataList('travelData');
             if (!cityList || cityList.length === 0) {
                 console.log("추천 여행지가 없습니다.");
                 return;
