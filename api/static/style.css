@@ -19,7 +19,12 @@ body, html {
     align-items: center;
     flex-direction: column;
 }
-
+.recommended {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+}
 .top {
     height: 40%;
     background: linear-gradient(to right, #89f7fe, #66a6ff);
