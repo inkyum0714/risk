@@ -51,8 +51,12 @@
     </div>
         <script>
             document.getElementById('searchButton').addEventListener('click', function(event){
-                event.preventDefault(); // 기본 submit 방지
-                search();           // AJAX 호출
+                event.preventDefault();
+                const cityInput = document.getElementById('country-input').value.trim();
+                if (cityInput) {
+                    setCookieList('recent_cities', cityInput, 2); // 2일 유효
+                }
+                search();
             });
 
             async function search() {
@@ -354,15 +358,6 @@
         search(); // 기존 search() 함수 사용
     });
 
-    // 입력값 저장 (검색 버튼 클릭 시)
-    document.getElementById('searchButton').addEventListener('click', function(event){
-        event.preventDefault();
-        const cityInput = document.getElementById('country-input').value.trim();
-        if (cityInput) {
-            setCookieList('recent_cities', cityInput, 2); // 2일 유효
-        }
-        search();
-    });
 
     // 페이지 로드 시 쿠키에서 최근 도시 중 마지막 값으로 input 채우기
     window.addEventListener('load', function(){
