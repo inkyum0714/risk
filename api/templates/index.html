@@ -7,228 +7,82 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-<div class="top">
-    <h2>맞춤 여행 점수 판단 서비스</h2>
-    <form class="search-form" action="/index" method="get" autocomplete="off">
-        <div class="input-group">
-            <label for="country-input-start">출발</label>
-            <input id="country-input-start" type="text" value="대한민국" disabled="true">
-        </div>
+    <div class="top">
+        <h2>맞춤 여행 점수 판단 서비스</h2>
+        <!-- 상단 검색 영역 -->
+        <form class="search-form" action="/index" method="get" autocomplete="off">
+            <div class="input-group">
+                <label for="country-input-start">출발</label>
+                <input id="country-input-start" type="text" value="대한민국" disabled="true">
+            </div>
 
-        <div class="input-group">
-            <label for="country-input">도착</label>
-            <input id="country-input" type="text" placeholder="나라, 도시, 공항중 하나를 입력하세요" name="user_input_travel" required>
-            <div id="autocomplete-list" class="autocomplete-list"></div>
-        </div>
+            <div class="input-group">
+                <label for="country-input">도착</label>
+                <input id="country-input" type="text" placeholder="나라, 도시, 공항중 하나를 입력하세요" name="user_input_travel" required>
+                <div id="autocomplete-list" class="autocomplete-list"></div>
+            </div>
 
-        <div class="input-group">
-            <label for="user_input_day">출발일</label>
-            <input type="date" id="user_input_day" name="user_input_day" required>
-            <small id="date-warning" style="color: red; display: none; margin-top: 4px;">과거 날짜는 선택할 수 없습니다.</small>
-        </div>
-        <button id="searchButton">검색</button>
-        <button id="recommendButton" class="recommend-btn">추천 여행지 검색</button>
-    </form>
-</div>
-
-<div class="bottom">
-    <div id="response-container" class="weather-results"></div>
-    <h2 style="margin-bottom: 20px; color: #333;">추천 여행지</h2>
-    {% for dest in destinations %}
-    <div class="destination">
-        <img src="{{ dest.image_url }}" alt="{{ dest.name }}">
-        <div class="destination-info">
-            <h3>{{ dest.name }}</h3>
-            <p>여행 점수: <span class="score">{{ dest.score }}</span></p>
-            <p>설명: {{ dest.description }}</p>
-        </div>
+            <div class="input-group">
+                <label for="user_input_day">출발일</label>
+                <input type="date" id="user_input_day" name="user_input_day" required>
+                <small id="date-warning" style="color: red; display: none; margin-top: 4px;">과거 날짜는 선택할 수 없습니다.</small>
+            </div>
+            <button id="searchButton">검색</button>
+            <button id="recommendButton" class="recommend-btn">추천 여행지 검색</button>
+        </form>
     </div>
-    {% endfor %}
-</div>
 
-<script>
-    // ===================== 날짜 자동 내일로 설정 =====================
-    window.addEventListener('load', function() {
-        const today = new Date();
-        const tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate() + 1);
-        const yyyy = tomorrow.getFullYear();
-        const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
-        const dd = String(tomorrow.getDate()).padStart(2, '0');
-        document.getElementById('user_input_day').value = `${yyyy}-${mm}-${dd}`;
-    });
 
-    // ===================== 검색 버튼 =====================
-    document.getElementById('searchButton').addEventListener('click', function(event){
-        event.preventDefault();
-        const travelInput = document.getElementById('country-input').value;
-        document.cookie = `last_city=${encodeURIComponent(travelInput)}; max-age=2160000; path=/`;
-        search(); 
-    });
 
-    async function search() {
-        const user_input_travel = document.getElementById('country-input').value;
-        const container = document.querySelector("#response-container");
-        container.innerHTML = "";
-        const url = "/search?user_input_travel=" + encodeURIComponent(user_input_travel);
-        $.ajax({
-            url: url,
-            method: "GET",
-            success: function(response) {
-                let user_input_travel_data = response.result;
-                getAllmain(user_input_travel_data.city, user_input_travel_data.country);
-            },
-            error: function(err) {
-                console.error("search AJAX error:", err);
-            }
-        });
-    }
-
-    // ===================== 추천 여행지 검색 버튼 =====================
-    document.getElementById('recommendButton').addEventListener('click', function(event){
-        event.preventDefault();
-        recommendSearch();
-    });
-
-    async function recommendSearch() {
-        const container = document.querySelector("#response-container");
-        container.innerHTML = "<p>추천 여행지를 불러오는 중...</p>";
-
-        try {
-            const res = await fetch("/recommend");
-            const data = await res.json();
-
-            if (!data.destinations || data.destinations.length === 0) {
-                container.innerHTML = "<p>추천할 여행지가 없습니다.</p>";
-                return;
-            }
-
-            // 쿠키 확인 후 마지막 검색 도시 기준으로 검색
-            const cookies = document.cookie.split(';').map(c => c.trim());
-            const cityCookie = cookies.find(c => c.startsWith('last_city='));
-            if (cityCookie) {
-                const lastCity = decodeURIComponent(cityCookie.split('=')[1]);
-                if (lastCity.trim() !== "") {
-                    re_search(lastCity);
-                } else {
-                    container.innerHTML = "<p>추천할 쿠키 도시가 없습니다.</p>";
-                }
-            } else {
-                container.innerHTML = "<p>추천할 쿠키 도시가 없습니다.</p>";
-            }
-
-        } catch (err) {
-            console.error("recommendSearch error:", err);
-            container.innerHTML = "<p>추천 정보를 가져오는 중 오류 발생</p>";
-        }
-    }
-
-    async function re_search(user_input_travel) {
-        const container = document.querySelector("#response-container");
-        container.innerHTML = "";
-        const url = "/search?user_input_travel=" + encodeURIComponent(user_input_travel);
-        $.ajax({
-            url: url,
-            method: "GET",
-            success: function(response) {
-                let user_input_travel_data = response.result;
-                getAllmain(user_input_travel_data.city, user_input_travel_data.country);
-            },
-            error: function(err) {
-                console.error("search AJAX error:", err);
-            }
-        });
-    }
-
-    // ===================== 자동완성 =====================
-    const countries = {{ country_code_data_five_number.keys() | list | tojson | safe }} || [];
-    const cities = {{ country_code_data_three.keys() | list | tojson | safe }} || [];
-    const airports = {{ airport_names | list | tojson | safe }} || [];
-    const allPlaces = [...new Set([...countries, ...cities, ...airports])];
-    const autocompleteList = document.getElementById('autocomplete-list');
-    const input = document.getElementById('country-input');
-
-    input.addEventListener('input', function() {
-        const val = this.value.toLowerCase();
-        autocompleteList.innerHTML = '';
-        if (!val) return;
-
-        const matches = allPlaces.filter(place => place.toLowerCase().includes(val)).slice(0, 10);
-        matches.forEach(match => {
-            const item = document.createElement('div');
-            item.classList.add('autocomplete-item');
-            const startIndex = match.toLowerCase().indexOf(val);
-            item.innerHTML = `${match.substring(0, startIndex)}<strong>${match.substr(startIndex, val.length)}</strong>${match.substr(startIndex + val.length)}`;
-            item.addEventListener('click', function(e) {
-                e.stopPropagation();
-                input.value = match;
-                autocompleteList.innerHTML = '';
+    <div class="bottom">
+        <div id="response-container" class="weather-results">   
+    </div>
+        <h2 style="margin-bottom: 20px; color: #333;">추천 여행지</h2>
+        {% for dest in destinations %}
+        <div class="destination">
+            <img src="{{ dest.image_url }}" alt="{{ dest.name }}">
+            <div class="destination-info">
+                <h3>{{ dest.name }}</h3>
+                <p>여행 점수: <span class="score">{{ dest.score }}</span></p>
+                <p>설명: {{ dest.description }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+        <script>
+            document.getElementById('searchButton').addEventListener('click', function(event){
+                event.preventDefault(); // 기본 submit 방지
+                search();           // AJAX 호출
             });
-            autocompleteList.appendChild(item);
-        });
-    });
 
-    // ===================== getAllmain / main / weather / airticket / risk / exchange / total =====================
-    async function getAllmain(user_input_travel_cities, user_input_travel_country) {
-        const exchangeData = await exchange(user_input_travel_country);
-        const exchangeRate = exchangeData.result;
-        const symbol = exchangeData.symbol;
-
-        const riskData = await risk(user_input_travel_country);
-        const riskLevel = riskData.result.score;
-        const alerts = riskData.result.alert;
-        const color = riskLevel >= 10 ? '#ef4444' : riskLevel >= 6 ? '#f59e0b' : '#10b981';
-
-        appendResult(`
-            <div style="padding: 20px; background: white; border-radius: 8px; border-left: 4px solid ${color}; margin-bottom: 16px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h3 style="margin: 0;">국가 위험도</h3>
-                <span style="font-size: 32px; font-weight: bold; color: ${color};">${riskLevel}</span>
-                </div>
-                ${alerts && alerts.length > 0 ? `<div style="margin-top: 16px;"><p>경보:</p>${alerts.map(a=>`<p>• ${a}</p>`).join('')}</div>` : ''}
-            </div>
-        `);
-
-        appendResult(`
-            <div style="padding: 20px; background: white; border-radius: 8px; border-left: 4px solid #3b82f6; margin-bottom: 16px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h3 style="margin: 0;">환율 정보</h3>
-                <span style="font-size: 32px; font-weight: bold; color: #3b82f6;">${exchangeRate}</span>
-                </div>
-                <p>현재 ${user_input_travel_country}의 1${symbol} 단위 기준 대한민국 환율</p>
-            </div>
-        `);
-
-        for (const city of user_input_travel_cities) {
-            await main(city, user_input_travel_country, riskData);
-        }
-    }
-
-    function appendResult(message) {
-        const container = document.querySelector("#response-container");
-        const div = document.createElement("div");
-        div.innerHTML = message;
-        container.appendChild(div);
-    }
-
-    async function main(user_input_travel_city, user_input_travel_country, riskData) {
-        const progressId = `progress-${user_input_travel_city.replace(/\s+/g, '-')}`;
-        const labelId = `label-${user_input_travel_city.replace(/\s+/g, '-')}`;
-        let progress = 0;
-
-        appendResult(`
-            <div class="progress-container" id="container-${progressId}">
-                <label id="${labelId}" for="${progressId}" class="progress-label">${user_input_travel_city} 데이터 불러오는 중...</label>
-                <progress id="${progressId}" value="0" max="100"></progress>
-            </div>
-        `);
-        const progressBar = document.getElementById(progressId);
-
-        async function incrementProgress(target, step = 1, interval = 20) {
-            return new Promise(resolve => {
+            async function search() {
+                const user_input_travel = document.getElementById('country-input').value;
+                const container = document.querySelector("#response-container")
+                container.innerHTML = "";
+                const url = "/search?user_input_travel="+user_input_travel;
+                $.ajax({
+                    url : url,
+                    method : "GET",
+                    success: function(response) {
+                        let user_input_travel_data = response.result;
+                        console.log(user_input_travel_data)
+                        console.log(user_input_travel_data.country)
+                        console.log(user_input_travel_data.city)
+                        console.log(user_input_travel_data.airport)
+                        getAllmain(user_input_travel_data.city, user_input_travel_data.country)
+                    },
+                    error: function(err) {
+                        console.error("search AJAX error:", err);
+                    }
+                })
+            }
+        </script>
+        <script>
+        function incrementProgress(target, step = 1, interval = 20) {
+            return new Promise((resolve) => {
                 const timer = setInterval(() => {
                     progress += step;
-                    if (progress > target) progress = target;
+                    if (progress > target) progress = target; // 최대값 제한
                     progressBar.value = progress;
                     if (progress >= target) {
                         clearInterval(timer);
@@ -237,77 +91,230 @@
                 }, interval);
             });
         }
-
-        try {
-            const weatherPromise = weather(user_input_travel_city).then(async data => { await incrementProgress(40,1,15); return data; });
-            const ticketPromise = airticket(user_input_travel_city).then(async data => { await incrementProgress(80,1,15); return data; });
-            const [weatherData, ticketData] = await Promise.all([weatherPromise, ticketPromise]);
-            const total_score = await total(weatherData.result, ticketData.result, riskData.result.score);
-            await incrementProgress(100,1,10);
-
-            document.getElementById(`container-${progressId}`).remove();
-
+        function appendResult(message) {
+            const container = document.querySelector("#response-container")
+            const div = document.createElement("div")
+            div.innerHTML = message
+            container.appendChild(div)
+        }
+        async function getAllmain(user_input_travel_cities, user_input_travel_country) {
+            const exchangeData = await exchange(user_input_travel_country);
+            const exchangeRate = exchangeData.result;
+            const symbol = exchangeData.symbol
+            // 1. 국가 위험도 한 번만 가져오기
+            const riskData = await risk(user_input_travel_country);
+            const riskLevel = riskData.result.score;
+            const alerts = riskData.result.alert;
+            const color = riskLevel >= 10 ? '#ef4444' : riskLevel >= 6 ? '#f59e0b' : '#10b981';
+        
+            // 2. 위험도 출력 (맨 위에)
             appendResult(`
-                <div class="travell-card fade-in">
-                    <div class="card-header"><h3>${user_input_travel_city}</h3></div>
-                    <div class="card-body">
-                        <div class="info-section weather-section">
-                            <span class="label">날씨 점수(불쾌 지수)</span>
-                            <span class="value">${weatherData.result}</span>
-                            <span class="label">총합 점수</span>
-                            <span class="value">${total_score}</span>
-                        </div>
-                        <div class="info-section score-section">
-                            <span class="label">항공권 점수</span>
-                            <span class="value score">${ticketData.result}</span>
-                        </div>
-                        <div class="ticket-details">
-                            <h4 class="details-title">항공권 상세 정보</h4>
-                            <div class="detail-grid">
-                                <div class="detail-item"><span class="detail-label">가격</span><span class="detail-value">${ticketData.result_data[0]["가격"]}</span></div>
-                                <div class="detail-item"><span class="detail-label">최초 탑승 시간</span><span class="detail-value">${ticketData.result_data[0]["최초 탑승 시간"]}</span></div>
-                                <div class="detail-item"><span class="detail-label">마지막 탑승 시간</span><span class="detail-value">${ticketData.result_data[0]["마지막 탑승 시간"]}</span></div>
-                                <div class="detail-item"><span class="detail-label">위탁수하물 용량</span><span class="detail-value">${ticketData.result_data[0]["위탁수하물 용량"]}</span></div>
-                                <div class="detail-item"><span class="detail-label">항공사 이름</span><span class="detail-value airline">${ticketData.result_data[0]["항공사 이름"]}</span></div>
-                            </div>
-                        </div>
+                <div style="padding: 20px; background: white; border-radius: 8px; border-left: 4px solid ${color}; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="margin: 0; color: #333;">국가 위험도</h3>
+                    <span style="font-size: 32px; font-weight: bold; color: ${color};">${riskLevel}</span>
                     </div>
+                    ${alerts && alerts.length > 0 ? `
+                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee;">
+                        <p style="margin: 0 0 8px 0; font-weight: 600; color: #666;">경보:</p>
+                        ${alerts.map(alert => `<p style="margin: 4px 0; color: #666;">• ${alert}</p>`).join('')}
+                    </div>
+                    ` : ''}
                 </div>
             `);
 
-        } catch(err) {
-            console.error("에러 발생:", err);
+            appendResult(`
+                <div style="padding: 20px; background: white; border-radius: 8px; border-left: 4px solid #3b82f6; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; color: #333;">환율 정보</h3>
+                <span style="font-size: 32px; font-weight: bold; color: #3b82f6;">${exchangeRate}</span>
+            </div>
+            <p style="margin-top: 12px; color: #666;">현재 ${user_input_travel_country}의 1${symbol} 단위 기준 대한민국 환율</p>
+        </div>
+        `);
+
+            // 3. 각 도시별 여행 카드 출력 (riskData 전달)
+            for (const city of user_input_travel_cities) {
+                await main(city, user_input_travel_country, riskData);
+            }
         }
-    }
 
-    async function weather(city) {
-        const date = document.getElementById('user_input_day').value;
-        const res = await fetch(`/weather?user_input_travel_city=${encodeURIComponent(city)}&date=${date}`);
-        return res.json();
-    }
+        // main() 함수에서 riskData를 매개변수로 받도록 수정
+        async function main(user_input_travel_city, user_input_travel_country, riskData) {
+            // 도시마다 고유 ID 부여
+            const progressId = `progress-${user_input_travel_city.replace(/\s+/g, '-')}`;
+            const labelId = `label-${user_input_travel_city.replace(/\s+/g, '-')}`;
 
-    async function airticket(city) {
-        const date = document.getElementById('user_input_day').value;
-        const res = await fetch(`/airticket?user_input_travel_city=${encodeURIComponent(city)}&date=${date}`);
-        return res.json();
-    }
+            let progress = 0;
+            try {
+                appendResult(`
+                    <div class="progress-container" id="container-${progressId}">
+                        <label id="${labelId}" for="${progressId}" class="progress-label">
+                            ${user_input_travel_city} 데이터 불러오는 중...
+                        </label>
+                        <progress id="${progressId}" value="0" max="100"></progress>
+                    </div>
+                `);
 
-    async function risk(country) {
-        const date = document.getElementById('user_input_day').value;
-        const res = await fetch(`/risk?user_input_travel_country=${encodeURIComponent(country)}&date=${date}`);
-        return res.json();
-    }
+                const progressBar = document.getElementById(progressId);
+                const label = document.getElementById(labelId);
 
-    async function exchange(country) {
-        const res = await fetch(`/exchange?base=${encodeURIComponent(country)}`);
-        return res.json();
-    }
+                // 내부 전용 진행 함수
+                function incrementProgress(target, step = 1, interval = 20) {
+                    return new Promise((resolve) => {
+                        const timer = setInterval(() => {
+                            progress += step;
+                            if (progress > target) progress = target;
+                            progressBar.value = progress;
+                            if (progress >= target) {
+                                clearInterval(timer);
+                                resolve();
+                            }
+                        }, interval);
+                    });
+                }
 
-    async function total(weather, air_ticket, risk) {
-        const res = await fetch(`/total?weather=${weather}&air_ticket=${air_ticket}&risk=${risk}`);
-        return (await res.json()).result;
-    }
+                // weather
+                const weatherPromise = weather(user_input_travel_city)
+                    .then(async (weatherData) => {
+                        await incrementProgress(40, 1, 15);
+                        return weatherData;
+                    });
 
-</script>
-</body>
+                // airticket
+                const ticketPromise = airticket(user_input_travel_city)
+                    .then(async (ticketData) => {
+                        await incrementProgress(80, 1, 15);
+                        return ticketData;
+                    });
+
+                // 모두 완료
+                const [weatherData, ticketData] = await Promise.all([weatherPromise, ticketPromise]);
+                const total_score = await total(weatherData.result, ticketData.result, riskData.result.score);
+                await incrementProgress(100, 1, 10);
+
+                // 완료 후 진행바 제거
+                const container = document.getElementById(`container-${progressId}`);
+                container.remove();
+                // 결과 표시
+                appendResult(`
+                    <div class="travell-card fade-in">
+                        <div class="card-header">
+                            <h3 class="city-name">${user_input_travel_city}</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-section weather-section">
+                                <span class="label">날씨 점수(불쾌 지수)</span>
+                                <span class="value">${weatherData.result}</span>
+                                <span class="label">총합 점수</span>
+                                <span class="value">${total_score}</span>
+                            </div>
+                            <div class="info-section score-section">
+                                <span class="label">항공권 점수</span>
+                                <span class="value score">${ticketData.result}</span>
+                            </div>
+                            <div class="ticket-details">
+                                <h4 class="details-title">항공권 상세 정보</h4>
+                                <div class="detail-grid">
+                                    <div class="detail-item">
+                                        <span class="detail-label">가격</span>
+                                        <span class="detail-value price">${ticketData.result_data[0]["가격"] }</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">최초 탑승 시간</span>
+                                        <span class="detail-value">${ticketData.result_data[0]["최초 탑승 시간"]}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">마지막 탑승 시간</span>
+                                        <span class="detail-value">${ticketData.result_data[0]["마지막 탑승 시간"]}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">위탁수하물 용량</span>
+                                        <span class="detail-value">${ticketData.result_data[0]["위탁수하물 용량"]}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">항공사 이름</span>
+                                        <span class="detail-value airline">${ticketData.result_data[0]["항공사 이름"]}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `);
+            } catch (err) {
+                console.error("에러 발생:", err);
+            } 
+        }
+
+
+            async function weather(city) {
+                const date = document.getElementById('user_input_day').value;
+                const res = await fetch(`/weather?user_input_travel_city=${city}&date=${date}`);
+                return res.json(); 
+            }
+
+            async function airticket(city) {
+                const date = document.getElementById('user_input_day').value;
+                const res = await fetch(`/airticket?user_input_travel_city=${city}&date=${date}`);
+                console.log(res)
+                return res.json();
+            }
+
+            async function risk(country) {
+                const date = document.getElementById('user_input_day').value;
+                const res = await fetch(`/risk?user_input_travel_country=${country}&date=${date}`);
+                return res.json();
+            }
+
+            async function exchange(country) {
+                console.log(country)
+                const res = await fetch(`/exchange?base=${country}`);
+                console.log(res)
+                return res.json();
+            }
+            async function total(weather, air_ticket, risk) {
+                const res = await fetch(`/total?weather=${weather}&air_ticket=${air_ticket}&risk=${risk}`);
+                const data = await res.json(); 
+                return data.result; 
+            }
+
+        </script>
+        <script>
+        const countries = {{ country_code_data_five_number.keys() | list | tojson | safe }} || [];
+        const cities = {{ country_code_data_three.keys() | list | tojson | safe }} || [];
+        const airports = {{ airport_names | list | tojson | safe }} || [];
+
+        const allPlaces = [...new Set([...countries, ...cities, ...airports])];
+            const autocompleteList = document.getElementById('autocomplete-list');
+            const input = document.getElementById('country-input');
+
+        input.addEventListener('input', function() {
+            const val = this.value.toLowerCase();
+            autocompleteList.innerHTML = '';
+            if (!val) return;
+
+            const matches = allPlaces
+                .filter(place => place.toLowerCase().includes(val))
+                .slice(0, 10); 
+
+            matches.forEach(match => {
+                const item = document.createElement('div');
+                item.classList.add('autocomplete-item');
+
+                const startIndex = match.toLowerCase().indexOf(val);
+                item.innerHTML = 
+                    `${match.substring(0, startIndex)}<strong>${match.substr(startIndex, val.length)}</strong>${match.substr(startIndex + val.length)}`;
+
+                item.addEventListener('click', function(e) {
+                    e.stopPropagation(); 
+                    input.value = match;
+                    autocompleteList.innerHTML = '';
+                });
+
+                autocompleteList.appendChild(item);
+            });
+        });
+        </script>
+
+    </body>
 </html>
