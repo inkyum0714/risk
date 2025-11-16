@@ -31,9 +31,6 @@
             <button id="recommendButton" class="recommend-btn">추천 여행지 검색</button>
         </form>
     </div>
-
-
-
     <div class="bottom">
         <div id="response-container" class="weather-results">   
     </div>
@@ -148,7 +145,7 @@
             // 도시마다 고유 ID 부여
             const progressId = `progress-${user_input_travel_city.replace(/\s+/g, '-')}`;
             const labelId = `label-${user_input_travel_city.replace(/\s+/g, '-')}`;
-
+        }
             let progress = 0;
             try {
                 appendResult(`
@@ -308,8 +305,6 @@
                 return data.result; 
             }
 
-        </script>
-        <script>
             const countries = {{ country_code_data_five_number.keys() | list | tojson | safe }} || [];
             const cities = {{ country_code_data_three.keys() | list | tojson | safe }} || [];
             const airports = {{ airport_names | list | tojson | safe }} || [];
@@ -343,22 +338,6 @@
                 autocompleteList.appendChild(item);
             });
         });
-        </script>
-            <script>
-        // 쿠키 가져오기
-        function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-            return null;
-        }
-.
-        // 쿠키 설정
-        function setCookie(name, value, days) {
-            const expires = new Date();
-            expires.setTime(expires.getTime() + (days*24*60*60*1000));
-            document.cookie = `${name}=${encodeURIComponent(value)};expires=${expires.toUTCString()};path=/`;
-        }
-        </script>
+        </script>  
         </body>
 </html>
