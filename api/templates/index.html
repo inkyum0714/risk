@@ -63,7 +63,7 @@
                 const url = "/search?user_input_travel="+user_input_travel;
                 $.ajax({
                     url : url,
-                    method : "GET",
+                    method : "GET", 
                     success: function(response) {
                         let user_input_travel_data = response.result;
                         console.log(user_input_travel_data)
@@ -266,7 +266,7 @@
                 totalScore: total_score
             };
 
-            // 중복 확인 후 append
+            // 중복 확인 후 appendw
             if (!dataArray.some(item => item.city === user_input_travel_city)) {
                 dataArray.push(dataItem);
                 setCookie("travelData", JSON.stringify(dataArray), 7);
