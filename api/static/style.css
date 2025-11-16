@@ -258,6 +258,17 @@ h1 {
 .card-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+  color: white;
+  border-radius: 8px 8px 0 0;
+}
+
+.card-header .city-name {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0;
 }
 
 .card-header .total-score-container {
@@ -266,16 +277,17 @@ h1 {
 
 .card-header .total-score-container h4 {
   margin: 0;
-  font-size: 1.1em;  
+  font-size: 1em;
   font-weight: normal;
-  color: #f3f4f6;    
+  color: #f3f4f6;
 }
 
 .card-header .total-score-container .score-value {
-  font-size: 1.5em; 
+  font-size: 1.6em;
   font-weight: bold;
-  color: #ffed4a;   
+  color: #ffed4a;
   display: block;
+  margin-top: 2px;
 }
 .city-name {
   margin: 0;
