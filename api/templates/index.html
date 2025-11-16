@@ -1,4 +1,4 @@
-@ -1,402 +1,399 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -346,6 +346,22 @@
             });
         });
             // 쿠키 설정 함수 (리스트 저장 가능)
+            function setCookieList(name, value, days) {
+                let list = getCookieList(name) || [];
+                if (!list.includes(value)) list.push(value); // 중복 방지
+                const expires = new Date();
+                expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+                document.cookie = `${name}=${encodeURIComponent(JSON.stringify(list))};expires=${expires.toUTCString()};path=/`;
+            }
+        
+            // 쿠키 가져오기 함수 (리스트 형태)
+            function getCookieList(name) {
+                const cookieArr = document.cookie.split(';');
+                for (let cookie of cookieArr) {
+                    const [cname, cvalue] = cookie.trim().split('=');
+                    if (cname === name) return JSON.parse(decodeURIComponent(cvalue));
+                }
+            }
             // 기존 쿠키 가져오기
             function getCookie(name) {
                 const value = `; ${document.cookie}`;
@@ -353,6 +369,7 @@
                 if (parts.length === 2) return parts.pop().split(';').shift();
                 return null;
             }
+        
 
             // 쿠키 저장 함수
             function setCookie(name, value, days) {
@@ -370,6 +387,7 @@
                 // 쿠키에서 도시 리스트 가져오기
                 const cityList = getCookieList('recent_cities') || [];
                 if (cityList.length === 0) {
+                    alert("먼저 도시를 선택해주세요.");
                     alert("추천 여행지가 없습니다.");
                     return;
                 }
@@ -391,5 +409,7 @@
                 }
             });
         </script>
+
+
     </body>
 </html>
