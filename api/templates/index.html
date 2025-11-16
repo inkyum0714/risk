@@ -53,9 +53,6 @@
             document.getElementById('searchButton').addEventListener('click', function(event){
                 event.preventDefault();
                 const cityInput = document.getElementById('country-input').value.trim();
-                if (cityInput) {
-                    setCookieList('recent_cities', cityInput, 2); // 2일 유효
-                }
                 search();
             });
 
