@@ -315,58 +315,86 @@
             });
         });
         </script>
-    <script>
-    document.getElementById('searchButton').addEventListener('click', function(event){
-        event.preventDefault();
-        const travelInput = document.getElementById('country-input').value;
-    
-        document.cookie = `last_city=${encodeURIComponent(travelInput)}; max-age=2160000; path=/`;
-    
-        search(); 
-    });
-    window.addEventListener('load', function() {
-        const cookies = document.cookie.split(';').map(c => c.trim());
-        const cityCookie = cookies.find(c => c.startsWith('last_city='));
-    
-        if (cityCookie) {
-            const lastCity = decodeURIComponent(cityCookie.split('=')[1]);
+        <script>
         
-            document.getElementById('country-input').value = lastCity;
+        document.getElementById('searchButton').addEventListener('click', function(event){
+            event.preventDefault();
         
-            if (lastCity.trim() !== "") {
-                search();
+            const travelInput = document.getElementById('country-input').value;
+        
+            document.cookie = `last_city=${encodeURIComponent(travelInput)}; max-age=2160000; path=/`;
+        
+            search(); 
+        });
+        
+        
+        document.getElementById('recommendButton').addEventListener('click', function(event){
+            event.preventDefault();
+            recommendSearch();
+        });
+        
+        window.addEventListener('load', function() {
+            const cookies = document.cookie.split(';').map(c => c.trim());
+            const cityCookie = cookies.find(c => c.startsWith('last_city='));
+        
+            if (cityCookie) {
+                const lastCity = decodeURIComponent(cityCookie.split('=')[1]);
+                document.getElementById('country-input').value = lastCity;
+            
+                if (lastCity.trim() !== "") {
+                    search();
+                }
+            }
+        });
+        
+        async function search() {
+            const user_input_travel = document.getElementById('country-input').value;
+            const container = document.querySelector("#response-container");
+            container.innerHTML = "";
+        
+            const url = "/search?user_input_travel=" + encodeURIComponent(user_input_travel);
+        
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+            
+                getAllmain(data.result.city, data.result.country);
+            
+            } catch (err) {
+                console.error("search error:", err);
+                container.innerHTML = "<p>검색 중 오류 발생</p>";
             }
         }
-    });
+        
         async function recommendSearch() {
-        const container = document.querySelector("#response-container");
-        container.innerHTML = "<p>추천 여행지를 불러오는 중...</p>";
-
-        try {
-            const res = await fetch("/recommend");
-            const data = await res.json();
-
-            if (!data.destinations || data.destinations.length === 0) {
-                container.innerHTML = "<p>추천할 여행지가 없습니다.</p>";
-                return;
-            }
-
-            container.innerHTML = data.destinations.map(dest => `
-                <div class="destination">
-                    <img src="${dest.image_url}" alt="${dest.name}">
-                    <div class="destination-info">
-                        <h3>${dest.name}</h3>
-                        <p>여행 점수: <span class="score">${dest.score}</span></p>
-                        <p>설명: ${dest.description}</p>
+            const container = document.querySelector("#response-container");
+            container.innerHTML = "<p>추천 여행지를 불러오는 중...</p>";
+        
+            try {
+                const res = await fetch("/recommend");
+                const data = await res.json();
+            
+                if (!data.destinations || data.destinations.length === 0) {
+                    container.innerHTML = "<p>추천할 여행지가 없습니다.</p>";
+                    return;
+                }
+            
+                container.innerHTML = data.destinations.map(dest => `
+                    <div class="destination">
+                        <img src="${dest.image_url}" alt="${dest.name}">
+                        <div class="destination-info">
+                            <h3>${dest.name}</h3>
+                            <p>여행 점수: <span class="score">${dest.score}</span></p>
+                            <p>설명: ${dest.description}</p>
+                        </div>
                     </div>
-                </div>
-            `).join("");
-
-        } catch (err) {
-            console.error("recommendSearch error:", err);
-            container.innerHTML = "<p>추천 정보를 가져오는 중 오류 발생</p>";
+                `).join("");
+                
+            } catch (err) {
+                console.error("recommendSearch error:", err);
+                container.innerHTML = "<p>추천 정보를 가져오는 중 오류 발생</p>";
+            }
         }
-    }
-    </script>
+        </script>
     </body>
 </html>
