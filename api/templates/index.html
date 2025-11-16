@@ -396,7 +396,9 @@
                     </div>
                     <div class="info-section price-section">
                         <span class="label">가격</span>
-                        <span class="value">${cityData.price.toLocaleString()}원</span>
+                        <span class="score-value">
+                            ${cityData.totalScore !== undefined ? cityData.totalScore.toLocaleString() : '데이터가 없습니다'}
+                        </span>
                     </div>
                 </div>
             </div>
