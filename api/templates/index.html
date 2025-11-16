@@ -342,6 +342,19 @@
                 autocompleteList.appendChild(item);
             });
         });
+        function getTravelDataList(cookieName) {
+            const cookieValue = getCookie(cookieName);
+            if (!cookieValue) return [];
+            try {
+                const decoded = decodeURIComponent(cookieValue); // 반드시 디코딩
+                const data = JSON.parse(decoded);
+                if (Array.isArray(data)) return data; // 배열 그대로 반환
+                return [];
+            } catch(e) {
+                console.error("쿠키 파싱 실패", e);
+                return [];
+            }
+}
         function setCookie(name, value, days) {
             const d = new Date();
             d.setTime(d.getTime() + (days*24*60*60*1000));
