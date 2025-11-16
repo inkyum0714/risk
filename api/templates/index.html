@@ -346,53 +346,6 @@
             });
         });
         </script>
-        <script>
-            // 쿠키 설정 함수 (리스트 저장 가능)
-            // 기존 쿠키 가져오기
-            function getCookie(name) {
-                const value = `; ${document.cookie}`;
-                const parts = value.split(`; ${name}=`);
-                if (parts.length === 2) return parts.pop().split(';').shift();
-                return null;
-            }
-
-            // 쿠키 저장 함수
-            function setCookie(name, value, days) {
-                const d = new Date();
-                d.setTime(d.getTime() + (days*24*60*60*1000));
-                const expires = "expires=" + d.toUTCString();
-                document.cookie = name + "=" + value + ";" + expires + ";path=/";
-            }
-
-                    
-            // 추천 여행지 버튼 클릭 이벤트
-            document.getElementById('recommendButton').addEventListener('click', function(event){
-                event.preventDefault();
-            
-                // 쿠키에서 도시 리스트 가져오기
-                const cityList = getCookieList('recent_cities') || [];
-                if (cityList.length === 0) {
-                    alert("추천 여행지가 없습니다.");
-                    return;
-                }
-            
-                // 랜덤으로 선택
-                const randomCity = cityList[Math.floor(Math.random() * cityList.length)];
-                document.getElementById('country-input').value = randomCity;
-            
-                // 검색 호출
-                search();
-            });
-        
-        
-            // 페이지 로드 시 쿠키에서 최근 도시 중 마지막 값으로 input 채우기
-            window.addEventListener('load', function(){
-                const cityList = getCookieList('recent_cities');
-                if (cityList && cityList.length > 0) {
-                    document.getElementById('country-input').value = cityList[cityList.length - 1];
-                }
-            });
-        </script>
 
 
     </body>
