@@ -29,7 +29,6 @@
                 <small id="date-warning" style="color: red; display: none; margin-top: 4px;">과거 날짜는 선택할 수 없습니다.</small>
             </div>
             <button id="searchButton">검색</button>
-            <button id="recommendButton" class="recommend-btn">추천 여행지 검색</button>
         </form>
     </div>
 
@@ -397,7 +396,7 @@
                     <div class="info-section price-section">
                         <span class="label">가격</span>
                         <span class="score-value">
-                            ${cityData.totalScore !== undefined ? cityData.totalScore.toLocaleString() : '데이터가 없습니다'}
+                            ${cityData.totalScore !== undefined ? cityData.price.toLocaleString() : '데이터가 없습니다'}
                         </span>
                     </div>
                 </div>
