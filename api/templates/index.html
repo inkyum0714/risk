@@ -8,47 +8,49 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="top">
-        <h2>맞춤 여행 점수 판단 서비스</h2>
-        <!-- 상단 검색 영역 -->
-        <form class="search-form" action="/index" method="get" autocomplete="off">
-            <div class="input-group">
-                <label for="country-input-start">출발</label>
-                <input id="country-input-start" type="text" value="대한민국" disabled="true">
-            </div>
-
-            <div class="input-group">
-                <label for="country-input">도착</label>
-                <input id="country-input" type="text" placeholder="나라, 도시, 공항중 하나를 입력하세요" name="user_input_travel" required>
-                <div id="autocomplete-list" class="autocomplete-list"></div>
-            </div>
-
-            <div class="input-group">
-                <label for="user_input_day">출발일</label>
-                <input type="date" id="user_input_day" name="user_input_day" required>
-                <small id="date-warning" style="color: red; display: none; margin-top: 4px;">과거 날짜는 선택할 수 없습니다.</small>
-            </div>
-            <button id="searchButton">검색</button>
-        </form>
-    </div>
-
-
-
-    <div class="bottom">
-        <div id="response-container" class="weather-results">   
-    </div>
-        <h2 style="margin-bottom: 20px; color: #333;">추천 여행지</h2>
-        {% for dest in destinations %}
-        <div class="destination">
-            <img src="{{ dest.image_url }}" alt="{{ dest.name }}">
-            <div class="destination-info">
-                <h3>{{ dest.name }}</h3>
-                <p>여행 점수: <span class="score">{{ dest.score }}</span></p>
-                <p>설명: {{ dest.description }}</p>
-            </div>
+<div class="top">
+    <h2>맞춤 여행 점수 판단 서비스</h2>
+    <!-- 검색 폼 -->
+    <form class="search-form" action="/index" method="get" autocomplete="off">
+        <div class="input-group">
+            <label for="country-input-start">출발</label>
+            <input id="country-input-start" type="text" value="대한민국" disabled="true">
         </div>
-        {% endfor %}
+
+        <div class="input-group">
+            <label for="country-input">도착</label>
+            <input id="country-input" type="text" placeholder="나라, 도시, 공항중 하나를 입력하세요" name="user_input_travel" required>
+            <div id="autocomplete-list" class="autocomplete-list"></div>
+        </div>
+
+        <div class="input-group">
+            <label for="user_input_day">출발일</label>
+            <input type="date" id="user_input_day" name="user_input_day" required>
+            <small id="date-warning" style="color: red; display: none; margin-top: 4px;">과거 날짜는 선택할 수 없습니다.</small>
+        </div>
+        <button id="searchButton">검색</button>
+    </form>
+</div>
+
+<div class="recommended">
+    <h2 style="margin-bottom: 20px; color: #333;">추천 여행지</h2>
+    {% for dest in destinations %}
+    <div class="destination">
+        <img src="{{ dest.image_url }}" alt="{{ dest.name }}">
+        <div class="destination-info">
+            <h3>{{ dest.name }}</h3>
+            <p>여행 점수: <span class="score">{{ dest.score }}</span></p>
+            <p>설명: {{ dest.description }}</p>
+        </div>
     </div>
+    {% endfor %}
+</div>
+
+
+<!-- 🔽 검색 결과는 그 다음 -->
+<div class="bottom">
+    <div id="response-container" class="weather-results"></div>
+</div>
         <script>
             document.getElementById('searchButton').addEventListener('click', function(event){
                 event.preventDefault();
@@ -396,7 +398,7 @@
                     <div class="info-section price-section">
                         <span class="label">가격</span>
                         <span class="score-value">
-                            ${cityData.totalScore !== undefined ? cityData.price.toLocaleString() : '데이터가 없습니다'}
+                            ${cityData.price !== undefined ? cityData.price.toLocaleString() : '데이터가 없습니다'}
                         </span>
                     </div>
                 </div>
