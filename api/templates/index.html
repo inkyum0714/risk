@@ -204,9 +204,11 @@
                 appendResult(`
                     <div class="travell-card fade-in">
                         <div class="card-header">
-                            <h3 class="city-name">${user_input_travel_city}</h3>
-                            <span class="label">총합 점수</span>
-                            <span class="value">${total_score}</span>
+                            <h3 class="city-name" style="margin:0;">${user_input_travel_city}</h3>
+                            <div class="total-score-container">
+                                <h4>총합 점수</h4>
+                                <span class="score-value">${total_score}</span>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="info-section weather-section">
