@@ -345,71 +345,74 @@
                 autocompleteList.appendChild(item);
             });
         });
-            // 쿠키 설정 함수 (리스트 저장 가능)
-            function setCookieList(name, value, days) {
-                let list = getCookieList(name) || [];
-                if (!list.includes(value)) list.push(value); // 중복 방지
-                const expires = new Date();
-                expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-                document.cookie = `${name}=${encodeURIComponent(JSON.stringify(list))};expires=${expires.toUTCString()};path=/`;
+        // traveldata 쿠키에서 리스트 추출
+        function getTravelDataList(cookieName) {
+            const cookieValue = getCookie(cookieName);
+            if (!cookieValue) return [];
+            try {
+                const data = JSON.parse(cookieValue);
+                if (Array.isArray(data)) return data; // 배열 그대로 반환
+                return [];
+            } catch(e) {
+                console.error("쿠키 파싱 실패", e);
+                return [];
             }
-        
-            // 쿠키 가져오기 함수 (리스트 형태)
-            function getCookieList(name) {
-                const cookieArr = document.cookie.split(';');
-                for (let cookie of cookieArr) {
-                    const [cname, cvalue] = cookie.trim().split('=');
-                    if (cname === name) return JSON.parse(decodeURIComponent(cvalue));
-                }
-            }
-            // 기존 쿠키 가져오기
-            function getCookie(name) {
-                const value = `; ${document.cookie}`;
-                const parts = value.split(`; ${name}=`);
-                if (parts.length === 2) return parts.pop().split(';').shift();
-                return null;
-            }
-        
+        }
 
-            // 쿠키 저장 함수
-            function setCookie(name, value, days) {
-                const d = new Date();
-                d.setTime(d.getTime() + (days*24*60*60*1000));
-                const expires = "expires=" + d.toUTCString();
-                document.cookie = name + "=" + value + ";" + expires + ";path=/";
+        // 쿠키 가져오기
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        // 랜덤으로 n개 뽑기
+        function getRandomCities(list, n) {
+            const shuffled = list.slice().sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, n);
+        }
+
+        // 카드 HTML 생성 후 appendResult 호출
+        function appendTravelCard(cityData) {
+            const cardHTML = `
+            <div class="travell-card fade-in">
+                <div class="card-header">
+                    <h3 class="city-name">${cityData.city}</h3>
+                    <div class="total-score-container">
+                        <p>총합 점수</p>
+                        <span class="score-value">${cityData.totalScore}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-section weather-section">
+                        <span class="label">날씨 점수(불쾌 지수)</span>
+                        <span class="value">${cityData.weather}</span>
+                    </div>
+                    <div class="info-section price-section">
+                        <span class="label">가격</span>
+                        <span class="value">${cityData.price.toLocaleString()}원</span>
+                    </div>
+                </div>
+            </div>
+            `;
+            appendResult(cardHTML);
+        }
+
+        // 페이지 로드 시 실행
+        window.addEventListener('load', function() {
+            const cityList = getTravelDataList('traveldata');
+            if (!cityList || cityList.length === 0) {
+                console.log("추천 여행지가 없습니다.");
+                return;
             }
 
-                    
-            // 추천 여행지 버튼 클릭 이벤트
-            document.getElementById('recommendButton').addEventListener('click', function(event){
-                event.preventDefault();
-            
-                // 쿠키에서 도시 리스트 가져오기
-                const cityList = getCookieList('recent_cities') || [];
-                if (cityList.length === 0) {
-                    alert("먼저 도시를 선택해주세요.");
-                    alert("추천 여행지가 없습니다.");
-                    return;
-                }
-            
-                // 랜덤으로 선택
-                const randomCity = cityList[Math.floor(Math.random() * cityList.length)];
-                document.getElementById('country-input').value = randomCity;
-            
-                // 검색 호출
-                search();
+            const randomCities = getRandomCities(cityList, 2); // 2개 선택
+            randomCities.forEach(city => {
+                appendTravelCard(city); // appendResult를 통해 카드 출력
             });
-        
-        
-            // 페이지 로드 시 쿠키에서 최근 도시 중 마지막 값으로 input 채우기
-            window.addEventListener('load', function(){
-                const cityList = getCookieList('recent_cities');
-                if (cityList && cityList.length > 0) {
-                    document.getElementById('country-input').value = cityList[cityList.length - 1];
-                }
-            });
+        });
+
         </script>
-
-
     </body>
 </html>
