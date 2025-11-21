@@ -4,9 +4,8 @@ import requests, json, os
 WEATHER_API_KEY = "lfwWiH5cTMe8Foh-XJzH6g"
 
 def get_weather(user_input_city, user_input_day):
-    current_dir = os.path.dirname(__file__)  # 현재 파일(service 폴더) 기준
+    current_dir = os.path.dirname(__file__)  
 
-    # weather_data.json 처리
     weather_file_path = os.path.join(current_dir, "weather_data.json")
     weather_file_path = os.path.abspath(weather_file_path)
 
@@ -20,7 +19,6 @@ def get_weather(user_input_city, user_input_day):
         except json.JSONDecodeError:
             data = {}
 
-    # country_code_data_five.json 처리
     country_code_path = os.path.join(current_dir, "..", "data", "country_code_data_five.json")
     country_code_path = os.path.abspath(country_code_path)
 
@@ -55,7 +53,7 @@ def get_weather(user_input_city, user_input_day):
             if flag == True:
                 continue
 
-            url = f"https://apihub.kma.go.kr/api/typ01/url/gts_syn1.php?tm={day}1200&dtm=2&stn=47&help=0&authKey={WEATHER_API_KEY}&stn={country}" #https://apihub.kma.go.kr/api/typ01/url/gts_syn1.php?tm=2025-10-261200&dtm=2&stn=47&help=0&authKey=lfwWiH5cTMe8Foh-XJzH6g&stn=
+            url = f"https://apihub.kma.go.kr/api/typ01/url/gts_syn1.php?tm={day}1200&dtm=2&stn=47&help=0&authKey={WEATHER_API_KEY}&stn={country}" 
             print(url)
             response = requests.get(url)
             text = response.text
