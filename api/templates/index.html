@@ -2,13 +2,13 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>맞춤 여행 점수 판단 서비스</title>
+    <title>travel Score Judgement</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="top">
-        <h2>맞춤 여행 점수 판단 서비스</h2>
+        <h2>travel Score Judgement</h2>
         <!-- 상단 검색 영역 -->
         <form class="search-form" action="/index" method="get" autocomplete="off">
             <div class="input-group">
@@ -51,9 +51,7 @@
         <script>
             document.getElementById('searchButton').addEventListener('click', function(event){
                 event.preventDefault(); // 기본 submit 방지
-                search();           // AJAX 호출
-                event.preventDefault(); 
-                search();        
+                search();           // AJAX 호출       
             });
 
             async function search() {
@@ -347,11 +345,9 @@
         event.preventDefault();
         const travelInput = document.getElementById('country-input').value;
     
-        // 마지막 검색 도시 쿠키 저장
 
         document.cookie = `last_city=${encodeURIComponent(travelInput)}; max-age=2160000; path=/`;
     
-        search(); // 검색 실행
         search(); 
     });
     
