@@ -7,31 +7,26 @@ import json
 import os
 import time
 
-# JSON 파일 경로 지정
 json_path = os.path.join("data", "city_to_airport.json")
 
 with open(json_path, "r", encoding="utf-8") as f:
     city_to_airport = json.load(f)
 
-# 크롬 드라이버 설정
 options = webdriver.ChromeOptions()
-options.add_argument("--headless")  # 창 안 보이게 (테스트 시엔 주석 처리 추천)
+options.add_argument("--headless") 
 options.add_argument("--disable-gpu")
 options.add_argument("--no-sandbox")
 driver = webdriver.Chrome(options=options)
 
-# 결과 저장용 딕셔너리
 translated_data = {}
 try_number = 0
 try:
     for key, value in city_to_airport.items():
         try_number += 1
-        # value를 번역하도록 수정
         encoded_text = quote(value)
         url = f"https://translate.google.co.kr/?sl=en&tl=ko&text={encoded_text}&op=translate"
         driver.get(url)
 
-        # 번역 결과 기다리기
         try:
             wait = WebDriverWait(driver, 10)
             span = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "ryNqvb")))
@@ -42,13 +37,10 @@ try:
         print(try_number, f"{value} → {top_text}")
 
         translated_data[key] = top_text
-        # 너무 빠르면 구글에서 차단할 수 있으므로 약간 대기
         time.sleep(0.5)
 
 finally:
     driver.quit()
-
-# 전체 결과를 JSON 파일로 저장
 output_path = "translation_result.json"
 with open(output_path, "w", encoding="utf-8") as f:
     json.dump(translated_data, f, ensure_ascii=False, indent=4)

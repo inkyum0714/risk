@@ -11,7 +11,7 @@ body, html {
     background-color: #f2f2f2;
 }
 
-/* 상하 분할 */
+
 .top, .bottom {
     width: 100%;
     display: flex;
@@ -45,7 +45,7 @@ h1 {
     margin-bottom: 20px;
 }
 
-/* 검색폼 */
+
 .search-form {
     display: flex;
     justify-content: center;
@@ -71,7 +71,7 @@ h1 {
 
 .search-form input[type="date"] {
     width: 160px;
-    box-shadow: none !important; /* ← 이게 핵심 */
+    box-shadow: none !important; 
     background-color: white;
 }
 
@@ -94,23 +94,23 @@ h1 {
 }
 
 .input-group {
-    position: relative; /* autocomplete-list를 input 바로 아래에 위치시키기 위해 필요 */
+    position: relative; 
 }
 .autocomplete-list {
     position: absolute;
     top: calc(100%);
     left: 0;
     right: 0;
-    background-color: white; /* 배경 하얀색 */
+    background-color: white;
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     border-top: none;
-    z-index: 1000; /* 다른 요소 위에 표시 */
+    z-index: 1000; 
     max-height: 200px;
     overflow-y: auto;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2); /* 그림자 넣으면 입체감 */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2); 
 }
 
-/* 자동완성 드롭다운 */
+
 .autocomplete-items {
     position: absolute;
     top: 45px;
@@ -136,7 +136,7 @@ h1 {
     background-color: #e9e9e9;
 }
 
-/* 검색 결과 */
+
 .weather-results {
     margin-top: 20px;
     background: rgba(255,255,255,0.8);
@@ -147,7 +147,7 @@ h1 {
     border: 1px solid black;
 }
 
-/* 추천 여행지 카드 */
+
 .destination {
     background-color: white;
     width: 90%;
@@ -192,7 +192,7 @@ h1 {
     color: #ff6b6b;
 }
 
-        /* 항공권 검색 폼 */
+
 .flight-form {
     display: flex;
     flex-direction: column;
@@ -206,7 +206,7 @@ h1 {
     margin-top: 20px;
 }
 
-/* 각 입력 그룹 (라벨 + 입력창) */
+
 .flight-group {
     display: flex;
     flex-wrap: wrap;
@@ -216,7 +216,7 @@ h1 {
     margin-bottom: 15px;
 }
 
-/* 입력창 스타일 통합 */
+
 .flight-group input {
     flex: 1 1 45%;
     min-width: 200px;
@@ -232,7 +232,7 @@ h1 {
     border-color: #66a6ff;
 }
 
-/* 버튼 스타일 */
+
 .flight-form button {
     margin-top: 10px;
     padding: 12px 25px;
@@ -252,7 +252,7 @@ h1 {
 }
 .travel-card {
     max-width: 720px;
-    margin: 16px auto;       /* 상하 여백 + 중앙 정렬 */
+    margin: 16px auto;     
 }
 
 .travel-card:hover {
@@ -408,19 +408,19 @@ h1 {
 }
 #response-container > div:first-child {
     max-width: 720px;
-    margin: 0 auto 16px auto;  /* 상하 마진 + 중앙 정렬 */
+    margin: 0 auto 16px auto;  
 }
 
 #response-container {
-    max-width: 720px;       /* 카드 최대 너비 */
+    max-width: 720px;     
     width: 100%;
-    margin: 0 auto;         /* 중앙 정렬 */
+    margin: 0 auto;        
+    
     overflow-y: auto;
     background: rgba(255,255,255,0.8);
     padding: 15px;
     border-radius: 8px;
 }
-/* 진행바 스타일 */
 .progress-container {
     display: flex;
     flex-direction: column;
@@ -462,7 +462,7 @@ progress::-webkit-progress-value {
     transition: width 0.1s ease;
 }
 
-/* 등장 애니메이션 */
+
 .fade-in {
     animation: fadeIn 0.6s ease-in-out;
 }
@@ -472,7 +472,7 @@ progress::-webkit-progress-value {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* 반응형 디자인 */
+
 @media (min-width: 768px) {
   .detail-grid {
     grid-template-columns: repeat(2, 1fr);
