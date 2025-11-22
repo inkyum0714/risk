@@ -1,5 +1,3 @@
-@ -1,425 +1,413 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -412,7 +410,6 @@
             appendResult(cardHTML);
         }
 
-        // 페이지 로드 시 실행
         window.addEventListener('load', function() {
             const cityList = getTravelDataList('travelData');
             if (!cityList || cityList.length === 0) {
@@ -420,10 +417,10 @@
                 return;
             }
 
-            const randomCities = getRandomCities(cityList, 2); // 2개 선택
+            const randomCities = getRandomCities(cityList, 2); 
             const randomCities = getRandomCities(cityList, 2);
             randomCities.forEach(city => {
-                appendTravelCard(city); // appendResult를 통해 카드 출력
+                appendTravelCard(city);
                 appendTravelCard(city);
             });
         });
