@@ -2,53 +2,59 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>travel Score Judgement</title>
+    <title>TSJ - service</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="top">
-        <h2>travel Score Judgement</h2>
-        <!-- 상단 검색 영역 -->
-        <form class="search-form" action="/index" method="get" autocomplete="off">
-            <div class="input-group">
-                <label for="country-input-start">출발</label>
-                <input id="country-input-start" type="text" value="대한민국" disabled="true">
-            </div>
-
-            <div class="input-group">
-                <label for="country-input">도착</label>
-                <input id="country-input" type="text" placeholder="나라, 도시, 공항중 하나를 입력하세요" name="user_input_travel" required>
-                <div id="autocomplete-list" class="autocomplete-list"></div>
-            </div>
-
-            <div class="input-group">
-                <label for="user_input_day">출발일</label>
-                <input type="date" id="user_input_day" name="user_input_day" required>
-                <small id="date-warning" style="color: red; display: none; margin-top: 4px;">과거 날짜는 선택할 수 없습니다.</small>
-            </div>
-            <button id="searchButton">검색</button>
-        </form>
-    </div>
-
-
-
-    <div class="bottom">
-        <div id="response-container" class="weather-results">   
-    </div>
-        <h2 style="margin-bottom: 20px; color: #333;">추천 여행지</h2>
-        {% for dest in destinations %}
-        <div class="destination">
-            <img src="{{ dest.image_url }}" alt="{{ dest.name }}">
-            <div class="destination-info">
-                <h3>{{ dest.name }}</h3>
-                <p>여행 점수: <span class="score">{{ dest.score }}</span></p>
-                <p>설명: {{ dest.description }}</p>
-            </div>
+<div class="top">
+    <h2>travel Score Judgement</h2>
+    <!-- 검색 폼 -->
+    <form class="search-form" action="/index" method="get" autocomplete="off">
+        <div class="input-group">
+            <label for="country-input-start">출발</label>
+            <input id="country-input-start" type="text" value="대한민국" disabled="true">
         </div>
-        {% endfor %}
+
+        <div class="input-group">
+            <label for="country-input">도착</label>
+            <input id="country-input" type="text" placeholder="나라, 도시, 공항중 하나를 입력하세요" name="user_input_travel" required>
+            <div id="autocomplete-list" class="autocomplete-list"></div>
+        </div>
+
+        <div class="input-group">
+            <label for="user_input_day">출발일</label>
+            <input type="date" id="user_input_day" name="user_input_day" required>
+            <small id="date-warning" style="color: red; display: none; margin-top: 4px;">과거 날짜는 선택할 수 없습니다.</small>
+        </div>
+        <button id="searchButton">검색</button>
+    </form>
+</div>
+
+<div class="recommended">
+    <h2 style="margin-bottom: 20px; color: #333;">추천 여행지</h2>
+    {% for dest in destinations %}
+    <div class="destination">
+        <img src="{{ dest.image_url }}" alt="{{ dest.name }}">
+        <div class="destination-info">
+            <h3>{{ dest.name }}</h3>
+            <p>여행 점수: <span class="score">{{ dest.score }}</span></p>
+            <p>설명: {{ dest.description }}</p>
+        </div>
     </div>
+    {% endfor %}
+</div>
+
+
+<div class="bottom">
+    <div id="response-container" class="weather-results"></div>
+</div>
         <script>
+            document.getElementById('searchButton').addEventListener('click', function(event){
+                event.preventDefault();
+                const cityInput = document.getElementById('country-input').value.trim();
+                search();
+            });
 
             async function search() {
                 const user_input_travel = document.getElementById('country-input').value;
@@ -71,14 +77,21 @@
                     }
                 })
             }
-        </script>
-        <script>
+        let existingData = getCookie("travelData");
+        let dataArray = [];
+
+        if (existingData) {
+            try {
+                dataArray = JSON.parse(existingData);
+            } catch(e) {
+                dataArray = [];
+            }
+        }
         function incrementProgress(target, step = 1, interval = 20) {
             return new Promise((resolve) => {
                 const timer = setInterval(() => {
                     progress += step;
                     if (progress > target) progress = target; // 최대값 제한
-                    if (progress > target) progress = target;
                     progressBar.value = progress;
                     if (progress >= target) {
                         clearInterval(timer);
@@ -98,14 +111,16 @@
             const exchangeRate = exchangeData.result;
             const symbol = exchangeData.symbol
             // 1. 국가 위험도 한 번만 가져오기
-            // 1. 국가 위험도,환율 최상단에 한번만 가져오기
             const riskData = await risk(user_input_travel_country);
             const riskLevel = riskData.result.score;
             const alerts = riskData.result.alert;
             const color = riskLevel >= 10 ? '#ef4444' : riskLevel >= 6 ? '#f59e0b' : '#10b981';
+
+            cookieData = {
+
+            }
         
             // 2. 위험도 출력 (맨 위에)
-            // 2. 위험도,환율 출력
             appendResult(`
                 <div style="padding: 20px; background: white; border-radius: 8px; border-left: 4px solid ${color}; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 16px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -135,6 +150,7 @@
             for (const city of user_input_travel_cities) {
                 await main(city, user_input_travel_country, riskData);
             }
+
         }
 
         // main() 함수에서 riskData를 매개변수로 받도록 수정
@@ -187,8 +203,9 @@
                     });
 
                 // 모두 완료
-                // total
                 const [weatherData, ticketData] = await Promise.all([weatherPromise, ticketPromise]);
+               
+
                 const total_score = await total(weatherData.result, ticketData.result, riskData.result.score);
                 await incrementProgress(100, 1, 10);
 
@@ -199,14 +216,16 @@
                 appendResult(`
                     <div class="travell-card fade-in">
                         <div class="card-header">
-                            <h3 class="city-name">${user_input_travel_city}</h3>
+                            <h3 class="city-name" style="margin:0;">${user_input_travel_city}</h3>
+                            <div class="total-score-container">
+                                <p>총합 점수</p>
+                                <span class="score-value">${total_score}</span>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="info-section weather-section">
                                 <span class="label">날씨 점수(불쾌 지수)</span>
                                 <span class="value">${weatherData.result}</span>
-                                <span class="label">총합 점수</span>
-                                <span class="value">${total_score}</span>
                             </div>
                             <div class="info-section score-section">
                                 <span class="label">항공권 점수</span>
@@ -240,6 +259,18 @@
                         </div>
                     </div>
                 `);
+                
+                const dataItem = {
+                    city: user_input_travel_city,
+                    price: ticketData.result_data[0]["가격"],
+                    weather: weatherData.result,
+                    totalScore: total_score
+                };
+                const isDuplicate = dataArray.some(item => item.city === user_input_travel_city);
+                if (!isDuplicate) {
+                    dataArray.push(dataItem);
+                }
+                setCookie("travelData", JSON.stringify(dataArray), 7);
             } catch (err) {
                 console.error("에러 발생:", err);
             } 
@@ -277,20 +308,17 @@
                 return data.result; 
             }
 
-        </script>
-        <script>
-        const countries = {{ country_code_data_five_number.keys() | list | tojson | safe }} || [];
-        const cities = {{ country_code_data_three.keys() | list | tojson | safe }} || [];
-        const airports = {{ airport_names | list | tojson | safe }} || [];
-
-        const allPlaces = [...new Set([...countries, ...cities, ...airports])];
+            const countries = {{ country_code_data_five_number.keys() | list | tojson | safe }} || [];
+            const cities = {{ country_code_data_three.keys() | list | tojson | safe }} || [];
+            const airports = {{ airport_names | list | tojson | safe }} || [];
+            const allPlaces = [...new Set([...countries, ...cities, ...airports])];
             const autocompleteList = document.getElementById('autocomplete-list');
             const input = document.getElementById('country-input');
 
-        input.addEventListener('input', function() {
-            const val = this.value.toLowerCase();
-            autocompleteList.innerHTML = '';
-            if (!val) return;
+            input.addEventListener('input', function() {
+                const val = this.value.toLowerCase();
+                autocompleteList.innerHTML = '';
+                if (!val) return;
 
             const matches = allPlaces
                 .filter(place => place.toLowerCase().includes(val))
@@ -313,60 +341,84 @@
                 autocompleteList.appendChild(item);
             });
         });
-        </script>
-        <script>
-        const dateInput = document.getElementById('user_input_day');
-        const warningText = document.getElementById('date-warning');
-        const searchButton = document.querySelector('.search-form button');
-
-        dateInput.addEventListener('change', function() {
-            const selectedDate = new Date(this.value);
-            const today = new Date();
-            today.setHours(0,0,0,0);
-
-            if (selectedDate < today) {
-                warningText.style.display = 'block';
-                searchButton.disabled = true;
-                searchButton.style.backgroundColor = '#ccc';
-                this.value = '';
-            } else {
-                warningText.style.display = 'none';
-                searchButton.disabled = false;
-                searchButton.style.backgroundColor = '#ff6b6b';
-            }
-        });
-        </script>
-    <script>
-    document.getElementById('searchButton').addEventListener('click', function(event){
-        event.preventDefault();
-        const travelInput = document.getElementById('country-input').value;
-    
-
-        document.cookie = `last_city=${encodeURIComponent(travelInput)}; max-age=2160000; path=/`;
-    
-        search(); 
-    });
-    
-    // 페이지 로드 시 실행
-    window.addEventListener('load', function() {
-        const cookies = document.cookie.split(';').map(c => c.trim());
-        const cityCookie = cookies.find(c => c.startsWith('last_city='));
-    
-        if (cityCookie) {
-            const lastCity = decodeURIComponent(cityCookie.split('=')[1]);
-        
-            // input 채우기
-            document.getElementById('country-input').value = lastCity;
-        
-            // ✅ 페이지 로딩 시 자동 검색 실행
-            // (쿠키 값이 유효하면)
-
-            if (lastCity.trim() !== "") {
-                search();
+        function getTravelDataList(cookieName) {
+            const cookieValue = getCookie(cookieName);
+            if (!cookieValue) return [];
+            try {
+                const decoded = decodeURIComponent(cookieValue); // 디코딩 필수
+                const data = JSON.parse(decoded);
+                if (Array.isArray(data)) return data; 
+                return [];
+            } catch(e) {
+                console.error("쿠키 파싱 실패", e);
+                return [];
             }
         }
-    });
-    </script>
+        function setCookie(name, value, days) {
+            const d = new Date();
+            d.setTime(d.getTime() + (days*24*60*60*1000));
+            const expires = "expires=" + d.toUTCString();
+            // 반드시 encodeURIComponent 적용
+            document.cookie = name + "=" + encodeURIComponent(value) + ";" + expires + ";path=/";
+        }
 
+
+        // 쿠키 가져오기
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        // 랜덤으로 n개 뽑기
+        function getRandomCities(list, n) {
+            const shuffled = list.slice().sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, n);
+        }
+
+        // 카드 HTML 생성 후 appendResult 호출
+        function appendTravelCard(cityData) {
+            const cardHTML = `
+            <div class="travell-card fade-in">
+                <div class="card-header">
+                    <h3 class="city-name">${cityData.city}</h3>
+                    <div class="total-score-container">
+                        <p>총합 점수</p>
+                        <span class="score-value">${cityData.totalScore}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="info-section weather-section">
+                        <span class="label">날씨 점수(불쾌 지수)</span>
+                        <span class="value">${cityData.weather}</span>
+                    </div>
+                    <div class="info-section price-section">
+                        <span class="label">가격</span>
+                        <span class="score-value">
+                            ${cityData.price !== undefined ? cityData.price.toLocaleString() : '데이터가 없습니다'}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            `;
+            appendResult(cardHTML);
+        }
+
+        // 페이지 로드 시 실행
+        window.addEventListener('load', function() {
+            const cityList = getTravelDataList('travelData');
+            if (!cityList || cityList.length === 0) {
+                console.log("추천 여행지가 없습니다.");
+                return;
+            }
+
+            const randomCities = getRandomCities(cityList, 2); // 2개 선택
+            randomCities.forEach(city => {
+                appendTravelCard(city); // appendResult를 통해 카드 출력
+            });
+        });
+
+        </script>
     </body>
 </html>
