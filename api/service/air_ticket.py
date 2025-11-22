@@ -69,7 +69,8 @@ def air_ticket(user_input_toId, departDate):
                                         weight_kg = "0"
                                 else: 
                                     weight_kg = "0"
-
+                                if  deal_dic["항공사 이름"] == "undefined" or deal_dic["가격"] < 10000:
+                                    continue
                                 deal_dic["위탁수하물 용량"] = round(float(weight_kg), 0)
                                 cabin_luggage = response_data["data"]["flightOffers"][j]["segments"][0].get("travellerCabinLuggage", [])
                                 if cabin_luggage and "luggageAllowance" in cabin_luggage[0]:

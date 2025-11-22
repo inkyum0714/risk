@@ -19,7 +19,12 @@ body, html {
     align-items: center;
     flex-direction: column;
 }
-
+.recommended {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+}
 .top {
     height: 40%;
     background: linear-gradient(to right, #89f7fe, #66a6ff);
@@ -258,8 +263,50 @@ h1 {
 .card-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+  color: white;
+  border-radius: 8px 8px 0 0;
 }
 
+.card-header .city-name {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0;
+}
+
+.card-header .total-score-container {
+  text-align: right;
+}
+
+.card-header .total-score-container h4 {
+  margin: 0;
+  font-size: 1em;
+  font-weight: normal;
+  color: #f3f4f6;
+}
+
+.card-header .total-score-container .score-value {
+  font-size: 1.6em;
+  font-weight: bold;
+  color: #ffed4a;
+  display: block;
+  margin-top: 2px;
+}
+.travell-card {
+    flex: 0 1 calc(50% - 20px); /* 화면 너비의 50%에서 간격 제외 */
+    box-sizing: border-box;
+    margin-bottom: 20px;   /* 카드 아래 여백 */
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.travell-card:hover {
+    transform: translateY(-5px);
+}
 .city-name {
   margin: 0;
   color: #fff;
