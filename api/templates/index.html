@@ -49,10 +49,6 @@
         {% endfor %}
     </div>
         <script>
-            document.getElementById('searchButton').addEventListener('click', function(event){
-                event.preventDefault(); // 기본 submit 방지
-                search();           // AJAX 호출       
-            });
 
             async function search() {
                 const user_input_travel = document.getElementById('country-input').value;
